@@ -1,0 +1,44 @@
+{%- comment -%}
+    Render product using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+
+<div
+    class="product__info-block product__info-block--price reveal-item"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    <div id="price-{{ sectionId }}" class="no-js-hidden product__price" data-updatable="true">
+        {%- render 'price',
+            product: product,
+            use_variant: true,
+            show_badges: true,
+            show_stock: false,
+            show_sku: false
+        -%}
+    </div>
+    {%- if shop.enabled_payment_types contains 'shopify_pay' -%}
+        <div>
+            {%- unless product == null -%}
+                {%- form 'product', product, id: 'product-form-installment', class: 'installment caption-large' -%}
+                    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                    {{ form | payment_terms }}
+                {%- endform -%}
+            {%- endunless -%}
+        </div>
+    {%- endif -%}
+    {%- if block.settings.show_tax_message -%}
+        <div class="product__tax caption rte">
+            {% if cart.taxes_included %}
+                {{ 'sections.cart.taxes_included' | t }}
+            {% else %}
+                {{ 'sections.cart.taxes_excluded' | t }}
+            {% endif %}
+        </div>
+    {%- endif -%}
+</div>

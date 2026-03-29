@@ -1,0 +1,11 @@
+{%- comment -%}
+    Render app block
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+{%- endcomment -%}
+
+<div class="collection__block collection__block--app" style="order: {{ blockOrder }}" {{ block.shopify_attributes }}>
+    {%- render block -%}
+</div>

@@ -1,0 +1,46 @@
+{%- comment -%}
+    if we apply a special style to cents,
+    we will wrap them in a sup (superscript) element.
+
+    Accepts:
+     - price     {Number}
+     - css_class {String}
+{%- endcomment -%}
+
+{%- liquid
+    assign price = price | default: '1999'
+    assign formatted_price = price | money | strip_html
+    assign moneyFormatCurrency = shop.money_format | first
+    assign moneyFormat = shop.money_format | replace: "{{","" | replace: "}}","" | replace: moneyFormatCurrency | strip
+    unless shop.money_format contains 'money' or shop.money_format contains '.'
+        if settings.superscript_decimals
+            if moneyFormat == 'amount'
+                assign formatted_price = formatted_price | replace: '.', '<span class="visually-hidden">.</span><sup>'
+            elsif moneyFormat == 'amount_with_comma_separator'
+                assign formatted_price = formatted_price | replace: ',', '<span class="visually-hidden">,</span><sup>'
+            endif
+
+            assign beginning = shop.money_format | split: '}}' | first
+            assign ending = shop.money_format | split: '}}' | last
+            if beginning == ending
+                assign formatted_price = formatted_price | append: '</sup>'
+            else
+                assign formatted_price = formatted_price | replace: ending, '</sup>' | append: ending
+            endif
+        endif
+    endunless
+
+    if variants
+        assign price_from = 'products.product.price.from_price_html' | t: price: formatted_price
+    endif
+
+    assign price_without_currency = price | money_without_currency
+    assign currency = price | money | strip_html | replace: price_without_currency, ''
+-%}
+<span class="{{ css_class }}" data-amount="{{ price_without_currency }}" data-currency="{{ currency }}">
+    {% if variants %}
+        {{ price_from | replace: currency, '<span class="currency-sign">###</span>' | replace: '###', currency }}
+    {% else %}
+        {{ formatted_price | replace: currency, '<span class="currency-sign">###</span>' | replace: '###', currency }}
+    {% endif %}
+</span>

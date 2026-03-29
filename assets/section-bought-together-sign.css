@@ -1,0 +1,42 @@
+bought-together .grid-item {
+    --sign-size: 1.5rem;
+    --sign-width: 2rem;
+    --sign-height: var(--sign-width);
+    position: relative;
+}
+
+bought-together .grid-item::after {
+    content: '+';
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--sign-size);
+    right: -1.25rem;
+    top: calc(45% - 2rem);
+    opacity: .5;
+    width: var(--sign-width);
+    height: var(--sign-height);
+    font-weight: 500;
+    border-radius: 9999px;
+}
+
+bought-together .grid-item:has([type='checkbox']:checked)::after {
+    opacity: 1;
+}
+
+bought-together .grid-item:nth-last-child(2)::after,
+bought-together .grid-item:last-child::after {
+    display: none;
+}
+
+bought-together .grid-item:not(.summary) {
+    padding: 0 1rem;
+}
+
+@media(min-width: 990px), print {
+    bought-together .grid-item::after {
+        --sign-size: 2rem;
+        --sign-width: 2rem;
+    }
+}

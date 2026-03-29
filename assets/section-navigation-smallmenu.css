@@ -1,0 +1,82 @@
+@media (min-width: 990px) {
+    .with--animation__child-menu .dropdown-inner.small {
+        --transition-timing-function-on: cubic-bezier(.2,.7,.1,1);
+        --transition-timing-function-off: cubic-bezier(0.1, 0.4, 0.5, 1);
+    }
+
+    .dropdown-inner.small {
+        padding: .75rem;
+        width: 18rem}
+
+    .dropdown-inner.small details[open] {
+        position: relative;
+    }
+
+    .dropdown-inner.small .childlist-menu--disclosure {
+        position: absolute;
+        top: -.75rem;
+        display: block;
+        width: 18rem;
+        border-radius: 0.25rem;
+        padding: .75rem;
+        right: -18rem;
+        background-color: var(--header--dropdown-background, #fafafa);
+        box-shadow: 2px 2px 10px 5px rgba(0,0,0,0.08);
+        z-index: 40;
+    }
+
+    .with--animation__child-menu .dropdown-inner.small .childlist-menu--disclosure {
+        transform: translateX(-10px);
+        transition: all .5s var(--transition-timing-function-off);
+    }
+
+    .with--animation__child-menu .dropdown-inner.small [open] .childlist-menu--disclosure {
+        transform: translateX(0);
+        transition: all .5s var(--transition-timing-function-on);
+    }
+
+    .dropdown-inner.small .list-menu--disclosure [open] summary {
+        color: var(--color-base-accent-1);
+    }
+
+    .dropdown-inner.small .list-menu--disclosure > li,
+    .dropdown-inner.small .childlist-menu--disclosure > li {
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+        transition: transform 0.25s ease;
+    }
+
+    .dropdown-inner.small .childlist-menu--disclosure > li > a {
+        padding-left: .5rem;
+    }
+
+    .dropdown-inner.small .list-menu--disclosure > li > a,
+    .dropdown-inner.small .childlist-menu--disclosure > li > a,
+    .dropdown-inner.small .list-menu--disclosure summary > a {
+        display: flex;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .dropdown-inner.small .list-menu--disclosure > li > a,
+    .dropdown-inner.small .list-menu--disclosure summary > a {
+        max-width: calc(100% - 3rem);
+        padding-left: .5rem;
+    }
+
+    .dropdown-inner .childlist-menu--disclosure > li > a {
+        max-width: calc(100% - .5rem);
+    }
+
+    .dropdown-inner.small .list-menu--disclosure summary > .icon-caret {
+        position: absolute;
+        right: .75rem;
+        top: 50%;
+        transform: translateY(-50%) rotate(0deg);
+    }
+
+    .dropdown-inner.small .list-menu--disclosure [open] summary > .icon-caret {
+        transform: translateY(-50%) rotate(-90deg);
+    }
+}

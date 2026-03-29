@@ -1,0 +1,23 @@
+{%- comment -%}
+    Render tab heading
+
+    Accepts:
+    - block:     {Object}
+{%- endcomment -%}
+
+{%- liquid
+    if block.settings.heading == null
+        if block.type == '@app'
+            capture blockHtml
+                render block
+            endcapture
+            if blockHtml contains 'id="shopify-product-reviews"'
+                echo 'sections.product-tabs.shopify-product-reviews.heading' | t
+            else
+                echo 'sections.product-tabs.unknown-block.heading' | t
+            endif
+        endif
+    else
+        echo block.settings.heading
+    endif
+-%}

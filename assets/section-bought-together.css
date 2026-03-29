@@ -1,0 +1,258 @@
+bought-together {
+    --bought-together--spacing-x: .75rem;
+    --bought-together--items__background: var(--color-foreground-4);
+    --bought-together--items-grid__gap: .5rem;
+    --bought-together--grid-item__width: calc(100% / 1.75);
+    --bought-together--grid-item-summary__width: calc(50% + 2rem);
+    display: block;
+}
+
+bought-together .items,
+bought-together > .heading {
+    width: 100%;
+}
+
+bought-together .items-grid {
+    display: flex;
+    overflow: auto;
+    gap: .5rem;
+    padding: 1.5rem 0;
+}
+
+bought-together .grid-item {
+    display: flex;
+    position: relative;
+    width: var(--bought-together--grid-item__width);
+}
+
+bought-together .item-checkbox {
+    background: var(--color-background);
+    box-shadow: inset 0 0 0 1px var(--color-foreground-10);
+    cursor: pointer;
+    padding: .5rem .5rem .5rem 1rem;
+    min-height: calc(50px - 7px);
+    border-radius: 4px;
+    z-index: 10;
+    position: absolute;
+    right: .5rem;
+    left: .5rem;
+}
+
+bought-together .summary .product-form__buttons {    
+    margin-top: 1.75rem;
+}
+
+bought-together .summary .product-form {
+    width: 100%;
+    padding: 0 1rem;
+}
+
+bought-together .item-checkbox svg {
+    color: var(--color-button-text);
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    z-index: 1;
+    opacity: 1;
+    transform: translateY(-50%) scale(0);
+}
+
+bought-together .item-checkbox::after {
+    content: '';
+    background: var(--color-foreground-4);
+    position: absolute;
+    display: block;
+    top: 50%;
+    right: .75rem;
+    transform: translateY(-50%);
+    width: 1.25rem;
+    height: 1.25rem;
+    border: 1px solid var(--color-foreground-20);
+    border-radius: 100%;
+    z-index: 0;
+}
+
+bought-together .item-checkbox > span {
+    text-transform: uppercase;
+    font-size: .7rem;
+    font-weight: 600;
+}
+
+bought-together [type='checkbox']:checked ~ .item-checkbox {
+    box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+}
+
+bought-together [type='checkbox']:checked ~ .item-checkbox svg {
+    transform: translateY(-50%) scale(1);
+}
+
+bought-together [type='checkbox']:checked ~ .item-checkbox::after {
+    background: var(--color-button-background);
+}
+
+bought-together [type='checkbox'][disabled] ~ .item-checkbox {
+    color: var(--color-foreground-10);
+    cursor: not-allowed;
+}
+
+bought-together [type='checkbox']:focus:focus-visible ~ .item-checkbox {
+    --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+    --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(3px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+    box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+
+bought-together .grid-item .item-link {
+    width: 100%;
+    opacity: .5;
+}
+
+bought-together [type='checkbox']:checked ~ .item-link {
+    opacity: 1;
+}
+
+bought-together .grid-item .item-title {
+    margin: .5rem 0;
+}
+
+bought-together .grid-item.summary > .wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bought-together--items__background);
+    border-radius: 4px;
+    gap: .25rem;
+    padding-top: 4rem;
+}
+
+bought-together .item-checkbox {
+    top: calc(50% - .5rem);
+}
+
+bought-together .grid-item.summary .message-wrapper {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+}
+
+bought-together .summary .price--final,
+bought-together .summary .label {
+    font-size: 1.5rem;
+}
+
+bought-together .summary .label {
+    font-weight: bold;
+}
+
+/* TRANSITOIN */
+
+bought-together .item-checkbox,
+bought-together .item-checkbox svg,
+bought-together .grid-item::after,
+bought-together .grid-item .item-link {
+    transition-property: box-shadow, opacity, transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+}
+
+@media (max-width: 500px) {
+    bought-together .grid-item.summary {
+        width: calc(var(--bought-together--grid-item-summary__width));
+    }
+}
+
+@media (min-width: 640px) {
+    bought-together {
+        --bought-together--grid-item__width: calc(100% / 3.5);
+    }
+}
+
+@media (max-width: 768px) {
+    bought-together .grid-item.summary > .wrapper {
+        position: relative;
+    }
+}
+
+@media (min-width: 768px) {
+    bought-together[data-size="1"] {
+        --bought-together--grid-item__width: calc(100% / 1);
+    }
+
+    bought-together[data-size="2"] {
+        --bought-together--grid-item__width: calc(100% / 2);
+    }
+
+    bought-together[data-size="3"] {
+        --bought-together--grid-item__width: calc(100% / 3);
+    }
+
+    bought-together[data-size="4"] {
+        --bought-together--grid-item__width: calc(100% / 4 - 6px);
+    }
+}
+
+@media all and (min-width: 990px) {
+    bought-together[data-size="5"] {
+        --bought-together--grid-item__width: calc(100% / 5 + .5rem);
+    }
+
+    bought-together {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    bought-together > .heading {
+        margin: 0 0 1rem;
+    }
+
+    bought-together .item-checkbox {
+        padding: .75rem;
+        top: calc(50% + 2rem);
+    }
+
+    bought-together .summary .product-form__buttons {    
+        margin-top: 4rem;
+    }
+
+    bought-together [type=checkbox]:checked ~ .item-checkbox:hover:after,
+    bought-together [type=checkbox]:checked ~ .item-checkbox:focus:after {
+        background: var(--color-foreground-75);
+        box-shadow: 0 0 0px 5px var(--color-foreground-10);
+        transition: box-shadow .25s;
+    }
+
+    bought-together .item-checkbox:after {
+        right: 1rem;
+    }
+
+    bought-together .item-checkbox svg {
+        right: 1.25rem;
+    }
+
+    bought-together .item-checkbox > span {
+        font-size: .85rem;
+    }
+
+    bought-together[data-size="5"] .item-checkbox {
+        top: calc(50% - .5rem);
+    }
+
+    bought-together .summary .price--final,
+    bought-together .summary .label {
+        font-size: 2rem;
+    }
+}
+
+@media all and (min-width: 1200px) {
+    bought-together[data-size="5"] .item-checkbox {
+        top: calc(50% + .5rem);
+        right: 1.25rem;
+        left: 1.25rem;
+    }
+
+    bought-together .summary .product-form__buttons {    
+        margin-top: 5.5rem;
+    }
+}

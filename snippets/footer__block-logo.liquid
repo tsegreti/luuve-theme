@@ -1,0 +1,52 @@
+{% comment %}
+    Render Logo block for footer.
+
+    Accepts:
+     - logo: {Object}
+     - logo_width: {string}
+{% endcomment %}
+
+{%- liquid
+    assign logo_image = logo | default: section.settings.image
+    assign logo_width = logo_width | default: section.settings.logo_width
+    assign logo_width = logo_width | append: 'px'
+    assign logo_svg_width = logo_width | divided_by: 2 | append: 'px'
+-%}
+
+{%- if logo_image %}
+    <div
+        class="media"
+        style="padding-bottom: {% render 'helper__media-padding-bottom' image: logo_image image_ratio: 'native' %};"
+    >
+        {%- assign imgWidth = logo_width -%}
+        {%- assign imageWidth2x = logo_width | times: 2 -%}
+        {%- assign widths = imgWidth | append: ',' | append: imageWidth2x | append: ',#iw#' -%}
+        {%- render 'render-image', image: logo_image, sizes: imgWidth, widths: widths, loading_strategy: 'lazy' -%}
+    </div>
+{% else %}
+    {% style %}
+        .footer-logo-heading {
+            color: currentColor;
+            margin: 0;
+            font-weight: normal;
+            padding: 0 0.5rem;
+            font-size: 2rem;
+        }
+    {% endstyle %}
+    <span class="footer-logo-heading">
+        {%- liquid
+            assign delimiter = ' '
+            unless shop.name contains delimiter
+                assign delimiter = '.'
+            endunless
+            assign parts = shop.name | split: delimiter
+            for part in parts
+                if forloop.first
+                    echo part | prepend: '<strong>' | append: '</strong>'
+                else
+                    echo part | prepend: delimiter
+                endif
+            endfor
+        -%}
+    </span>
+{% endif -%}

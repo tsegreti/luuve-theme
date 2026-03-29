@@ -1,0 +1,19 @@
+{%- comment -%}
+    Render filter "clear all" button.
+{%- endcomment -%}
+
+{%- liquid
+    if collection != null
+        assign url = collection.url
+    elsif search != null
+        assign terms = search.terms | escape
+        assign url = '?q=' | append: terms | append: '&type=product&options[prefix]=last'
+    endif
+-%}
+
+<a
+    href="{{ url }}"
+    class="active-facets__item active-facets__item--clear-all js-facet-remove button button--secondary button--small"
+>
+    {{- 'sections.collection_template.clear_all' | t -}}
+</a>

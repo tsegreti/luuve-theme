@@ -1,0 +1,151 @@
+{% comment %}
+    Renders an article card for a given article with settings to either show the image or not.
+
+    Accepts:
+    - article:        {Object} Article object
+    - excerpt_limit:  {Number}
+    - info_class:     {String}
+    - show_image:     {String} The setting either show the article image or not. If it's not included it will show the image by default
+    - tags_position:  {String}
+    - tags_limit:     {Number}
+    - show_date:      {Boolean}
+    - show_author:    {Boolean}
+    - show_date:      {Boolean}
+    - show_link:      {Boolean}
+    - show_comments:  {Boolean}
+    Usage:
+    {% render 'article-card' article: article, show_image: section.settings.show_image %}
+{% endcomment %}
+
+{%- assign tags_position = tags_position | default: '' -%}
+
+<article
+    class="article-card{% unless show_image %} article-card--no-image{% endunless %}"
+    aria-labelledby="Article-{{ article.id }}"
+>
+    <a class="article-card__content" href="{{ article.url | default: '#' }}">
+        {%- if show_image -%}
+            <div class="article-card__image-wrapper">
+                {% if tags_position == 'on_image' -%}
+                    {% render 'article-card__tags', article: article, limit: tags_limit %}
+                {%- endif %}
+                {%- if article.image -%}
+                    <div
+                        class="article-card__image media media--landscape"
+                        style="padding-bottom: {{ 1 | divided_by: article.image.aspect_ratio | times: 100 }}%"
+                    >
+                        <img
+                            srcset="
+                                {%- if article.image.src.width >= 533 -%}{{ article.image.src | image_url: width: 533 }} 533w,{%- endif -%}
+                                {%- if article.image.src.width >= 720 -%}{{ article.image.src | image_url: width: 720 }} 720w,{%- endif -%}
+                                {%- if article.image.src.width >= 940 -%}{{ article.image.src | image_url: width: 940 }} 940w,{%- endif -%}
+                                {%- if article.image.src.width >= 1066 -%}{{ article.image.src | image_url: width: 1066 }} 1066w{%- endif -%}
+                            "
+                            src="{{ article.image.src | image_url }}"
+                            sizes="(min-width: 1100px) 535px, (min-width: 750px) calc((100vw - 130px) / 2), calc((100vw - 50px) / 2)"
+                            width="{{ article.image.width }}"
+                            height="{{ article.image.height }}"
+                            alt="{{ article.image.src.alt | escape }}"
+                            loading="lazy"
+                        >
+                    </div>
+                {%- else -%}
+                    {{
+                        'image'
+                        | placeholder_svg_tag: 'placeholder-svg placeholder article-card__image'
+                        | replace: '<svg ',
+                            '<svg style="background: radial-gradient(circle, var(--color-background) 0, var(--color-foreground-10) 100%), var(--color-background)" '
+                    }}
+                {%- endif -%}
+            </div>
+        {%- endif -%}
+
+        <div class="article-card__info {{ info_class }}">
+            {% if article != null %}
+                <header class="article-card__header">
+                    {% if tags_position == 'before_title' -%}
+                        {% render 'article-card__tags', article: article, limit: tags_limit %}
+                    {%- endif %}
+                    {% if show_date -%}
+                        <span class="date__wrapper">
+                            <span class="article-card__published-at">
+                                {{- article.published_at | date: '%b %d, %Y' -}}
+                            </span>
+                        </span>
+                    {%- endif -%}
+                    {% unless show_title == false %}
+                        <span class="article-card__title" id="Article-{{ article.id }}">
+                            {{ article.title | escape }}
+                        </span>
+                    {% endunless %}
+                    {%- if show_author -%}
+                        <span class="article-card__author">{{ article.author }}</span>
+                    {%- endif -%}
+                </header>
+                {% if excerpt_limit > 0 -%}
+                    <p class="article-card__excerpt">
+                        {{ article.excerpt | default: article.content | strip_html | truncatewords: excerpt_limit }}
+                    </p>
+                {%- endif %}
+                <div class="article-card__footer">
+                    {%- if article.comments_count > 0 and article.comments_enabled? and show_comments -%}
+                        <span class="article-comments">
+                            {{- 'blogs.article.comments' | t: count: article.comments_count -}}
+                        </span>
+                    {%- endif -%}
+                    {%- if show_link -%}
+                        <span class="_link animate-arrow">
+                            {{ 'blogs.article.read_more' | t }}
+                            {%- if settings.current_theme_icons == 'enduro' %}
+                                {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+                            {% else %}
+                                {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+                            {% endif -%}
+                        </span>
+                    {%- endif -%}
+                </div>
+            {% else %}
+                {% assign article_id = 'now' | date: '%9' %}
+                <header class="article-card__header">
+                    {% if show_date -%}
+                        <span class="date__wrapper">
+                            <span class="article-card__published-at">
+                                {{- 'now' | date: '%b %d, %Y' -}}
+                            </span>
+                        </span>
+                    {%- endif -%}
+                    <span class="article-card__title" id="Article-{{ article_id }}">
+                        {{ 'Example article' | escape }}
+                    </span>
+                    {%- if show_author -%}
+                        <span class="article-card__author">{{ 'John Doe' }}</span>
+                    {%- endif -%}
+                </header>
+                {% if excerpt_limit > 0 -%}
+                    <p class="article-card__excerpt">
+                        {{
+                            'Example article excerpt is here. Article as an example'
+                            | strip_html
+                            | truncatewords: excerpt_limit
+                        }}
+                    </p>
+                {%- endif %}
+                <div class="article-card__footer">
+                    {%- if show_comments -%}
+                        <span class="article-comments">{{ 'blogs.article.comments' | t: count: 33 }}</span>
+                    {%- endif -%}
+                    {%- if show_link -%}
+                        <span class="_link animate-arrow">
+                            {{ 'blogs.article.read_more' | t }}
+                            {%- if settings.current_theme_icons == 'enduro' %}
+                                {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+                            {% else %}
+                                {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+                            {% endif -%}
+                        </span>
+                    {%- endif -%}
+                </div>
+            {% endif %}
+        </div>
+    </a>
+</article>

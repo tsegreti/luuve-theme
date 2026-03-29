@@ -1,0 +1,44 @@
+{%- comment -%}
+    Render Video
+
+    Accepts:
+    - video:        {Object}
+    - padding_bottom: {Number}
+{%- endcomment -%}
+
+{%- case video.type -%}
+    {% when 'youtube' %}
+        <div
+            class="embed-responsive embed-responsive-16by9"
+            {% if padding_bottom != blank %}
+                style="padding-bottom: {{ padding_bottom }}%"
+            {% endif %}
+        >
+            <iframe
+                src="https://www.youtube.com/embed/{{ video.id }}?enablejsapi=1&autoplay=1&mute=1&showinfo=0&loop=1&playlist={{ video.id }}&controls=0"
+                class="js-youtube"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+                title="{{ video.id }}"
+            ></iframe>
+        </div>
+
+    {% when 'vimeo' %}
+        <div
+            class="embed-responsive embed-responsive-16by9"
+            {% if padding_bottom != blank %}
+                style="padding-bottom: {{ padding_bottom }}%"
+            {% endif %}
+        >
+            <iframe
+                src="https://player.vimeo.com/video/{{ video.id }}"
+                class="js-vimeo"
+                allow="autoplay; encrypted-media"
+                allowfullscreen
+                title="{{ video.id }}"
+            ></iframe>
+        </div>
+
+    {% else %}
+        {{ video | video_tag: autoplay: true, loop: true, controls: false, muted: true }}
+{%- endcase -%}

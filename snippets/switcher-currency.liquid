@@ -1,0 +1,64 @@
+{% comment %}
+    Render localization currency switcher
+
+    Accepts:
+     - form_id {String}
+{% endcomment %}
+
+{%- assign formIdNoScript = form_id | append: 'NoScript' -%}
+
+{%- if shop.enabled_currencies.size > 1 -%}
+    <div class="localization-currency-wrapper">
+        <noscript>
+            {%- form 'localization', id: formIdNoScript, class: 'localization-form' -%}
+                <div class="localization-form__select select">
+                    <h2 class="visually-hidden" id="{{ formIdNoScript }}">{{ 'localization.country_label' | t }}</h2>
+                    <select class="localization-selector" name="currency_code" aria-labelledby="{{ formIdNoScript }}">
+                        {%- for currency in shop.enabled_currencies -%}
+                            <option
+                                value="{{ currency.iso_code }}"
+                                {%- if currency == cart.currency %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ currency.name }} ({{ currency.iso_code }}
+                                {{ currency.symbol }})
+                            </option>
+                        {%- endfor -%}
+                    </select>
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret">
+                        <use href="#icon-caret" />
+                    </svg>
+                </div>
+                <button type="submit">{{ 'localization.update_currency' | t }}</button>
+            {%- endform -%}
+        </noscript>
+        <localization-form data-panel-source="switcher__list-currencies">
+            {%- form 'localization', id: form_id, class: 'localization-form no-js-hidden' -%}
+                <span class="visually-hidden" id="{{ form_id }}Label">{{ 'localization.currency_label' | t }}</span>
+                <div class="disclosure">
+                    {% capture button_inner_html %}
+                    <span class="localization-form__currency-name">
+                        {{ cart.currency.name }}
+                    </span>
+                    <span class="localization-form__currency">
+                        {%- if cart.currency.iso_code == cart.currency.symbol %}
+                            {{ cart.currency.iso_code }} 
+                        {% else %}
+                            {{ cart.currency.iso_code }} {{ cart.currency.symbol }}
+                        {% endif -%}
+                    </span>
+                {% endcapture %}
+                    {% render 'switcher__disclosure-button', form_id: form_id, inner_html: button_inner_html %}
+                    <div
+                        class="localization-panel disclosure__list--wrapper loader-when-empty  transition-bezier"
+                        hidden
+                        data-search-placeholder="{{ 'localization.search_placeholder' | t }}"
+                        data-localization-size="{{ shop.enabled_currencies.size }}"
+                    ></div>
+                </div>
+                <input type="hidden" name="currency_code" value="{{ cart.currency.iso_code }}">
+            {%- endform -%}
+        </localization-form>
+    </div>
+{%- endif -%}

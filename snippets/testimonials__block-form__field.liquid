@@ -1,0 +1,28 @@
+{%- comment -%}
+    Render form field form new testimonial form
+
+    Accepts:
+     -  name     {String}
+     -  required {String}
+{%- endcomment -%}
+
+<div class="field">
+    <label for="{{ name }}--{{ section.id }}" class="field__label">
+        {{- 'sections.testimonials.form.fields.' | append: name | append: '.label' | t -}}
+    </label>
+    <input
+        id="{{ name }}--{{ section.id }}"
+        type="{% if name == 'email' %}email{% else %}text{% endif %}"
+        name="contact[{{ name }}]"
+        placeholder="
+            {{- 'sections.testimonials.form.fields.'
+                | append: name
+                | append: '.placeholder'
+                | t
+            -}}
+        "
+        {% if required == 'required' %}
+            required="required"
+        {%- endif %}
+    >
+</div>

@@ -1,0 +1,22 @@
+{% comment %}
+    Render cart item price
+
+    Accepts:
+    - item: {Object}
+{% endcomment %}
+
+{%- if item.original_price != item.final_price -%}
+    <div class="cart-item__discounted-prices">
+        <div class="price price__regular price--compare">
+            <span class="visually-hidden">{{ 'products.product.price.regular_price' | t }}</span>
+            {% render 'render-price', price: item.original_price, css_class: 'price-item price-item--regular' %}
+        </div>
+        <div class="price price__sale">
+            <span class="visually-hidden">{{ 'products.product.price.sale_price' | t }}</span>
+            {% render 'render-price', price: item.final_price, css_class: 'price-item price-item--sale price--final' %}
+        </div>
+    </div>
+{%- else -%}
+    {% render 'render-price', price: item.original_price, css_class: 'price price--final' %}
+    {% render 'render-price-unit', variant: item.variant %}
+{%- endif -%}

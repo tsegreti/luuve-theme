@@ -1,0 +1,28 @@
+{%- comment -%}
+    Render sidebar menu
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+{%- endcomment -%}
+
+{%- if block.settings.menu != blank %}
+    <div
+        class="collection__block collection__block--menu"
+        style="order: {{ blockOrder }}"
+        {{ block.shopify_attributes }}
+    >
+        {% unless block.settings.menu == blank %}
+            <h2 class="title {% if settings.bold_first_heading_word %}heading-normal{% endif %}">
+                {% render 'helper__decorate-heading', heading: block.settings.menu.title %}
+            </h2>
+        {% endunless %}
+        <ul class="content">
+            {%- for link in block.settings.menu.links %}
+                <li>
+                    {% render 'helper__menu-item', item: link %}
+                </li>
+            {% endfor -%}
+        </ul>
+    </div>
+{% endif -%}

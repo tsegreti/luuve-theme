@@ -1,0 +1,632 @@
+{%- liquid
+    case section.settings.image_height
+        when 'small'
+            assign padding_bottom = '14rem'
+            assign padding_bottom_md = '26rem'
+        when 'medium'
+            assign padding_bottom = '20rem'
+            assign padding_bottom_md = '34rem'
+        when 'large'
+            assign padding_bottom = '28rem'
+            assign padding_bottom_md = '44rem'
+    endcase
+
+    assign sizes = 'calc(min(100vw, 1200px) - .75rem * 2)'
+    assign widths = '698,966,1176,#iw#'
+    assign titlePosition = 'center'
+
+    assign __class__ = 'comparison-slider'
+    if section.settings.heading == blank
+        assign __class__ = __class__ | append: ' no-heading'
+    endif
+
+    if section.settings.enable_grayscale_effect
+        assign __class__ = __class__ | append: ' with--grayscale-effect'
+    endif
+
+    unless request.design_mode
+        if section.settings.animation_on_reveal
+            assign __class__ = __class__ | append: ' reveal-slide-in'
+        endif
+    endunless
+
+    assign hex = section.settings.description_bg_color
+    assign hexGlass = hex | append: '75'
+-%}
+{% style %}
+    #shopify-section-{{ section.id }} {
+        display: none;
+    }
+{% endstyle %}
+
+{%- liquid
+    assign media_condition = 'all'
+    if section.settings.visibility == 'mobile'
+        assign media_condition = '(max-width: 639px)'
+    elsif section.settings.visibility == 'desktop'
+        assign media_condition = '(min-width: 640px)'
+    endif
+-%}
+<style media="{{ media_condition }}">
+    #shopify-section-{{ section.id }} {
+        display: block;
+    }
+
+    #shopify-section-{{ section.id }} .heading.position_{{ titlePosition }} {
+        align-items: {{ titlePosition }};
+    }
+
+    #comparison-slider .image-comparison__slider-wrapper {
+        position: relative;
+        display: grid;
+        overflow-x: hidden;
+    }
+
+    #shopify-section-{{ section.id }} comparison-slider .media {
+        padding-bottom: {{ padding_bottom_md }};
+        background: #ffffff;
+    }
+
+    #comparison-slider .image-comparison__slider-wrapper > * {
+        grid-area: 1 / -1;
+    }
+
+    #comparison-slider comparison-slider .image-comparison__image-wrapper[data-image-overlay] {
+        --cursor-position: 50%;
+        clip-path: inset(0 0 0 var(--cursor-position, 0%));
+        z-index: 1;
+    }
+
+    #shopify-section-{{ section.id }} #comparison-slider .description {
+        background: {{ hex }};
+    }
+
+    #shopify-section-{{ section.id }} #comparison-slider .product-title,
+    #shopify-section-{{ section.id }} #comparison-slider :is(.product-price) {
+        color: {{ section.settings.description_color }};
+    }
+
+    #shopify-section-{{ section.id }} #comparison-slider .comparison-slider__icon-wrapper,
+    #shopify-section-{{ section.id }} #comparison-slider .slider-toggler {
+        background: {% if settings.current_presets == "oldmoney" %}#5F5D5C{% else %}var(--color-background){% endif %};
+    }
+
+    #comparison-slider .slider-toggler > svg {
+        color: #000000;
+    }
+    {% if settings.current_presets == "oldmoney" %}
+    #shopify-section-{{ section.id }} #comparison-slider .description {
+        border-radius: 2px;
+    }{% endif %}{% if section.settings.glass_effect %}
+
+    #shopify-section-{{ section.id }} #comparison-slider .description {
+        background: {{ hexGlass }};
+        backdrop-filter: blur(1px);
+    }{% endif %}
+
+    #comparison-slider .product-title {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        word-break: break-word;
+        text-transform: capitalize;
+        font-weight: bold;
+        font-size: 1.25rem;
+    }
+
+    #comparison-slider .content-mobile-wrapper .description {
+        padding: 2rem 1rem;
+    }
+
+    @media (max-width: 989px), print {
+        #comparison-slider .image-comparison__image-wrapper > .description,
+        #comparison-slider .content-mobile-wrapper .button > svg {
+            display: none;
+        }
+
+        #comparison-slider .content-mobile-wrapper {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        #comparison-slider .content-mobile-wrapper .description {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 50%;
+        }
+
+        #shopify-section-{{ section.id }} .content-mobile-wrapper .description {
+            background: {{ section.settings.bg_color_1 }};
+        }
+
+        #comparison-slider .content-mobile-wrapper .description--before:after {
+            content: '';
+            position: absolute;
+            display: block;
+            width: 4px;
+            height: 100%;
+            right: -0.25rem;
+            top: 0;
+            background: var(--color-background);
+            z-index: 1;
+        }
+
+        #comparison-slider .content-mobile-wrapper .button {
+            background: transparent;
+            border-color: transparent;
+            padding: 0;
+            justify-content: flex-start;
+            text-decoration: underline;
+            color: {{ section.settings.description_color }};
+            font-size: .875rem;
+        }
+
+        #comparison-slider .content-mobile-wrapper .description:last-child {
+            text-align: right;
+        }
+
+        #comparison-slider .content-mobile-wrapper .description:last-child .button {
+            justify-content: end;
+        }
+    }
+
+    @media (min-width: 767px), print {
+        #comparison-slider .content-mobile-wrapper .description {
+            padding: 2rem;
+        }
+    }
+
+    @media (min-width: 990px), print {
+        #comparison-slider .description {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1.5rem;
+            position: absolute;
+            max-width: calc(20% + 4rem);
+            padding: 1.5rem;
+            margin: 0 2.5rem;
+            z-index: 1;
+        }
+
+        #comparison-slider .description:is(.position-center) {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #comparison-slider .description:is(.position-top) {
+            top: 2rem;
+        }
+
+        #comparison-slider .description:is(.position-bottom) {
+            bottom: 2rem;
+        }
+
+        #comparison-slider .description--after {
+            right: 0;
+        }
+
+        #comparison-slider .content-mobile-wrapper {
+            display: none;
+        }
+
+        #comparison-slider .product-title {
+            font-size: {{ section.settings.title_font_size }}rem;
+        }
+    }
+
+    @media (min-width: 1300px), print {
+        #comparison-slider .description {
+            padding: 2rem;
+        }
+    }
+</style>
+{%- capture product_price %}
+    {%- if section.settings.product_2.price_min == section.settings.product_2.price_max %}
+        {% assign price = section.settings.product_2.price | money %}
+        {{ 'sections.comparison-slider.product_price_label' | t: product_price: price }}
+    {% else %}
+        {% assign price = section.settings.product_2.price_min | money %}
+        {{ 'sections.comparison-slider.product_price_from_label' | t: product_price: price }}
+    {% endif -%}
+{% endcapture -%}
+
+{%- capture view_all_arrow -%}
+    {%- if settings.current_theme_icons == 'enduro' %}
+        {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+    {% else %}
+        {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+    {% endif -%}
+{% endcapture -%}
+
+<div id="comparison-slider" class="{{ __class__ }}">
+    <div class="{% if section.settings.full_width %}full--width{% else %}dynamic-page-width{% endif %}">
+        {% unless section.settings.heading == blank %}
+            <div class="heading position_{{ titlePosition }}">
+                <{{ section.settings.heading_size }} class="title reveal-item">
+                    {{ section.settings.heading }}
+                </{{ section.settings.heading_size }}>
+            </div>
+        {% endunless %}
+
+        <div class="comparison-wrapper">
+            <comparison-slider class="image-comparison" data-component="image-comparison-slider">
+                <div class="image-comparison__slider-wrapper">
+                    <label for="comparison-range" class="comparison-label" hidden>
+                        {{ 'sections.comparison-slider.range_label' | t }}
+                    </label>
+                    <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        value="50"
+                        class="comparison-range"
+                        id="comparison-range"
+                        aria-label="{{ 'sections.comparison-slider.range_label' | t }}"
+                    >
+                    <div class="image-comparison__image-wrapper">
+                        <div class="description description--before position-{{ section.settings.box_content_position }}">
+                            <div class="product-title h5 reveal-item">
+                                {{ section.settings.product_1.title | default: 'Product name' }}
+                            </div>
+                            {%- if section.settings.show_product_price %}
+                                <p class="product-price">
+                                    {{- product_price -}}
+                                </p>
+                            {% endif -%}
+                            <a
+                                class="comparison-slider__action button button--primary animate-arrow reveal-item"
+                                href="{{ section.settings.product_1.url | default: "#/" }}"
+                                title="{{ section.settings.product_1.title | default: "Product name" }}"
+                            >
+                                {{ 'view_all_link.view_product' | t }}
+                                {{- view_all_arrow -}}
+                            </a>
+                        </div>
+
+                        <div class="image-media media-half image-comparison__figure--overlay">
+                            <div class="media">
+                                {% if section.settings.use_original_product_image %}
+                                    {% assign product_1_image = section.settings.product_1.featured_media.preview_image %}
+                                    {% if product_1_image != blank %}
+                                        {% render 'render-image',
+                                            image: product_1_image,
+                                            width: product_1_image.width,
+                                            widths: widths,
+                                            sizes: sizes,
+                                            is_preload: section.settings.is_preload
+                                        %}
+                                    {% else %}
+                                        {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+                                    {% endif -%}
+                                {% endif %}
+
+                                {% comment %}external source image{% endcomment %}
+
+                                {% unless section.settings.use_original_product_image %}
+                                    {%- if section.settings.image != blank %}
+                                        {% render 'render-image',
+                                            image: section.settings.image,
+                                            width: section.settings.image.width,
+                                            widths: widths,
+                                            sizes: sizes,
+                                            is_preload: section.settings.is_preload
+                                        %}
+                                    {% else %}
+                                        {{ 'product-1' | placeholder_svg_tag: 'placeholder' }}
+                                    {% endif -%}
+                                {% endunless %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-slider__icon-wrapper" data-comparison-slider>
+                        <span class="slider-toggler">
+                            {%- render 'theme-icons', name: 'slider-toggler' -%}
+                        </span>
+                    </div>
+
+                    <div class="image-comparison__image-wrapper" data-image-overlay>
+                        <div class="image-media media-half">
+                            <div class="media">
+                                {% if section.settings.use_original_product_image %}
+                                    {% assign product_2_image = section.settings.product_2.featured_media.preview_image %}
+                                    {% if product_2_image != blank %}
+                                        {% render 'render-image',
+                                            image: product_2_image,
+                                            width: product_2_image.width,
+                                            widths: widths,
+                                            sizes: sizes,
+                                            is_preload: section.settings.is_preload
+                                        %}
+                                    {% else %}
+                                        {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder' }}
+                                    {% endif -%}
+                                {% endif %}
+
+                                {% comment %}external source image{% endcomment %}
+
+                                {% unless section.settings.use_original_product_image %}
+                                    {%- if section.settings.image_2 != blank %}
+                                        {% render 'render-image',
+                                            image: section.settings.image_2,
+                                            width: section.settings.image_2.width,
+                                            widths: widths,
+                                            sizes: sizes,
+                                            is_preload: section.settings.is_preload
+                                        %}
+                                    {% else %}
+                                        {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder' }}
+                                    {% endif -%}
+                                {% endunless %}
+                            </div>
+                        </div>
+
+                        <div class="description description--after position-{{ section.settings.box_content_position }}">
+                            <div class="product-title h5 reveal-item">
+                                {{ section.settings.product_2.title | default: 'Product Name' }}
+                            </div>
+                            {%- if section.settings.show_product_price %}
+                                <p class="product-price">
+                                    {{- product_price -}}
+                                </p>
+                            {% endif -%}
+                            <a
+                                class="comparison-slider__action button button--primary animate-arrow reveal-item"
+                                href="{{ section.settings.product_2.url | default: "#/" }}"
+                                title="{{ section.settings.product_2.title | default: "Product Name" }}"
+                            >
+                                {{ 'view_all_link.view_product' | t }}
+                                {{- view_all_arrow -}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </comparison-slider>
+
+            <div class="content-mobile-wrapper">
+                <div class="description description--before">
+                    <div class="product-title reveal-item">
+                        {{ section.settings.product_1.title | default: 'Product Name' }}
+                    </div>
+                    {%- if section.settings.show_product_price %}
+                        <p class="product-price">
+                            {{- product_price -}}
+                        </p>
+                    {% endif -%}
+                    <a
+                        class="comparison-slider__action button button--primary animate-arrow reveal-item"
+                        href="{{ section.settings.product_1.url | default: "#/" }}"
+                        title="{{ section.settings.product_1.title | default: "Product Name" }}"
+                    >
+                        {{ 'view_all_link.view_product' | t }}
+                        {{- view_all_arrow -}}
+                    </a>
+                </div>
+
+                <div class="description description--after">
+                    <div class="product-title reveal-item">
+                        {{ section.settings.product_2.title | default: 'Product Name' }}
+                    </div>
+                    {%- if section.settings.show_product_price %}
+                        <p class="product-price">
+                            {{- product_price -}}
+                        </p>
+                    {% endif -%}
+                    <a
+                        class="comparison-slider__action button button--primary animate-arrow reveal-item"
+                        href="{{ section.settings.product_2.url | default: "#/" }}"
+                        title="{{ section.settings.product_2.title | default: "Product Name" }}"
+                    >
+                        {{ 'view_all_link.view_product' | t }}
+                        {{- view_all_arrow -}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{ 'section-comparison-slider.css' | asset_url | stylesheet_tag }}
+<noscript>{{ 'section-comparison-slider.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- render 'initialize-deferred-scripts', init_comparison_slider: true -%}
+
+{% schema %}
+{
+  "name": "t:sections.comparison-slider.name",
+  "tag": "section",
+  "class": "spaced-section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.image-banner.settings.full_width.label",
+      "default": false
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Compare products color",
+      "label": "t:sections.comparison-slider.settings.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h1",
+          "label": "t:sections.comparison-slider.settings.heading_size.options.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:sections.comparison-slider.settings.heading_size.options.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:sections.comparison-slider.settings.heading_size.options.h3"
+        }
+      ],
+      "default": "h2",
+      "label": "t:sections.comparison-slider.settings.heading_size.label"
+    },
+    {
+      "type": "product",
+      "id": "product_1",
+      "label": "t:sections.comparison-slider.settings.product_1.label"
+    },
+    {
+      "type": "product",
+      "id": "product_2",
+      "label": "t:sections.comparison-slider.settings.product_2.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "use_original_product_image",
+      "label": "t:sections.comparison-slider.settings.use_original_product_image.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_price",
+      "label": "t:sections.comparison-slider.settings.show_product_price.label",
+      "default": false
+    },
+    {
+        "type": "checkbox",
+        "id": "glass_effect",
+        "label": "t:sections.comparison-slider.settings.glass_effect.label",
+        "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.comparison-slider.settings.header_0.content"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.comparison-slider.settings.image.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "t:sections.comparison-slider.settings.image_2.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "is_preload",
+      "default": false,
+      "label": "t:sections.comparison-slider.settings.is_preload.label",
+      "info": "t:sections.comparison-slider.settings.is_preload.info"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "options": [
+        {
+          "value": "small",
+          "label": "t:sections.comparison-slider.settings.image_height.options__2.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.comparison-slider.settings.image_height.options__3.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.comparison-slider.settings.image_height.options__4.label"
+        }
+      ],
+      "default": "medium",
+      "label": "t:sections.comparison-slider.settings.image_height.label",
+      "info": "t:sections.comparison-slider.settings.image_height.info"
+    },
+    {
+      "type": "select",
+      "id": "box_content_position",
+      "options": [
+        {
+          "value": "top",
+          "label": "t:sections.comparison-slider.settings.box_content_position.options.top"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.comparison-slider.settings.box_content_position.options.center"
+        },
+        {
+          "value": "bottom",
+          "label": "t:sections.comparison-slider.settings.box_content_position.options.bottom"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.comparison-slider.settings.box_content_position.label"
+    },
+    {
+      "type": "select",
+      "id": "visibility",
+      "label": "t:sections.slider.settings.visibility.label",
+      "options": [
+        {
+          "value": "always",
+          "label": "t:sections.slider.settings.visibility.options.always.label"
+        },
+        {
+          "value": "mobile",
+          "label": "t:sections.slider.settings.visibility.options.mobile.label"
+        },
+        {
+          "value": "desktop",
+          "label": "t:sections.slider.settings.visibility.options.desktop.label"
+        }
+      ],
+      "default": "always"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grayscale_effect",
+      "label": "t:sections.all.settings.enable_grayscale_effect.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.comparison-slider.settings.header_1.content"
+    },
+    {
+      "type": "color",
+      "id": "description_bg_color",
+      "label": "t:sections.comparison-slider.settings.description_bg_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "description_color",
+      "label": "t:sections.comparison-slider.settings.description_color.label",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 1.5,
+      "max": 3.5,
+      "step": 0.5,
+      "default": 2,
+      "unit": "rem",
+      "label": "t:sections.comparison-slider.settings.title_font_size.label"
+    }
+  ],
+  "presets": [
+    {
+      "name":  "t:sections.comparison-slider.name"
+    }
+  ]
+}
+{% endschema %}

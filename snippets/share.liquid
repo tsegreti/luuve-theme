@@ -1,0 +1,78 @@
+{%- comment -%}
+    Render share html
+
+    Accepts:
+     - object_to_share:   {Object}
+     - share_on_facebook: {Boolean} (Optional)
+     - share_on_twitter:  {Boolean} (Optional)
+{%- endcomment -%}
+
+{%- liquid
+    assign socials = ''
+    if share_on_facebook
+        assign socials = socials | append: '|facebook'
+    endif
+    if share_on_twitter
+        assign socials = socials | append: '|twitter'
+    endif
+    if share_on_pinterest
+        assign socials = socials | append: '|pinterest'
+    endif
+
+    assign socials = socials | remove_first: '|' | split: '|'
+-%}
+
+<p class="share-label visually-hidden">{{ 'general.share.share' | t }}</p>
+
+{% liquid
+    for social in socials
+        render 'share__button-social', social: social, object_to_share: object_to_share
+    endfor
+%}
+
+<share-button class="share-button">
+    <button class="share-button__button button--tertiary button--small hidden" title="{{ 'general.share.share' | t }}">
+        {% render 'icons-outline', name: 'share' %}
+        <span class="visually-hidden">{{ 'general.share.share' | t }}</span>
+    </button>
+    <details>
+        <summary
+            class="share-button__button button button--tertiary button--small"
+            title="{{ 'general.share.share' | t }}"
+        >
+            {% render 'icons-outline', name: 'share' %}
+            <span class="visually-hidden">{{ 'general.share.share' | t }}</span>
+        </summary>
+        <div class="share-button__fallback">
+            <div class="field">
+                <label class="field__label visually-hidden" for="url">{{ 'general.share.share_url' | t }}</label>
+                <input
+                    type="text"
+                    class="field__input"
+                    id="url"
+                    value="{{ shop.url | append: object_to_share.url }}"
+                    placeholder="{{ 'general.share.share_url' | t }}"
+                    onclick="this.select();"
+                    readonly
+                >
+                <button
+                    class="field__button button button--tertiary button--small"
+                    title="{{ 'general.share.copy_to_clipboard' | t }}"
+                >
+                    {% render 'icons-outline', name: 'duplicate' %}
+                    <span class="visually-hidden">{{ 'general.share.copy_to_clipboard' | t }}</span>
+                </button>
+            </div>
+            <span
+                id="ShareMessage-{{ section.id }}"
+                class="share-button__message hidden"
+                role="status"
+                aria-hidden="true"
+            >
+                {{ 'general.share.success_message' | t }}
+            </span>
+        </div>
+    </details>
+</share-button>
+
+{% render 'initialize-deferred-scripts', init_share_button: true %}

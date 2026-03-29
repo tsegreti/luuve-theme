@@ -1,0 +1,10 @@
+{%- comment -%}
+    Renders logo for Header
+{%- endcomment -%}
+
+<span class="invert--logo">
+    {% render 'header__heading', logo: section.settings.invert_logo, logo_width: section.settings.logo_width %}
+</span>
+<span class="custom--logo">
+    {% render 'header__heading', logo: section.settings.logo, logo_width: section.settings.logo_width %}
+</span>

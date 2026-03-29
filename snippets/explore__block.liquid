@@ -1,0 +1,95 @@
+{% comment %}
+{% endcomment %}
+
+{%- liquid
+    assign products_appearance = 'mixed'
+-%}
+
+<div
+    id="tab-{{ block.id }}--content"
+    class="tab-content collection classic"
+    role="tabpanel"
+    {{ block.shopify_attributes }}
+>
+    <slider-component data-loop="false">
+        {%- liquid
+            assign ul_id = 'products--' | append: block.id
+            assign ul_class = 'products'
+            assign has_side_column = false
+
+            if products_appearance == 'slider' or products_appearance == 'mixed'
+                assign ul_class = ul_class | append: ' slider slider--tablet slider--mobile grid--peek'
+            endif
+
+            if products_appearance == 'slider'
+                assign ul_class = ul_class | append: ' slider--desktop'
+            endif
+
+            unless block.settings.show_slider_buttons
+                assign ul_class = ul_class | append: ' slider--no-controls'
+            endunless
+
+            case block.type
+                when 'collection'
+                    assign items = block.settings.collection.products
+
+                when 'product_list'
+                    assign items = block.settings.product_list
+            endcase
+
+            if items == null or items.count == 0
+                if block.settings.show_random
+                    capture handels
+                        render 'helper__get-similar-products', limit: block.settings.products_to_show, offset: index
+                    endcapture
+                    assign items = handels | split: '|'
+
+                else
+                    assign items = 'sample'
+                    assign loopLimit = block.settings.products_to_show | minus: 1
+
+                    for i in (1..99) limit: loopLimit
+                        assign items = items | append: '|sample'
+                    endfor
+
+                    assign items = items | split: '|'
+                endif
+            endif
+        -%}
+
+        {% render 'grid-items',
+            ul_id: ul_id,
+            ul_class: ul_class,
+            has_side_column: has_side_column,
+            items: items,
+            columns: block.settings.products_per_row,
+            mode: block.settings.mode,
+            limit: block.settings.products_to_show,
+            badge_size: block.settings.badge_size,
+            image_ratio: block.settings.image_ratio,
+            product_secondary_image: settings.product_card_secondary_image,
+            product_to_cart_button: block.settings.show_to_cart_button,
+            product_show_vendor: settings.product_card_vendor,
+            product_description: block.settings.show_description
+        %}
+        {%- assign items_count = items.count | default: items.size -%}
+        {% render 'slider__buttons', count: items_count %}
+
+        {% if block.settings.show_view_all_link != blank -%}
+            <div class="view-all__wrapper">
+                <a
+                    href="{{ block.settings.show_view_all_link }}"
+                    class="button button--primary view-all animate-arrow"
+                    title="{{ 'sections.explore.view_all' | t: title: block.settings.heading }}"
+                >
+                    <span>{{ 'sections.explore.view_all' | t: title: block.settings.heading }}</span>
+                    {%- if settings.current_theme_icons == 'enduro' %}
+                        {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+                    {% else %}
+                        {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+                    {% endif -%}
+                </a>
+            </div>
+        {%- endif %}
+    </slider-component>
+</div>

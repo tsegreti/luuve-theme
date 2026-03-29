@@ -1,0 +1,57 @@
+{%- comment -%}
+    Render search results for article.
+
+    Accepts:
+     - block {Object}
+{%- endcomment -%}
+
+{%- assign articles = search.results | where: 'object_type', 'article' -%}
+{%- if articles.size > 0 -%}
+    {%- liquid
+        if block.settings.tags_limit > 0
+            assign tags_position = 'on_image'
+        else
+            assign tags_position = ''
+        endif
+    -%}
+
+    {{ 'component-article-tags.css' | asset_url | stylesheet_tag }}
+    {{ 'section-main-blog.css' | asset_url | stylesheet_tag }}
+    {{ 'component-article-card.css' | asset_url | stylesheet_tag }}
+
+    <div class="blog-articles__wrapper">
+        <h2 class="h3 search-secondary-results-heading">{{ 'templates.search.results.articles' | t }}</h2>
+        <ul id="articles-{{ section.id }}" class="blog-articles">
+            {%- for article in search.results -%}
+                {%- liquid
+                    unless article.object_type == 'article'
+                        continue
+                    endunless
+                    assign article_info_class = ''
+                    assign article_tags_position = tags_position
+                -%}
+
+                <li
+                    class="blog-articles__article article{% unless lead_article == nil %} article--newest{% endunless %}"
+                    data-article-tag="{{ article.tags | join:',' }}"
+                    {% unless lead_article == null %}
+                        {{- lead_article.shopify_attributes -}}
+                    {% endunless %}
+                >
+                    {%- render 'article-card',
+                        article: article,
+                        excerpt_limit: block.settings.excerpt_limit,
+                        info_class: article_info_class,
+                        show_author: block.settings.show_author,
+                        show_comments: block.settings.show_comments,
+                        show_date: block.settings.show_date,
+                        show_image: block.settings.show_image,
+                        show_link: block.settings.show_link,
+                        tags_position: article_tags_position,
+                        tags_limit: block.settings.tags_limit
+                    -%}
+                </li>
+            {%- endfor -%}
+        </ul>
+    </div>
+{%- endif -%}

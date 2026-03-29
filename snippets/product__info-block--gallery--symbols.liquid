@@ -1,0 +1,30 @@
+{% comment %}
+    Render SVG symbols for product gallery.
+
+    Accepts:
+     - type: {String}
+{% endcomment %}
+{% case type %}
+    {% when 'model' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="61" height="61" viewBox="0 0 61 61">
+            <rect x="0.5" y="0.5" width="60" height="60" fill="#fff" stroke-miterlimit="10"/>
+            <path d="M40.9,23.07l-8.8-5.14a3.19,3.19,0,0,0-3.21,0l-8.8,5.14a3.24,3.24,0,0,0-1.59,2.79V36.14a3.23,3.23,0,0,0,1.6,2.79l8.8,5.14a3.2,3.2,0,0,0,3.21,0l8.8-5.14a3.23,3.23,0,0,0,1.59-2.79V25.86A3.24,3.24,0,0,0,40.9,23.07ZM21.1,37.2a1.23,1.23,0,0,1-.6-1.06V25.86a1.23,1.23,0,0,1,.6-1.06l8.8-5.14a1.19,1.19,0,0,1,1.19,0l8.8,5.14a1.2,1.2,0,0,1,.36.34L30.74,30a2.23,2.23,0,0,0-1.25,2V42.1Z" fill="#3a3a3a"/>
+        </svg>
+    {% when 'badge-model' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26">
+            <path d="M1,25H25V1H1Z" fill="#fff"/>
+            <path d="M.5,25v.5h25V.5H.5Z" fill="none" stroke="#000" stroke-opacity="0.05"/>
+            <path d="M19.13,8.28,14,5.32a2,2,0,0,0-2,0l-5.12,3a2,2,0,0,0-1,1.76V16a2,2,0,0,0,1,1.76l5.12,3a2,2,0,0,0,2,0l5.12-3a2,2,0,0,0,1-1.76V10A2,2,0,0,0,19.13,8.28Zm-6.4,11.1-5.12-3A.53.53,0,0,1,7.35,16V10a.53.53,0,0,1,.27-.46l5.12-3a.53.53,0,0,1,.53,0l5.12,3-4.72,2.68a1.33,1.33,0,0,0-.67,1.2v6a.53.53,0,0,1-.26,0Z" fill="#3a3a3a" opacity="0.6" style="isolation:isolate"/>
+        </svg>
+    {% when 'video' %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="61" height="61" viewBox="0 0 61 61">
+            <rect x="0.5" y="0.5" width="60" height="60" fill="#fff" stroke="#f5f5f5" stroke-miterlimit="10"/>
+            <path d="M25,21.39a1,1,0,0,0-1.51.86V38.64a1,1,0,0,0,1.55.83l13.11-8.67a1,1,0,0,0,0-1.7Z" fill="#323232"/>
+        </svg>
+    {% when 'badge-video' %}
+        <svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M1 25H25V1H1V25Z" fill="white"/>
+            <path d="M0.5 25V25.5H1H25H25.5V25V1V0.5H25H1H0.5V1V25Z" stroke="black" stroke-opacity="0.05"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.71814 6.71984C9.0517 6.31605 8.19995 6.79588 8.19995 7.5751V18.311C8.19995 19.1138 9.09826 19.5893 9.76217 19.1379L18.1123 13.4612C18.7146 13.0518 18.6912 12.1564 18.0682 11.779L9.71814 6.71984Z" fill="#3A3A3A" fill-opacity="0.6"/>
+        </svg>
+{% endcase %}

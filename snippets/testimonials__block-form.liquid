@@ -1,0 +1,122 @@
+{%- comment -%}
+    Render form to submit new testimonial using block object.
+
+    Accepts:
+     -  block {Object}
+{%- endcomment -%}
+
+{%- liquid
+    assign form_fields = 'location|photo|email|order'
+    assign form_fields = form_fields | split: '|'
+-%}
+
+{{ 'component-testimonial-form.css' | asset_url | stylesheet_tag }}
+
+<div class="testimonial-form" {{ block.shopify_attributes }}>
+    <div class="testimonial-form--inner">
+        <h2>{{ block.settings.heading }}</h2>
+
+        {% form 'contact', id: 'new_testimonial' %}
+            {% if form.posted_successfully? -%}
+                <div
+                    class="form__message--success form__message"
+                    id="new_testimonial-success"
+                    tabindex="-1"
+                >
+                    {% render 'icons-outline', name: 'check-circle' %}
+                    <p>{{ 'sections.testimonials.form.messages.success' | t }}</p>
+                </div>
+            {% else %}
+                {{ form.errors | default_errors }}
+
+                <input type="hidden" name="contact[new_testimonial]" value="New testimonial">
+
+                {% render 'testimonials__block-form__field', name: 'name', required: 'required' %}
+
+                {% for field in form_fields %}
+                    {% assign key = 'field_' | append: field %}
+                    {% if block.settings[key] != 'hidden' %}
+                        {% render 'testimonials__block-form__field', name: field, required: block.settings[key] %}
+                    {% endif %}
+                {% endfor %}
+
+                {% if block.settings.field_rating != 'hidden' %}
+                    <div class="field">
+                        <label for="rating-5--{{ section.id }}" class="field__label">
+                            {{- 'sections.testimonials.form.fields.rating.label' | t -}}
+                        </label>
+                        <div id="rating--{{ section.id }}" class="field-rating">
+                            <input
+                                id="rating-0--{{ section.id }}"
+                                class="visually-hidden"
+                                type="radio"
+                                name="contact[rating]"
+                            >
+                            <label></label>
+                            {% for i in (1..5) %}
+                                <input
+                                    id="rating-{{ i }}--{{ section.id }}"
+                                    class="visually-hidden"
+                                    type="radio"
+                                    name="contact[rating]"
+                                    value="{{ i }}"
+                                    {% if block.settings.field_rating == 'required' %}
+                                        required="required"
+                                    {%- endif %}
+                                >
+                                <label
+                                    for="rating-{{ i }}--{{ section.id }}"
+                                    title="
+                                        {{-
+                                        'sections.testimonials.form.fields.rating.stars'
+                                        | append: i
+                                        | t
+                                        -}}
+                                    "
+                                >
+                                    <span class="visually-hidden">
+                                        {{- 'sections.testimonials.form.fields.rating.stars' | append: i | t -}}
+                                    </span>
+                                    <svg
+                                        aria-hidden="true"
+                                        focusable="false"
+                                        width="14"
+                                        height="13"
+                                    >
+                                        <use href="#star-{{ section.id }}"></use>
+                                    </svg>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+
+                <div class="field">
+                    <label for="message--{{ section.id }}" class="field__label">
+                        {{ 'sections.testimonials.form.fields.message.label' | t }}
+                    </label>
+                    <textarea
+                        id="message--{{ section.id }}"
+                        class="text-area"
+                        name="contact[message]"
+                        required="required"
+                        placeholder="
+                            {{-
+                                'sections.testimonials.form.fields.message.placeholder'
+                                    | t
+                            -}}
+                        "
+                        rows="5"
+                    ></textarea>
+                </div>
+
+                <div class="submit">
+                    <button type="submit" class="button button--primary animate-arrow">
+                        {{ 'sections.testimonials.form.buttons.submit.label' | t }}
+                        {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+                    </button>
+                </div>
+            {%- endif %}
+        {% endform %}
+    </div>
+</div>

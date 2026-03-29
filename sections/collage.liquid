@@ -1,0 +1,97 @@
+{%- liquid
+    assign __class__ = 'collage-wrapper dynamic-page-width'
+    if section.settings.enable_grayscale_effect
+        assign __class__ = __class__ | append: ' with--grayscale-effect'
+    endif
+
+    if section.settings.heading == blank
+        assign __class__ = __class__ | append: ' no-heading'
+    endif
+-%}
+<div class="{{ __class__ }}">
+    <h2 class="collage-wrapper-title">{{ section.settings.heading }}</h2>
+
+    <div class="collage collage--{{ section.settings.desktop_layout }}{% if section.settings.mobile_layout == 'collage' %} collage--mobile{% endif %}">
+        {% content_for 'blocks' %}
+    </div>
+</div>
+
+{{ 'section-collage.css' | asset_url | stylesheet_tag }}
+{{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+<noscript>
+    {{ 'section-collage.css' | asset_url | stylesheet_tag }}
+    {{ 'component-deferred-media.css' | asset_url | stylesheet_tag }}
+</noscript>
+
+{% schema %}
+{
+  "name": "t:sections.collage.name",
+  "tag": "section",
+  "class": "spaced-section collage-section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Multimedia collage",
+      "label": "t:sections.collage.settings.heading.label"
+    },
+    {
+      "type": "select",
+      "id": "desktop_layout",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.collage.settings.desktop_layout.options__1.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.collage.settings.desktop_layout.options__2.label"
+        }
+      ],
+      "default": "left",
+      "label": "t:sections.collage.settings.desktop_layout.label"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "options": [
+        {
+          "value": "collage",
+          "label": "t:sections.collage.settings.mobile_layout.options__1.label"
+        },
+        {
+          "value": "column",
+          "label": "t:sections.collage.settings.mobile_layout.options__2.label"
+        }
+      ],
+      "default": "collage",
+      "label": "t:sections.collage.settings.mobile_layout.label"
+    }
+  ],
+  "max_blocks": 3,
+  "blocks": [
+    { "type": "@theme" },
+    { "type": "@app"},
+    { "type": "collage-video" },
+    { "type": "collage-product" },
+    { "type": "collage-collection" },
+    { "type": "collage-image" }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collage.presets.name",
+      "blocks": [
+        {
+          "type": "collage-video"
+        },
+        {
+          "type": "collage-product"
+        },
+        {
+          "type": "collage-collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

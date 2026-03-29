@@ -1,0 +1,204 @@
+{%- comment -%}
+    Render product variants picker using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+
+{%- liquid
+    assign possibleOptionName = settings.list_color_option_names
+    unless possibleOptionName == blank
+        assign possibleOptionName = 'color'
+    endunless
+-%}
+<div
+    class="product__info-block product__info-block--border product__info-block--variant_picker reveal-item"
+    {% if product.has_only_default_variant %}
+        hidden
+    {% endif %}
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {%- unless product.has_only_default_variant -%}
+        {%- if block.settings.picker_type == 'button' -%}
+            {%- assign form_id = 'product-form-' | append: section.id -%}
+            <variant-radios
+                class="no-js-hidden block variants"
+                data-section="{{ sectionId }}"
+                data-url="{{ product.url }}"
+                data-update-url="true"
+                {% if block.settings.mark_unavailable_variants %}
+                    data-mark-unavailable="true"
+                {% endif %}
+            >
+                {%- for option in product.options_with_values -%}
+                    {%- assign option_name = option.name | downcase -%}
+                    <fieldset class="js">
+                        <div
+                            class="product-form__input"
+                            data-option-index="{{ forloop.index0 }}"
+                        >
+                            <legend class="form__label" title="{{ option.name }}">{{ option.name }}</legend>
+                            {% if block.settings.show_swatch_colors and option_name contains possibleOptionName %}
+                                {% render 'swatch-options',
+                                    product: product,
+                                    option_name: option.name,
+                                    option_values: option.values,
+                                    option_selected: option.selected_value,
+                                    product_handle: product.handle,
+                                    form: form_id
+                                %}
+                            {% else %}
+                                <div class="variant-options--wrapper">
+                                    {%- for value in option.values -%}
+                                        <input
+                                            type="radio"
+                                            id="{{ sectionId }}-{{ option.name }}-{{ forloop.index0 }}"
+                                            class="visually-hidden"
+                                            name="{{ option.name }}"
+                                            value="{{ value | escape }}"
+                                            form="product-form-{{ sectionId }}"
+                                            {% if option.selected_value == value %}
+                                                checked
+                                            {% endif %}
+                                            data-product-url="{{ value.product_url }}"
+                                            data-option-value-id="{{ value.id }}"
+                                        >
+                                        <label
+                                            class="transition-bezier"
+                                            for="{{ sectionId }}-{{ option.name }}-{{ forloop.index0 }}"
+                                            title="{{ option.name | escape }} - {{ value | escape }}"
+                                        >
+                                            {{ value }}
+                                        </label>
+                                    {%- endfor -%}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </fieldset>
+                {%- endfor -%}
+                <script type="application/json">
+                    {{ product.variants | json }}
+                </script>
+            </variant-radios>
+
+            {% render 'initialize-deferred-scripts', init_variant_radios: true %}
+        {%- else -%}
+            {%- assign form_id = 'product-form-' | append: section.id -%}
+            <variant-selects
+                class="no-js-hidden block variants"
+                data-section="{{ sectionId }}"
+                data-url="{{ product.url }}"
+                data-update-url="true"
+                {% if block.settings.mark_unavailable_variants %}
+                    data-mark-unavailable="true"
+                {% endif %}
+            >
+                {%- for option in product.options_with_values -%}
+                    {%- assign option_name = option.name | downcase -%}
+                    {% if block.settings.show_swatch_colors and option_name contains possibleOptionName %}
+                        <div
+                            class="product-form__input product-form__input--dropdown product-form__input--swatches"
+                            data-option-index="{{ forloop.index0 }}"
+                        >
+                            <span class="form__label" title="{{ option.name | escape }} - {{ value | escape }}">
+                                {{ option.name }}
+                            </span>
+                            {% render 'swatch-options',
+                                product: product,
+                                option_name: option.name,
+                                option_values: option.values,
+                                option_selected: option.selected_value,
+                                product_handle: product.handle,
+                                form: form_id
+                            %}
+                        </div>
+                    {% else %}
+                        <div
+                            class="product-form__input product-form__input--dropdown"
+                            data-option-index="{{ forloop.index0 }}"
+                        >
+                            <label
+                                class="form__label"
+                                for="Option-{{ section.id }}-{{ forloop.index0 }}"
+                                title="{{ option.name }}"
+                            >
+                                {{ option.name }}
+                            </label>
+                            <div class="select">
+                                <select
+                                    id="Option-{{ sectionId }}-{{ forloop.index0 }}"
+                                    class="select__select"
+                                    name="options[{{ option.name | escape }}]"
+                                    form="{{ form_id }}"
+                                >
+                                    {%- for value in option.values -%}
+                                        <option
+                                            value="{{ value | escape }}"
+                                            data-option-value-id="{{ value.id }}"
+                                            {% if option.selected_value == value %}
+                                                selected="selected"
+                                            {% endif %}
+                                            {% unless value.available %}
+                                                disabled="disabled"
+                                            {% endunless %}
+                                        >
+                                            {{- value -}}
+                                        </option>
+                                    {%- endfor -%}
+                                </select>
+                                <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret">
+                                    <use href="#icon-caret" />
+                                </svg>
+                            </div>
+                        </div>
+                    {% endif %}
+                {%- endfor -%}
+
+                <script type="application/json">
+                    {{ product.variants | json }}
+                </script>
+            </variant-selects>
+
+            {% render 'initialize-deferred-scripts', init_variant_selects: true %}
+        {%- endif -%}
+    {%- endunless -%}
+
+    <noscript>
+        <div class="product-form__input{% if product.has_only_default_variant %} hidden{% endif %}">
+            <label class="form__label" for="Variants-{{ sectionId }}">
+                {{- 'products.product.product_variants' | t -}}
+            </label>
+            <div class="select">
+                <select
+                    name="id"
+                    id="Variants-{{ sectionId }}"
+                    class="select__select"
+                    form="product-form-{{ sectionId }}"
+                >
+                    {%- for variant in product.variants -%}
+                        <option
+                            {% if variant == product.selected_or_first_available_variant %}
+                                selected="selected"
+                            {% endif %}
+                            {% if variant.available == false %}
+                                disabled
+                            {% endif %}
+                            value="{{ variant.id }}"
+                        >
+                            {{ variant.title }}
+                            {%- if variant.available == false %} - {{ 'products.product.sold_out' | t }}{% endif %}
+                            - {{ variant.price | money | strip_html }}
+                        </option>
+                    {%- endfor -%}
+                </select>
+                <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret">
+                    <use href="#icon-caret" />
+                </svg>
+            </div>
+        </div>
+    </noscript>
+</div>

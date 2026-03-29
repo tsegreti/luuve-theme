@@ -1,0 +1,15 @@
+.breadcrumbs .items::-webkit-scrollbar {
+  display: block;
+  height: .25rem;
+  width: .25rem;
+  padding: 0 .25rem;
+}
+
+.breadcrumbs .items::-webkit-scrollbar-thumb {
+  background-color: var(--color-foreground-20);
+  border-width: 0px;
+}
+
+.breadcrumbs .items::-webkit-scrollbar-track {
+  background: var(--color-foreground-4);
+}

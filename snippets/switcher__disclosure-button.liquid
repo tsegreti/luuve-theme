@@ -1,0 +1,23 @@
+{%- comment -%}
+    Render disclosure button for localization form.
+
+    Accepts:
+     -  form_id    {String}
+     -  inner_html {String}
+{%- endcomment -%}
+
+<button
+    type="button"
+    class="disclosure__button button--small localization-form__select localization-selector"
+    aria-expanded="false"
+    aria-controls="{{ form_id }}List"
+    aria-describedby="{{ form_id }}Label"
+>
+    {{ inner_html }}
+    <svg aria-hidden="true" focusable="false" role="presentation" width="16" height="16" class="icon icon-caret">
+        <use href="#icon-caret" />
+    </svg>
+    <svg aria-hidden="true" focusable="false" role="presentation" width="12" height="12" class="icon-x" hidden>
+        <use href="#icon-x" />
+    </svg>
+</button>

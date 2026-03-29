@@ -1,0 +1,68 @@
+{%- liquid
+    assign __class__ = 'wrapper'
+    if section.settings.full_width
+        assign __class__ = __class__ | append: ' full--width'
+    else
+        assign __class__ = __class__ | append: ' custom--width'
+    endif
+-%}
+
+{% style %}
+    :is(.footer-middle .custom--width) {
+        max-width: {{ section.settings.custom_layout_width }}px;
+        margin: 0 auto;
+        padding-left: 1rem;
+    }
+    {% if section.settings.enable_noise_effect %}
+    .footer-middle {
+        --image-noise:  url({{'noise3.svg' |  asset_url }});
+    }{% endif -%}
+{% endstyle %}
+
+<div class="footer-middle{% if section.settings.enable_noise_effect %} with--noise-effect{% endif %}">
+    <div class="{{ __class__ }}">
+        {% content_for 'blocks' %}
+    </div>
+</div>
+
+{% schema %}
+{
+    "name": "t:sections.footer_middle.name",
+    "class": "footer-middle-section",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "full_width",
+            "default": false,
+            "label": "t:sections.footer.settings.full_width.label"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_noise_effect",
+            "label": "t:sections.all.settings.enable_noise_effect.label",
+            "info": "t:sections.all.settings.enable_noise_effect.info",
+            "default": false
+        },
+        {
+            "type": "range",
+            "id": "custom_layout_width",
+            "label": "t:sections.footer.settings.custom_layout_width.label",
+            "unit": "px",
+            "min": 980,
+            "max": 1440,
+            "step": 20,
+            "default": 1440
+        }
+    ],
+    "max_blocks": 2,
+    "blocks": [{ "type": "@theme" }],
+    "presets": [
+        {
+          "name": "t:sections.footer_middle.presets.name"
+        }
+    ],
+    "enabled_on": {
+        "groups": ["footer"]
+    }
+}
+{% endschema %}

@@ -1,0 +1,51 @@
+{%- liquid
+    assign product = section.settings.product | default: product
+    assign block_index = block.settings.block_order
+-%}
+
+{%- render 'product__info-block--buy_buttons',
+    block: block,
+    product: product,
+    blockOrder: block_index,
+    sectionId: section.id
+-%}
+
+{% schema %}
+{
+    "name": "t:sections.main-product.blocks.buy_buttons.name",
+    "tag": null,
+    "settings": [
+        {
+          "type": "checkbox",
+          "id": "show_dynamic_checkout",
+          "default": true,
+          "label": "t:sections.main-product.blocks.buy_buttons.settings.show_dynamic_checkout.label",
+          "info": "t:sections.main-product.blocks.buy_buttons.settings.show_dynamic_checkout.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "gift_card_show_recipient_form",
+          "default": true,
+          "label": "t:sections.main-product.blocks.buy_buttons.settings.gift_card_show_recipient_form.label",
+          "info": "t:sections.main-product.blocks.buy_buttons.settings.gift_card_show_recipient_form.info"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.advanced.header.content"
+        },
+        {
+            "type": "number",
+            "id": "block_order",
+            "label": "t:sections.all.advanced.block_order.label",
+            "info": "t:sections.all.advanced.block_order.info",
+            "default": 8
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.main-product.blocks.buy_buttons.name",
+            "category": "t:sections.all.categories.product-information"
+        }
+    ]
+}
+{% endschema %}

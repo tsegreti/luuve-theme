@@ -1,0 +1,7 @@
+<scroll-top class="page-scroll-up" title="Scroll to top" hidden>
+    {%- if settings.current_theme_icons == 'enduro' %}
+        {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+    {% else %}
+        {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+    {% endif -%}
+</scroll-top>

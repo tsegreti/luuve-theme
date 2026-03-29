@@ -1,0 +1,151 @@
+{% comment -%}
+    Render newsletter section styles
+
+    Accept:
+        - newsletter_height:    {Numb}
+{% endcomment -%}
+
+{% style %}
+    {% if newsletter_height > 0 %}
+        #shopify-section-{{ section.id }} .newsletter {
+          min-height: min({{ newsletter_height }}px, calc(100vw / {{ newsletter_ratio }}));
+        }
+    {% endif %}
+    /*newsletter image position */
+        .newsletter__wrapper {
+            padding: 3rem 2rem;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .newsletter__wrapper .title {
+            line-height: 1.15;
+        }
+
+        #shopify-section-{{ section.id }} .newsletter:not(.image_cover) :is(.position__left) {
+            text-align: left;
+        }
+
+        #shopify-section-{{ section.id }} .newsletter:not(.image_cover) :is(.position__right) {
+            align-items: end;
+            text-align: right;
+            margin: unset;
+        }
+
+        #shopify-section-{{ section.id }} .newsletter:not(.image_cover) :is(.position__center) {
+            align-items: center;
+            text-align: center;
+        }
+
+        #shopify-section-{{ section.id }} .newsletter:not(.image_cover) .form-newsletter_container {
+            margin: unset;
+        }
+
+        .newsletter-form__field-wrapper [type="email"] {
+            border: 1px solid var(--color-foreground);
+            height: calc(4rem - 15px);
+        }
+
+        body[data-current-preset="enduro"] .newsletter-form__field-wrapper [type="email"] {
+            padding-left: 3rem;
+        }
+
+        {% if section.id contains 'newsletter' and settings.current_presets == 'oldmoney' %}
+        #shopify-section-{{ section.id }} .newsletter-form__field-wrapper [type="email"] {
+            background: var(--color-base-text);
+            border-color: var(--color-base-text);
+        }{% endif %}
+
+        @media (max-width: 768px) {
+            .newsletter__wrapper .title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (min-width: 767px) {
+            #shopify-section-{{ section.id }} .newsletter:not(.newsletter-with-image) .newsletter__wrapper {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex-direction: row;
+                gap: 1rem;
+                max-width: {{ settings.type_layout_max_width | append: 'px' }};
+                margin: 0 auto;
+                padding: 0 1rem;
+            }
+
+            #shopify-section-{{ section.id }} .newsletter:not(.newsletter-with-image) .newsletter__wrapper > * {
+                width: 50%;
+            }
+
+            #shopify-section-{{ section.id }} + .shopify-section {
+                margin-top: 5rem;
+            }
+
+            #shopify-section-{{ section.id }} .newsletter.image_first,
+            #shopify-section-{{ section.id }} .newsletter.newsletter_first {
+                display: flex;
+            }
+
+            #shopify-section-{{ section.id }} .newsletter.newsletter_first {
+                flex-direction: row-reverse;
+            }
+
+            #shopify-section-{{ section.id }} .newsletter.image_first .image-media,
+            #shopify-section-{{ section.id }} .newsletter.newsletter_first .image-media,
+            #shopify-section-{{ section.id }} .newsletter.image_first .newsletter__wrapper,
+            #shopify-section-{{ section.id }} .newsletter.newsletter_first .newsletter__wrapper {
+                width: 50%;
+            }
+
+            {% unless section.settings.layout_design == true %}
+            #shopify-section-{{ section.id }} .newsletter.image_first .image-media,
+            #shopify-section-{{ section.id }} .newsletter.newsletter_first .image-media {
+                margin-top: -2rem;
+            }
+
+            #shopify-section-{{ section.id }} .newsletter.image_first .newsletter__wrapper,
+            #shopify-section-{{ section.id }} .newsletter.newsletter_first .newsletter__wrapper {
+                margin-bottom: -2rem;
+            }{% endunless %}
+
+            #shopify-section-{{ section.id }} .newsletter.image_cover .newsletter__wrapper {
+                position: absolute;
+                top: 50%;
+            }
+
+            #shopify-section-{{ section.id }} .newsletter.image_cover :is(.position__center) {
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            #shopify-section-{{ section.id }} .newsletter.image_cover :is(.position__left) {
+                left: 2rem;
+                transform: translateY(-50%);
+            }
+
+            #shopify-section-{{ section.id }} .newsletter.image_cover :is(.position__right) {
+                right: 2rem;
+                transform: translateY(-50%);
+            }
+
+            #shopify-section-{{ section.id }} .newsletter .newsletter__wrapper {
+                padding: 4rem;
+            }
+        }
+
+        @media (min-width: 990px) {
+            #shopify-section-{{ section.id }} .newsletter.image_cover .newsletter__wrapper {
+                max-width: 50%;
+            }
+
+            #shopify-section-{{ section.id }} .newsletter__wrapper :is(.title),
+            #shopify-section-{{ section.id }} .newsletter__wrapper :is(.sub_title) {
+                max-width: {{ section.settings.text_block_width }}%;
+            }
+
+            #shopify-section-{{ section.id }} .newsletter:not(.newsletter-with-image) .newsletter__wrapper {
+                gap: 2rem;
+            }
+        }
+{% endstyle %}

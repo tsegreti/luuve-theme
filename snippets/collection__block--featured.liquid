@@ -1,0 +1,114 @@
+{%- comment -%}
+    Render collection featured products using block settings
+
+    Accepts:
+     - block:           {Object}
+     - blockOrder:      {Number}
+     - has_side_column: {Boolean}
+{%- endcomment -%}
+
+{%- liquid
+    assign items = block.settings.source
+    assign preloadItemsImage = 0
+    if block.settings.is_preload
+        assign preloadItemsImage = 2
+    endif
+
+    if items.count == 0 and block.settings.is_random
+        capture handels
+            render 'helper__get-similar-products', limit: block.settings.products_per_page
+        endcapture
+        assign items = handels | split: '|'
+    endif
+
+    assign columns = 3
+    assign ulId = 'featured-products-' | append: section.id
+-%}
+
+{% if items.count > 0 or items.size > 0 %}
+    <div
+        class="collection__block collection__block--featured{% if block.settings.animation_on_reveal %} reveal-slide-in{% endif %}"
+        style="order: {{ blockOrder }}"
+        {{ block.shopify_attributes }}
+    >
+        {% style %}
+            .collection__block--featured .products {
+                overflow-x: hidden;
+            }
+            @media (min-width: calc({{ settings.type_layout_max_width | append: 'px' }} + 2 * .5rem)) {
+                .collection__block--featured slider-component {
+                    --slider-component--margin: 0 -1.25rem;
+                }
+            }
+        {% endstyle %}
+        <div class="heading">
+            <h2 class="title reveal-item">{{ block.settings.heading }}</h2>
+            {% comment %}
+                <div class="title-image">
+                    {%- if block.settings.cover_image  -%}
+                        <div class="media media--transparent">
+                            {% render 'render-image',
+                                image: block.settings.cover_image
+                                widths: '480,640,960,#iw#'
+                                sizes: '50vw'
+                            %}
+                        </div>
+                    {%- endif -%}
+                </div>
+            {% endcomment %}
+        </div>
+        <slider-component data-loop="false">
+            {% capture innerHtml %}
+                {% render 'grid-items'
+                    ul_id: ulId
+                    ul_class: 'products slider slider--tablet slider--mobile grid--peek slider--desktop'
+                    has_side_column: has_side_column
+                    items: items
+                    mode: 'grid'
+                    columns: columns
+                    limit: block.settings.products_per_page
+                    badge_size: block.settings.badge_size
+                    image_ratio: block.settings.image_ratio
+                    product_secondary_image: settings.product_card_secondary_image
+                    product_to_cart_button: block.settings.show_to_cart_button
+                    product_show_vendor: settings.product_card_vendor
+                    product_description: block.settings.show_description
+                    preload_items_image: preloadItemsImage
+                %}
+            {% endcapture %}
+            {{ innerHtml | replace: 'class="grid-item', 'class="grid-item slider__slide' }}
+
+            <div class="slider-buttons no-js-hidden">
+                <button
+                    type="button"
+                    class="slider-button slider-button--prev button--tertiary"
+                    name="previous"
+                    aria-label="{{ 'accessibility.previous_slide' | t }}"
+                >
+                    {% render 'icons-theme', name: 'arrow-left', css_class: 'icon' %}
+                </button>
+                <button
+                    type="button"
+                    class="slider-button slider-button--next button--tertiary"
+                    name="next"
+                    aria-label="{{ 'accessibility.next_slide' | t }}"
+                >
+                    {% render 'icons-theme', name: 'arrow-right', css_class: 'icon' %}
+                </button>
+            </div>
+        </slider-component>
+        <style>
+            {% comment -%}
+            #shopify-section-{{ section.id }} .collection__block--featured {
+                --header-foreground-rgb: {{ block.settings.cover_text_color.red }}, {{ block.settings.cover_text_color.green }}, {{ block.settings.cover_text_color.blue }};
+                --header-background-rgb: {{ block.settings.cover_background.red }}, {{ block.settings.cover_background.green }}, {{ block.settings.cover_background.blue }};
+            }
+
+            {%- endcomment %}
+            #{{ ulId }} {
+                flex-wrap: nowrap;
+                margin: 0;
+            }
+        </style>
+    </div>
+{% endif %}

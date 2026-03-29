@@ -1,0 +1,79 @@
+{% comment %}
+    Render product quantity input using block settings
+
+    Accepts:
+      - block      {Object}
+      - blockOrder {Number}
+      - product    {Object}
+{% endcomment %}
+
+{%- liquid
+    assign block_class = 'product__info-block product__info-block--recommendations reveal-item'
+    assign is_collapsible_tab = block.settings.is_collapsible_tab
+    if is_collapsible_tab
+        assign block_class = block_class | append: ' product__info-block--collapsible_tab product__accordion accordion'
+    endif
+-%}
+
+<product-block-recommendations
+    class="{{ block_class }}"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {% capture icon_html %}
+    {%- liquid
+      unless block.settings.icon == 'none'
+        assign css_class = 'icon-accordion color-foreground-' | append: settings.accent_icons
+        render 'icon-accordion' name: block.settings.heading_icon, css_class: css_class
+      endunless
+    -%}
+  {% endcapture %}
+
+    {%- capture html -%}
+    {% render 'recommendations-complementary'
+      intent: block.settings.intent
+      product_id: product.id
+      limit: block.settings.products_to_show
+      appearance: 'slider'
+      mode: block.settings.mode_view
+    %}
+  {%- endcapture -%}
+
+    <style>
+        product-block-recommendations,
+        .product__info-block--recommendations .loader-when-empty {
+          display: block;
+        }
+
+        .product__info-block--recommendations :where(product-recommendations),
+        .product__info-block--recommendations:has(.products:empty) > h2 {
+          display: none;
+        }
+    </style>
+
+    {%- if is_collapsible_tab %}
+        <details>
+            <summary>
+                <div class="summary__title">
+                    {{ icon_html }}
+                    <h2 class="accordion__title">{{ block.settings.heading }}</h2>
+                </div>
+                <span class="icon icon-plus">{%- render 'icons-solid', name: 'plus' -%}</span>
+                <span class="icon icon-minus">{%- render 'icons-solid', name: 'minus' -%}</span>
+            </summary>
+            <div class="accordion__content">
+                <div class="loader-when-empty"></div>
+                {{ html }}
+            </div>
+        </details>
+    {%- else %}
+        <div class="loader-when-empty"></div>
+        <h2 class="h3">
+            {{ icon_html -}}
+            <span>{{ block.settings.heading }}</span>
+        </h2>
+        {{ html }}
+    {%- endif %}
+
+    {{ 'product-block-recommendations.css' | asset_url | stylesheet_tag }}
+</product-block-recommendations>

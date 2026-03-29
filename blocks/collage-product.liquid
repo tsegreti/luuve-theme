@@ -1,0 +1,128 @@
+{%- liquid
+    if block.settings.product != blank
+        assign product_title = block.settings.product.title | escape
+    else
+        assign product_title = 'onboarding.product_title' | t
+    endif
+
+    assign paddingBottom = 75
+    if block.settings.product.featured_image
+        assign paddingBottom = 100 | divided_by: block.settings.collection.featured_image.aspect_ratio
+        assign imageWidth = '326,652,978,1182,1340,2364'
+        assign imageSizes = '(max-width: 767px) calc(100vw - 2rem - 2px), (max-width: 1279px) calc(100vw - 6rem - 2px), 1182px'
+    endif
+
+    assign block_index = section.blocks | find_index: 'id', block.id
+
+    assign focus_card_left = false
+    if section.settings.desktop_layout == 'left' and block_index == 0
+        assign focus_card_left = true
+    elsif section.settings.desktop_layout == 'right' and block_index == 2
+        assign focus_card_right = true
+    endif
+-%}
+
+<a
+    id="{{ block.id }}"
+    href="{{ block.settings.product.url }}"
+    title="{{ product_title }}"
+    class="collage-card collage-product color-{{ block.settings.color_scheme }} card-wrapper{% if focus_card_left %} collage-card--left{% elsif focus_card_right %} collage-card--right{% endif %}"
+    {{ block.shopify_attributes }}
+>
+    <div class="product-image animate-arrow">
+        {% if block.settings.product.featured_image %}
+            <div
+                class="media"
+                {% if paddingBottom %}
+                    style="padding-bottom: {{ paddingBottom }}%;"
+                {% endif %}
+            >
+                {% render 'render-image',
+                    image: block.settings.product.featured_image,
+                    widths: imageWidth,
+                    sizes: imageSizes,
+                    css_class: ''
+                %}
+            </div>
+        {% else %}
+            <div
+                class="media"
+                {% if paddingBottom %}
+                    style="padding-bottom: {{ paddingBottom }}%;"
+                {% endif %}
+            >
+                {{
+                    block.settings.product.id
+                    | divided_by: 1000
+                    | modulo: 4
+                    | plus: 1
+                    | prepend: 'product-'
+                    | placeholder_svg_tag: 'placeholder-svg placeholder'
+                }}
+            </div>
+        {% endif %}
+        <div class="collage-card-title">
+            <h3>
+                {{- product_title -}}
+            </h3>
+            {% render 'render-price',
+                price: block.settings.product.price,
+                css_class: 'price regular-price price--final text-lg font-medium'
+            %}
+        </div>
+    </div>
+</a>
+
+{% schema %}
+{
+  "name": "t:sections.collage.blocks.product.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "product",
+      "id": "product",
+      "label": "t:sections.collage.blocks.product.settings.product.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "secondary_background",
+      "default": false,
+      "label": "t:sections.collage.blocks.product.settings.secondary_background.label"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "t:sections.all.colors.accent_1.label"
+        },
+        {
+          "value": "accent-2",
+          "label": "t:sections.all.colors.accent_2.label"
+        },
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "inverse",
+          "label": "t:sections.all.colors.inverse.label"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collage.blocks.product.name",
+      "category": "t:sections.all.categories.collage"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,165 @@
+{%- liquid
+    assign __class__ = 'countdown-timer'
+    if section.settings.enable_noise_effect
+        assign __class__ = __class__ | append: ' with--noise-effect'
+    endif
+
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+-%}
+
+{% style %}
+    #shopify-section-{{ section.id }} .countdown-timer {
+      background: {{ section.settings.section_bg_gradient | default: section.settings.section_bg_color }};
+      padding: {{ section.settings.vertical_paddings | append: 'rem' }} 0;
+    }
+    {%- if section.settings.enable_noise_effect %}
+    .countdown-timer {
+      --image-noise:  url({{'noise1.svg' |  asset_url }});
+    }
+    {% endif -%}
+    .countdown-timer > .wrapper {
+      display: flex;
+      flex-direction: column-reverse;
+      justify-content: space-around;
+      align-items: center;
+    }
+
+    #shopify-section-{{ section.id }} .countdown-timer .title,
+    #shopify-section-{{ section.id }} .countdown-timer span {
+      color: {{ section.settings.color_foreground }};
+    }
+
+    #shopify-section-{{ section.id }} :is(.separator-line) {
+      border-right: 1px solid {{ section.settings.color_foreground }};
+    }
+
+    @media (min-width: 990px) {
+      .countdown-timer > .wrapper {
+        flex-direction: row;
+      }
+    }
+    {%- if template == 'password' %}
+    .countdown-timer > .wrapper {
+      flex-direction: column;
+      text-align: center;
+    }
+    {% endif %}
+{% endstyle %}
+
+<div class="{{ __class__ }}">
+    <div class="wrapper dynamic-page-width">
+        <div class="heading">
+            {% unless section.settings.title == blank %}
+                <{{ section.settings.heading_size }} class="title reveal-item">
+                    {{ section.settings.title }}
+                </{{ section.settings.heading_size }}>
+            {% endunless %}
+            {% unless section.settings.sub_title == blank %}
+                <span class="sub_title reveal-item">{{ section.settings.sub_title }}</span>
+            {% endunless %}
+        </div>
+
+        {% content_for 'blocks' %}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.countdown-timer.name",
+  "tag": "section",
+  "class": "spaced-section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "Flash Sale",
+      "label": "t:sections.countdown-timer.settings.title.label"
+    },
+    {
+      "type": "select",
+      "id": "heading_size",
+      "options": [
+        {
+          "value": "h1",
+          "label": "t:sections.countdown-timer.settings.heading_size.options.h1"
+        },
+        {
+          "value": "h2",
+          "label": "t:sections.countdown-timer.settings.heading_size.options.h2"
+        },
+        {
+          "value": "h3",
+          "label": "t:sections.countdown-timer.settings.heading_size.options.h3"
+        }
+      ],
+      "default": "h2",
+      "label": "t:sections.countdown-timer.settings.heading_size.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "sub_title",
+      "label": "t:sections.countdown-timer.settings.sub_title.label",
+      "default": "Get 20% off if you spend $100 or more"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.countdown-timer.settings.header.content"
+    },
+    {
+      "type": "color",
+      "id": "section_bg_color",
+      "label": "t:sections.countdown-timer.settings.section_bg_color.label",
+      "info": "t:sections.countdown-timer.settings.section_bg_color.info"
+    },
+    {
+      "type": "color_background",
+      "id": "section_bg_gradient",
+      "label": "t:sections.countdown-timer.settings.section_bg_color.label",
+      "default": "linear-gradient(to right, #bacff5, #98acd3, #778bb2, #586b92, #394c73, #3c446e, #3f3c68, #433361, #673c6b, #894670, #a85371, #c3636f)"
+    },
+    {
+      "type": "color",
+      "id": "color_foreground",
+      "label": "t:sections.countdown-timer.settings.color_foreground.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "vertical_paddings",
+      "min": 1,
+      "max": 10,
+      "step": 0.5,
+      "default": 3,
+      "unit": "rem",
+      "label": "t:sections.countdown-timer.settings.vertical_paddings.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_noise_effect",
+      "label": "t:sections.all.settings.enable_noise_effect.label",
+      "info": "t:sections.all.settings.enable_noise_effect.info",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": true
+    }
+  ],
+  "max_blocks": 1,
+  "blocks": [{ "type": "@theme" }],
+  "presets": [
+    {
+      "name": "t:sections.countdown-timer.presets.name",
+      "blocks": [
+        {
+          "type": "timer"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

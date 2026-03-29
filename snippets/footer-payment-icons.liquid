@@ -1,0 +1,35 @@
+{% comment %}
+    Render Payment icons block for footer.
+
+    Accepts:
+     - icons_saturate
+     - custom_icon
+     - icon_width
+{% endcomment %}
+
+<div class="footer__payment">
+    <span class="visually-hidden">{{ 'sections.footer.payment' | t }}</span>
+    <ul
+        class="list-payment{% if custom_icon == blank %} shop-payment-icons{% endif %}"
+        role="list"
+        style="--footer__payment-icon-saturate: {{ icons_saturate | divided_by: 100.0 }}"
+    >
+        {% if custom_icon != blank %}
+            {% assign icons = custom_icon | split: ',' %}
+            {% for icon in icons %}
+                {% assign isImage = images[icon] %}
+                {% if isImage != empty %}
+                    <li class="list-payment__item">
+                        {{ images[icon] | image_url: width: icon_width | image_tag: class: '' }}
+                    </li>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {%- for type in shop.enabled_payment_types -%}
+                <li class="list-payment__item">
+                    {{ type | payment_type_svg_tag: class: 'icon' }}
+                </li>
+            {%- endfor -%}
+        {% endif %}
+    </ul>
+</div>

@@ -1,0 +1,42 @@
+{%- if cart.item_count > 0 %}
+    <div class="cart-sidebar__total" data-item-count="{{ cart.item_count }}">
+        <p>
+            <strong>{{ 'customer.order.total' | t }}</strong> -
+            <span>
+                {{- cart.item_count }}
+                {{ 'general.cart_sidebar.cart_items' | t -}}
+            </span>
+        </p>
+        <p class="total-amount">
+            {% render 'render-price', price: cart.total_price %}
+        </p>
+    </div>
+    <div class="cart-sidebar__discount">
+        {%- if cart.cart_level_discount_applications.size > 0 -%}
+            <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                {%- for discount in cart.cart_level_discount_applications -%}
+                    <li class="discounts__discount discounts__discount--end">
+                        {%- render 'icon-discount' -%}
+                        {{ discount.title }}
+                        (-{{ discount.total_allocated_amount | money }})
+                    </li>
+                {%- endfor -%}
+            </ul>
+        {%- endif -%}
+    </div>
+    <div class="cart-sidebar__footer-actions">
+        <form action="{{ routes.cart_url }}" method="post" id="cart">
+            <button class="button button--primary animate-arrow" name="checkout" form="cart">
+                <span>{{ 'sections.cart.submit' | t }}</span>
+                {%- if settings.current_theme_icons == 'enduro' %}
+                    {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+                {% else %}
+                    {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+                {% endif -%}
+            </button>
+        </form>
+        {% if settings.minicart_link_to_cart %}
+            <a href="{{ routes.cart_url }}" class="link_to_cart">{{ 'general.cart_sidebar.to_cart' | t }}</a>
+        {% endif %}
+    </div>
+{% endif -%}

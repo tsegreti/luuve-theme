@@ -1,0 +1,21 @@
+.classic .products {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    overflow: visible;
+}
+
+@media (min-width: 768px) {
+
+    .classic slider-component ul > li {
+        display: inline-block;
+    }
+}
+
+.classic .rows-divider {
+    display: none;
+}
+
+.classic .title-wrapper .view-all {
+    white-space: nowrap;
+}

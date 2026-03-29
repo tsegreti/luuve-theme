@@ -1,0 +1,222 @@
+{%- liquid
+    # general contact info
+    assign contact_phone = settings.contact_phone
+    assign contact_email = settings.contact_email
+
+    assign padding_bottom = '56.25%'
+    if block.settings.image != blank and block.settings.image_height == 'adapt'
+        capture padding_bottom
+            render 'helper__media-padding-bottom', image: block.settings.image, image_ratio: 'native'
+        endcapture
+    endif
+
+    case block.settings.image_height
+        when 'small'
+            assign padding_bottom = '26rem'
+        when 'medium'
+            assign padding_bottom = '34rem'
+        when 'large'
+            assign padding_bottom = '44rem'
+    endcase
+-%}
+<div class="contact_us" {{ block.shopify_attributes }}>
+    <div class="heading-wrapper dynamic-page-width">
+        {% unless block.settings.title == blank %}
+            <h2 class="reveal-item">{{ block.settings.title }}</h2>
+        {% endunless %}
+        {%- unless block.settings.subtitle == blank -%}
+            <p class="comment reveal-item">{{ block.settings.subtitle }}</p>
+        {%- endunless -%}
+    </div>
+    <div class="media">
+        {% if block.settings.image != blank %}
+            {% render 'render-image',
+                image: block.settings.image,
+                width: block.settings.image.width,
+                widths: '742,990,1920,#iw#',
+                sizes: '100vw',
+                is_preload: true
+            %}
+        {% else %}
+            {{ 'lifestyle-2' | placeholder_svg_tag: 'placeholder' }}
+        {% endif %}
+    </div>
+    <div class="company_data">
+        {% # Render Contact Info %}
+        <div class="contact__info reveal-item">
+            <h3>{{ block.settings.contact_info }}</h3>
+            {% if contact_email %}
+                <a class="email" href="mailto:{{ contact_email }}" title="{{ 'header_top.contact_email.title' | t }}">
+                    <span>{{ contact_email }}</span>
+                </a>
+            {% endif %}
+            {% if contact_phone %}
+                <a href="phoneto:{{ contact_phone }}" title="{{ 'header_top.contact_phone.title' | t }}">
+                    <span>{{ contact_phone }}</span>
+                </a>
+            {% endif %}
+            {% if block.settings.show_social_icons %}
+                <div class="follow__us social-icons">
+                    <div class="icons">
+                        {%- unless settings.social_facebook_link == blank %}
+                            <a
+                                href="{{ settings.social_facebook_link }}"
+                                title="{{ 'general.social.titles.facebook' | t }}"
+                                target="_blank"
+                            >
+                                <i class="icon" aria-hidden="true" focusable="false" role="presentation">
+                                    {% render 'icons-ion', name: 'logo-facebook' %}
+                                </i>
+                                <span class="visually-hidden">facebook</span>
+                            </a>
+                        {% endunless -%}
+                        {%- unless settings.social_youtube_link == blank %}
+                            <a
+                                href="{{ settings.social_youtube_link }}"
+                                title="{{ 'general.social.titles.youtube' | t }}"
+                                target="_blank"
+                            >
+                                <i class="icon" aria-hidden="true" focusable="false" role="presentation">
+                                    {% render 'icons-ion', name: 'logo-youtube' %}
+                                </i>
+                                <span class="visually-hidden">youtube</span>
+                            </a>
+                        {% endunless -%}
+                        {%- unless settings.social_instagram_link == blank %}
+                            <a
+                                href="{{ settings.social_instagram_link }}"
+                                title="{{ 'general.social.titles.instagram' | t }}"
+                                target="_blank"
+                            >
+                                <i class="icon" aria-hidden="true" focusable="false" role="presentation">
+                                    {% render 'icons-ion', name: 'logo-instagram' %}
+                                </i>
+                                <span class="visually-hidden">instagram</span>
+                            </a>
+                        {% endunless -%}
+                        {%- unless settings.social_linkedin_link == blank %}
+                            <a
+                                href="{{ settings.social_linkedin_link }}"
+                                title="{{ 'general.social.titles.linkedin' | t }}"
+                                target="_blank"
+                            >
+                                <i class="icon" aria-hidden="true" focusable="false" role="presentation">
+                                    {% render 'icons-ion', name: 'logo-linkedin' %}
+                                </i>
+                                <span class="visually-hidden">linkedin</span>
+                            </a>
+                        {% endunless -%}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+
+        {% # Render Company Info %}
+        <div class="company__info reveal-item">
+            {% unless block.settings.company_info_title == blank %}
+                <h3>{{- block.settings.company_info_title -}}</h3>
+            {% endunless %}
+            {{ block.settings.company_info_address }}
+        </div>
+    </div>
+</div>
+
+{%- render 'contact-form__styles', padding_bottom: padding_bottom -%}
+
+{% schema %}
+{
+  "name": "t:sections.contact-form.blocks.contact_us.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "label": "t:sections.contact-form.blocks.settings.title.label",
+      "default": "Our Address"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subtitle",
+      "label": "t:sections.contact-form.blocks.settings.subtitle.label"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.contact-form.blocks.settings.image.label"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.contact-form.blocks.settings.image_height.options.adapt"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.contact-form.blocks.settings.image_height.options.small"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.contact-form.blocks.settings.image_height.options.medium"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.contact-form.blocks.settings.image_height.options.large"
+        }
+      ],
+      "default": "medium",
+      "label": "t:sections.contact-form.blocks.settings.image_height.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.contact-form.blocks.settings.heading.company_info"
+    },
+    {
+      "type": "color",
+      "id": "company_info_background",
+      "label": "t:sections.contact-form.blocks.settings.company_info_background.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "company_info_title",
+      "label": "t:sections.contact-form.blocks.settings.company_info_title.label",
+      "default": "Company Info"
+    },
+    {
+      "type": "richtext",
+      "id": "company_info_address",
+      "label": "t:sections.contact-form.blocks.settings.company_info_address.label",
+      "default": "<p>FifthAve Street 31</p><p>New York, USA</p>"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.contact-form.blocks.settings.heading.contact_info"
+    },
+    {
+      "type": "color",
+      "id": "contact_info_background",
+      "label": "t:sections.contact-form.blocks.settings.contact_info_background.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "text",
+      "id": "contact_info",
+      "label": "t:sections.contact-form.blocks.settings.contact_info.label",
+      "default": "Contact Info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_social_icons",
+      "label": "t:sections.contact-form.blocks.settings.show_social_icons.label",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact-form.blocks.contact_us.name"
+    }
+  ]
+}
+{% endschema %}

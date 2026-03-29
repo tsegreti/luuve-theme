@@ -1,0 +1,75 @@
+{%- comment -%}
+    Renders Heading for header
+
+    Accepts:
+    - logo         {Object}
+    - logo_width   {Number}
+{%- endcomment -%}
+
+<div class="h1 header__heading">
+    <a href="{{ routes.root_url }}" class="header__heading-link focus-inset">
+        {%- if logo != blank -%}
+            {%- liquid
+                assign imageAlt = logo.alt | default: shop.name | escape
+                assign imageSizes = '#w#px' | replace: '#w#', logo_width
+                assign imageStyle = null
+                if logo_width < logo.width
+                    assign imageStyle = 'max-width: #w#px' | replace: '#w#', logo_width
+                endif
+
+                for dpr in (1..3)
+                    assign imageWidth = logo_width | times: dpr
+                    if imageWidth > logo.width
+                        assign imageWidth = logo.width
+                    endif
+                    if forloop.first
+                        assign imageWidths = imageWidth | append: ''
+                    else
+                        assign imageWidths = imageWidths | append: ', ' | append: imageWidth
+                    endif
+                    if imageWidth == logo.width
+                        break
+                    endif
+                endfor
+            -%}
+
+            {{
+                logo
+                | image_url: width: imageWidth
+                | image_tag:
+                    class: 'header__heading-logo',
+                    alt: imageAlt,
+                    widths: imageWidths,
+                    sizes: imageSizes,
+                    preload: true,
+                    style: imageStyle
+            }}
+        {%- else -%}
+            {% style %}
+                .header__heading-link .h6 {
+                    color: currentColor;
+                    margin: 0;
+                    font-weight: normal;
+                    padding: 0 0.5rem;
+                    font-size: 1.5rem;
+                }
+            {% endstyle %}
+            <span class="h6">
+                {%- liquid
+                    assign delimiter = ' '
+                    unless shop.name contains delimiter
+                        assign delimiter = '.'
+                    endunless
+                    assign parts = shop.name | split: delimiter
+                    for part in parts
+                        if forloop.first
+                            echo part | prepend: '<strong>' | append: '</strong>'
+                        else
+                            echo part | prepend: delimiter
+                        endif
+                    endfor
+                -%}
+            </span>
+        {%- endif -%}
+    </a>
+</div>

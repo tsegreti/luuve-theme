@@ -1,0 +1,59 @@
+{% comment %}
+    Render Countdown timer
+
+    Accepts:
+      - day_starts:     {String}
+      - hours_starts:   {String}
+      - is_full_labels: {Bool}
+      - separator:      {string}
+{% endcomment %}
+
+<countdown-timer>
+    <div class="timer" id="timer" data-day-starts="{{ day_starts }}" data-hours-start="{{ hours_starts }}">
+        <div class="reveal-item">
+            <span class="days item">00</span>
+            <span class="label">
+                {%- if is_full_labels %}
+                    {{ 'sections.countdown.days' | t }}
+                {% else -%}
+                    {{ 'sections.countdown.d' | t }}
+                {% endif -%}
+            </span>
+            <span class="separator-{{ separator }}"></span>
+        </div>
+        <div class="reveal-item">
+            <span class="hours item">00</span>
+            <span class="label">
+                {%- if is_full_labels %}
+                    {{ 'sections.countdown.hours' | t }}
+                {% else -%}
+                    {{ 'sections.countdown.h' | t }}
+                {% endif -%}
+            </span>
+            <span class="separator-{{ separator }}"></span>
+        </div>
+        <div class="reveal-item">
+            <span class="minutes item">00</span>
+            <span class="label">
+                {%- if is_full_labels %}
+                    {{ 'sections.countdown.minutes' | t }}
+                {% else -%}
+                    {{ 'sections.countdown.m' | t }}
+                {% endif -%}
+            </span>
+            <span class="separator-{{ separator }}"></span>
+        </div>
+        <div class="reveal-item">
+            <span class="seconds item">00</span>
+            <span class="label">
+                {%- if is_full_labels %}
+                    {{ 'sections.countdown.seconds' | t }}
+                {% else -%}
+                    {{ 'sections.countdown.s' | t }}
+                {% endif -%}
+            </span>
+        </div>
+    </div>
+</countdown-timer>
+
+{% render 'initialize-deferred-scripts', init_countdown_timer: true %}

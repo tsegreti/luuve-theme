@@ -1,0 +1,12 @@
+{%- comment -%}
+    Renders decimals separator for currency
+{%- endcomment -%}
+
+{%- liquid
+    assign currencies_using_comma_decimals = 'ANG,ARS,BRL,BYN,BYR,CLF,CLP,COP,CRC,CZK,DKK,EUR,HRK,HUF,IDR,ISK,MZN,NOK,PLN,RON,RUB,SEK,TRY,UYU,VES,VND' | split: ','
+    if currencies_using_comma_decimals contains cart.currency.iso_code
+        echo ','
+    else
+        echo '.'
+    endif
+-%}

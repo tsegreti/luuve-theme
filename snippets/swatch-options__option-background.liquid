@@ -1,0 +1,82 @@
+{%- comment -%}
+    Render product option as swatch.
+
+    Accepst:
+        -  product              {Object}
+        -  option_name          {String}
+        -  value                {String}
+        -  product_handle       {String}
+{%- endcomment -%}
+
+{%- liquid
+    assign extensions = '.png|.jpg' | split: '|'
+    assign product_handle = product_handle | default: '' | remove: '(' | remove: ')'
+    assign value_sanitized = value | downcase | remove: ' ' | remove: ',' | remove: '.' | remove: '(' | remove: ')'
+    assign image_key = option_name | append: '__' | append: value_sanitized
+
+    # color-swatch images from variant options
+    for variant in product.variants
+        if variant.options contains value
+            if variant.featured_image
+                assign swatch_image = variant.featured_image | image_url: width: 150
+            endif
+        endif
+    endfor
+
+    unless product_handle == blank
+        for extension in extensions
+            assign image_name = product_handle | append: '__' | append: image_key | append: extension
+            assign swatch_image = images[image_name]
+            unless swatch_image == empty
+                break
+            endunless
+        endfor
+    endunless
+
+    # render color swatches from the theme settings Swatch list using HEX code
+    assign useColorSwatcheslist = settings.use_color_swatches_list
+    assign colorSwatcheslist = settings.color_swatches_list
+    assign colorsList = ''
+    assign hex_color = ''
+
+    if useColorSwatcheslist
+        assign colorsList = colorsList | append: colorSwatcheslist | split: ', '
+        for item in colorsList
+            assign colorFirst = item | split: ':' | first | remove: '["' | remove: ' ' | escape | downcase
+            assign colorLast = item | split: ':' | last | remove: '"]' | remove: ','
+
+            if colorFirst == value_sanitized
+                assign hex_color = colorLast
+            endif
+        endfor
+    endif
+
+    # if swatch includes two colors like red/blue
+    assign gradient_color = ''
+    if value_sanitized contains '/'
+        assign color_first = value_sanitized | split: '/' | first
+        assign color_second = value_sanitized | split: '/' | last
+        assign gradient_color = gradient_color | append: 'linear-gradient(to bottom right,'
+        assign gradient_color = gradient_color | append: color_first
+        assign gradient_color = gradient_color | append: ' '
+        assign gradient_color = gradient_color | append: '51%,'
+        assign gradient_color = gradient_color | append: ' '
+        assign gradient_color = gradient_color | append: color_second
+        assign gradient_color = gradient_color | append: ' '
+        assign gradient_color = gradient_color | append: '51%);'
+    endif
+-%}
+{%- if value.swatch.image -%}
+    {% assign swatch_value = value.swatch.image %}
+    var(--swatch-background-{{ value_sanitized }}, url('{{ swatch_value | image_url }}'))
+{%- elsif value.swatch.color -%}
+    {% assign swatch_value = value.swatch.color %}
+    var(--swatch-background-{{ value_sanitized }}, {{ swatch_value }})
+{%- elsif hex_color != empty -%}
+    {{- hex_color -}}
+{%- elsif gradient_color != empty -%}
+    {{- gradient_color -}}
+{%- else -%}
+    var(--swatch-background-{{ value_sanitized }},
+    {% if swatch_image == blank %}{{ value_sanitized }}{% else %} url('{{ swatch_image | image_url }}'){% endif %})
+{%- endif -%}

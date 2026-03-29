@@ -1,0 +1,143 @@
+{% assign sectionId = section.id | prepend: '#shopify-section-' %}
+{% style %}
+    {{ sectionId }} .collections-list {
+        display: flex;
+        align-items: start;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    {{ sectionId }} .item-collection {
+        width: calc(50% - .5rem);
+        display: grid;
+    }{% if section.blocks.size == 1 %}
+    {{ sectionId }} .item-collection{
+        width: 100%;
+    }{% endif %}
+
+    {{ sectionId }} .item-collection .item-link {
+        display: block;
+        border: 1px solid var(--color-foreground-10);
+    }
+
+    {{ sectionId }} .item-collection .item-title {
+        padding: 0 .75rem;
+    }
+
+    {{ sectionId }} .item-collection .products-count {
+        display: block;
+        font-size: 1rem;
+        line-height: 1.5rem;
+        font-weight: normal;
+        font-style: italic;
+        padding: 0 .75rem .75rem;
+    }
+
+    {{ sectionId }} .item-collection .action,
+    {{ sectionId }} .item-description {
+        display: none;
+    }
+
+    {% if section.settings.show_descriptions_on_desktop %}
+    @media (min-width: 768px) {
+        {{ sectionId }} .item-description {
+            display: block;
+            padding: 0 1rem 1rem;
+            font-size: .875rem;
+            line-height: 1.25rem;
+            overflow-wrap: break-word;
+        }
+    }{% endif %}
+    @media (min-width: 990px) {
+        {{ sectionId }} .item-collection {
+            width: calc((100% - {{ section.blocks.size | minus: 1 }}rem) / {{ section.blocks.size }});
+        }
+    }
+{% endstyle %}
+
+<div class="dynamic-page-width{% if section.settings.animation_on_reveal %} reveal-slide-in{% endif %}">
+    <h2 class="title reveal-item">{{ section.settings.title }}</h2>
+
+    <ul
+        class="collections-list{% if section.settings.enable_grayscale_effect %} with--grayscale-effect{% endif %}"
+        role="list"
+    >
+        {%- for block in section.blocks -%}
+            {%- render 'grid-item-collection',
+                collection: block.settings.collection,
+                grid_columns: section.blocks.size,
+                block: block
+            -%}
+        {%- endfor -%}
+    </ul>
+
+    {%- if section.settings.show_view_all and section.blocks.size < collections.size -%}
+        <div class="buttons-wrapper reveal-item">
+            <a href="{{ routes.collections_url }}" class="button">{{ 'sections.collection_list.view_all' | t }}</a>
+        </div>
+    {%- endif -%}
+</div>
+
+<link rel="stylesheet" href="{{ 'section-collections-list.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'section-collections-list.css' | asset_url | stylesheet_tag }}</noscript>
+
+{% schema %}
+{
+  "name": "t:sections.collection-list.name",
+  "tag": "section",
+  "class": "spaced-section collection-list-section",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default": "Collections",
+      "label": "t:sections.collection-list.settings.title.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_view_all",
+      "default": false,
+      "label": "t:sections.collection-list.settings.show_view_all.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grayscale_effect",
+      "label": "t:sections.all.settings.enable_grayscale_effect.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "featured_collection",
+      "name": "t:sections.collection-list.blocks.featured_collection.name",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "t:sections.collection-list.blocks.featured_collection.settings.collection.label"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collection-list.presets.name",
+      "blocks": [
+        {
+          "type": "featured_collection"
+        },
+        {
+          "type": "featured_collection"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

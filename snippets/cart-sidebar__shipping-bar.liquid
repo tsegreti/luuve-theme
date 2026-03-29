@@ -1,0 +1,31 @@
+{%- liquid
+    assign cart_total = cart.total_price | money_without_currency | plus: 0.00
+    assign threshold = settings.minicart_free_shipping_threshold | plus: 0.00
+    assign remaining = threshold | minus: cart_total
+    assign currency_decimals = 1 | money_without_currency | replace: ',', '.' | split: '.' | last | size
+    for i in (1..currency_decimals)
+        assign remaining = remaining | times: 10
+    endfor
+-%}
+{%- if cart_total > 0 and threshold > 0 -%}
+    {% if remaining > 0 %}
+        {% assign amount = remaining | money %}
+        <p>
+            <small class="free-shipping-bar__text">
+                {{ 'sections.cart.free_shipping_threshold.message_html' | t: amount: amount }}
+            </small>
+        </p>
+        <div class="free-shipping-bar__progress">
+            <div
+                class="free-shipping-bar__progress--filled"
+                style="width: min(100%, {{ cart_total | divided_by: threshold | times: 100 }}%);"
+            ></div>
+        </div>
+    {% else %}
+        <p>
+            <small class="free-shipping-bar__text">
+                {{ 'sections.cart.free_shipping_threshold.message_success_html' | t }}
+            </small>
+        </p>
+    {% endif %}
+{%- endif -%}

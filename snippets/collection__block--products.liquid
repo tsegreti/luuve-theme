@@ -1,0 +1,222 @@
+{%- comment -%}
+    Render collection title using block settings
+
+    Accepts:
+     - block:               {Object}
+     - blockOrder:          {Number}
+     - has_side_column:     {Boolean}
+     - is_mozaic_listing:   {Boolean}
+     - mozaic_items_per_row: {String}
+{%- endcomment -%}
+
+{%- liquid
+    assign filters_block = section.blocks | where: 'type', 'filters' | first
+    assign filters_move_to = ''
+    assign filters_position = filters_block.settings.position | split: '-' | first
+    if filters_position == 'main'
+        assign filters_type = 'buttons'
+        assign filters_move_to = filters_block.settings.position | split: '-' | last
+    endif
+
+    assign preloadItemsImage = 0
+    if block.settings.is_preload
+        assign preloadItemsImage = 2
+    endif
+
+    capture active_facets_count
+        render 'facets__get_active_count', filters: collection.filters
+    endcapture
+    assign active_facets_count = active_facets_count | strip | plus: 0
+-%}
+
+<div
+    id="CollectionProducts"
+    class="collection__block collection__block--products"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {{ 'component-price.css' | asset_url | stylesheet_tag }}
+
+    {%- paginate collection.products by block.settings.per_page -%}
+        {%- if collection.products.size == 0 -%}
+            <div class="collection collection--empty" id="main-collection-products" data-id="{{ section.id }}">
+                <div class="form__message">
+                    {% render 'icons-outline', name: 'exclamation-circle' %}
+                    <p>
+                        {% if collection.filters.size > 0 -%}
+                            {{
+                                'sections.collection_template.use_fewer_filters_html'
+                                | t: link: collection.url, class: 'underlined-link link'
+                            }}
+                        {%- else -%}
+                            {{ 'sections.collection_template.empty' | t }}
+                        {%- endif %}
+                    </p>
+                </div>
+            </div>
+        {%- else -%}
+            <div class="collection">
+                {% unless filters_move_to == 'main' %}
+                    <div
+                        id="CollectionFiltersDesktopActive"
+                        class="active-facets active-facets-desktop"
+                        data-updatable="true"
+                    >
+                        {%- if active_facets_count > 0 %}
+                            {% render 'facets__active', filters: collection.filters %}
+                            {% render 'facets__button--clear-all', collection: collection %}
+                        {% endif -%}
+                    </div>
+                {% endunless %}
+                <div class="collection-toolbar collection-toolbar-top">
+                    {% if filters_move_to == 'products_toolbar' %}
+                        {% render 'facets__desktop',
+                            filters: collection.filters,
+                            desktop_facets_type: filters_type,
+                            desktop_facets_open: false,
+                            is_facets_slider: true,
+                            is_render_theme_swatches: filters_block.settings.show_swatch_colors,
+                            form_after_open_html: form_after_open_html
+                        %}
+
+                        {% render 'facets__mobile',
+                            filters: collection.filters,
+                            is_render_theme_swatches: filters_block.settings.show_swatch_colors,
+                            form_after_open_html: form_after_open_html
+                        %}
+                    {% endif %}
+
+                    {% unless filters_move_to == 'products_toolbar' %}
+                        <div
+                            id="CollectionFiltersDesktopActiveLabel"
+                            class="filter_by--wrapper"
+                            data-updatable="true"
+                        >
+                            {%- unless filters == empty -%}
+                                <p class="facets__heading desktop-only">
+                                    {{ 'sections.collection_template.filter_by_label' | t }}
+                                </p>
+                            {%- endunless -%}
+                            {% unless filters_move_to == 'main' %}
+                                {%- if active_facets_count > 0 %}
+                                    <div class="active-facets active-facets-label scrollbar scrollbar-thin">
+                                        {%- assign unique_labels = '' -%}
+                                        {%- for filter in collection.filters -%}
+                                            {%- for value in filter.active_values -%}
+                                                {% assign label = filter.label | join: '|' | escape %}
+                                                {% unless unique_labels contains label %}
+                                                    <span class="label">{{- label -}}</span>
+                                                    {%- assign unique_labels = unique_labels
+                                                        | append: label
+                                                        | append: ','
+                                                    -%}
+                                                {% endunless %}
+                                            {%- endfor -%}
+                                        {%- endfor -%}
+                                    </div>
+                                {% endif %}
+                            {% endunless %}
+                            {% if filters_move_to == 'main' %}
+                                <div
+                                    id="CollectionFiltersDesktopActive"
+                                    class="active-facets active-facets-desktop active-facets-desktop--{{ filters_move_to }} scrollbar scrollbar-thin "
+                                    data-updatable="true"
+                                >
+                                    {%- if active_facets_count > 0 %}
+                                        {% render 'facets__active', filters: collection.filters %}
+                                        {% render 'facets__button--clear-all', collection: collection %}
+                                    {% endif -%}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endunless %}
+
+                    {%- if block.settings.show_sorting -%}
+                        {% if filters_block != null %}
+                            {% render 'collection-sorting', collection: collection, form: 'CollectionFiltersForm' %}
+                        {% else %}
+                            <form id="CollectionSortForm" class="sorting__form">
+                                {% render 'collection-sorting', collection: collection %}
+                            </form>
+                        {% endif %}
+                    {%- endif -%}
+
+                    <p
+                        id="CollectionProductsCount"
+                        class="collection-product-count"
+                        data-updatable="true"
+                    >
+                        {%- if collection.products_count == collection.all_products_count -%}
+                            {{
+                                'sections.collection_template.product_count_simple'
+                                | t: count: collection.products_count
+                            }}
+                        {%- else -%}
+                            {{
+                                'sections.collection_template.product_count'
+                                | t: product_count: collection.products_count, count: collection.all_products_count
+                            }}
+                        {%- endif -%}
+                    </p>
+
+                    {%- if block.settings.show_mode -%}
+                        {% render 'collection__view-mode', collection: collection, current_mode: block.settings.mode %}
+                    {%- endif -%}
+                </div>
+
+                <div
+                    id="main-collection-products__wrapper"
+                    class="collection-products__wrapper{% if block.settings.animation_on_reveal %} reveal-slide-in{% endif %}"
+                    data-updatable="true"
+                >
+                    {% render 'grid-items',
+                        ul_id: 'main-collection-products',
+                        ul_class: 'products',
+                        has_side_column: has_side_column,
+                        is_mozaic: is_mozaic_listing,
+                        mozaic_items_per_row: mozaic_items_per_row,
+                        use_media_slider: block.settings.use_grid_media_slider,
+                        items: collection.products,
+                        mode: block.settings.mode,
+                        columns: block.settings.columns,
+                        badge_size: block.settings.badge_size,
+                        image_ratio: block.settings.image_ratio,
+                        product_secondary_image: settings.product_card_secondary_image,
+                        product_to_cart_button: block.settings.show_to_cart_button,
+                        product_show_vendor: settings.product_card_vendor,
+                        product_description: block.settings.show_description,
+                        preload_items_image: preloadItemsImage,
+                        loading_eager_image: 2
+                    %}
+                </div>
+
+                {%- if block.settings.pagination_type == 'list' %}
+                    {%- capture pagination_html %}
+                        {% render 'pagination'
+                          paginate: paginate
+                          tag_name: 'fetcher-component'
+                        %}
+                    {%- endcapture -%}
+
+                    {{
+                        pagination_html
+                        | replace_first: '<fetcher-component',
+                            '<fetcher-component id="main-collection-pagination" data-loader-target="main-collection-products__wrapper" data-section="#section#" data-updatable="true"'
+                        | replace: '#section#', section.id
+                    }}
+
+                    {%- render 'initialize-deferred-scripts', init_fetcher: true -%}
+
+                {% else -%}
+                    {%- if paginate.pages > 1 -%}
+                        {%- render 'pagination-load-more',
+                            type: block.settings.pagination_type,
+                            paginate: paginate,
+                            class: block.settings.pagination_type
+                        -%}
+                    {% endif -%}
+                {% endif -%}
+            </div>
+        {%- endif -%}
+    {%- endpaginate -%}
+</div>

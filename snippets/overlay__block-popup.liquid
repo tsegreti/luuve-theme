@@ -1,0 +1,84 @@
+{% capture html %}
+<div class="popup-banner__content rte link-underlined" {{ block.shopify_attributes }}>
+    {% if block.settings.image_position == 'on_left' %}
+        {%- liquid
+            assign image_width = block.settings.image.width | default: '320'
+            assign padding_bottom = 100
+            if block.settings.image != blank
+                assign padding_bottom = 100 | divided_by: block.settings.image.aspect_ratio
+            endif
+        -%}
+        {%- if block.settings.show_subscribe_image -%}
+            {%- if block.settings.image -%}
+                <a href="{{ block.settings.image_url | default: '#/' }}" class="media" style="--media--padding-bottom: min({{ padding_bottom }}%, 55vh); align-self: normal" title="{{ block.settings.image.alt }}">
+                    {% render 'render-image'
+                        image: block.settings.image,
+                        widths: '360,640,940,1176,#iw#',
+                        sizes: 'max(100vw, 768px)'
+                    %}
+                </a>            
+            {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'placeholder' }}
+            {%- endif -%}            
+        {%- endif -%}
+    {% endif %}
+    <div class="popup-banner__text prose color-{{ block.settings.subscribe_color_scheme }}{% unless block.settings.show_subscribe_image %} no-image{% endunless %}">
+        {{- block.settings.text -}}
+        {%- if block.settings.subscribe_newsletter -%}
+            {%- render 'form-subscribe' -%}
+        {%- endif -%}
+        {{- block.settings.text_additional -}}
+    </div>
+</div>
+{% endcapture %}
+
+{%- liquid
+    assign popupId = ''
+    for key in block.settings
+        assign popupId = popupId | append: key | append: ': ' | append: block.settings[key]
+        unless forloop.last
+            assign popupId = popupId | append: '|'
+        else
+            assign popupId = popupId | md5
+        endunless
+    endfor
+
+    assign isImageOnly = 'false'
+    if html contains '<div class="popup-banner__text prose"></div>'
+        assign isImageOnly = 'true'
+        assign html = html | replace: '<div class="popup-banner__text prose"></div>', ''
+    endif
+
+    assign showupWhen = block.settings.showup_when
+
+    assign isImageUnderneath = 'false'
+    if block.settings.image != null and block.settings.image_position == 'underneath'
+        assign isImageUnderneath = 'true'
+    endif
+
+    capture popup
+        render 'modal-dialog', id: popupId, aria_label: 'Popup banner', content: html, no_padding: true, color_scheme: section.settings.color_scheme
+    endcapture
+-%}
+
+{{
+    popup
+    | replace_first: '<modal-dialog',
+        '<popup-banner data-id="__dataId__" data-showup="__dataShowup__" data-frequency="__dataFrequency__" data-image-only="__dataImageOnly" data-image-underneath="__dataImageUnderneath"'
+    | replace_first: '__dataId__', popupId
+    | replace_first: '__dataShowup__', showupWhen
+    | replace_first: '__dataFrequency__', block.settings.showup_frequency
+    | replace_first: '__dataImageOnly', isImageOnly
+    | replace_first: '__dataImageUnderneath', isImageUnderneath
+    | replace_first: 'class="popup-modal__content', 'class="popup-modal__content scrollbar'
+    | replace_first: 'data-deferred-name="modalDialog"', ''
+    | replace_first: '</modal-dialog', '</popup-banner'
+}}
+
+{% if isImageUnderneath == 'true' %}
+    {% style %}
+        #PopupModal-{{ popupId }} {
+            --popup-image: url('{{ block.settings.image | image_url }}');
+        }
+    {% endstyle %}
+{% endif %}

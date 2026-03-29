@@ -1,0 +1,38 @@
+@media all and (min-width: 990px), print {
+    .menu-drawer {
+        left: 0;
+        --tw-translate-x: -100%;
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+    }
+
+        .menu-drawer .childlist-menu--disclosure {
+            transition-property: transform, visibility;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 300ms;
+            width: var(--width__menu-drawer);
+            --tw-translate-x: -100%;
+            transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
+            .menu-drawer [open].menu-opening .childlist-menu--disclosure {
+                box-shadow: 0 0 1rem var(--color-foreground-20);
+                background: var(--header--dropdown-background);
+                border-left: 0.1rem solid var(--color-foreground-4);
+                z-index: 11;
+                position: fixed;
+                top: 0px;
+                left: 100%;
+                height: 100%;
+                --tw-translate-x: 0px;
+                transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
+                padding-top: 1rem;
+                padding-left: 0px;
+            }
+                .menu-drawer [open].menu-opening > summary .icon-caret {
+                    transform: rotate(-90deg);
+                }
+}
+
+@media all and (min-width: 1200px), print {
+    .menu-drawer {
+        --width__menu-drawer: min(90vw, 24rem);
+    }
+}

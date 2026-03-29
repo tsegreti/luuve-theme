@@ -1,0 +1,26 @@
+{%- comment -%}
+    Render tabs when layout is expanded.
+
+    Accepts:
+    - block: {Object}
+{%- endcomment -%}
+
+{%- liquid
+    capture tabContent
+        render 'product-tabs__tab-content', block: block
+    endcapture
+    assign tabContent = tabContent | strip
+-%}
+{%- if tabContent != blank -%}
+    {% liquid
+        capture heading
+            render 'product-tabs__tab-heading', block: block
+        endcapture
+    %}
+    <h2 class="tab-title reveal-item">
+        <span>{{ heading }}</span>
+    </h2>
+    <div class="tab-content reveal-item" {{ block.shopify_attributes }}>
+        {{ tabContent }}
+    </div>
+{%- endif -%}

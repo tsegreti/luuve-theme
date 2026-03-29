@@ -1,0 +1,20 @@
+pagination-load-more {
+    display: flex;
+    justify-content: center;
+    margin: 2.5rem auto;
+}
+    
+    pagination-load-more .loading-overlay {
+        position: fixed;
+    }
+    
+    pagination-load-more .loading-overlay__spinner {
+        position: relative;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--color-foreground);
+    }
+    
+    pagination-load-more[data-page-next="false"] {
+        visibility: hidden;
+    }

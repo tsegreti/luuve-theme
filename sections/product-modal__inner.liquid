@@ -1,0 +1,253 @@
+{% style %}
+    .product-media-modal__content {
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 2rem - max(3rem, calc(var(--modal__thumb--width) / 2)) );
+      height: calc(100dvh - 2rem - max(3rem, calc(var(--modal__thumb--width) / 2)) );
+      overflow: auto;
+      width: 100%;
+    }
+
+    .product-media-modal__content > *:not(.active),
+    .product__media-list .deferred-media {
+      display: none;
+    }
+
+    .product-media-modal__thumbs {
+      display: flex;
+      gap: .75rem;
+      margin: 0 .75rem;
+      overflow-x: auto;
+      padding: .75rem .25rem .5rem;
+    }
+
+    .product-media-modal__thumbs > a {
+      border-radius: 4px;
+      flex-shrink: 0;
+      width: max(3rem, calc(var(--modal__thumb--width) / 2));
+    }
+
+    .product-media-modal__content > * {
+      height: auto;
+      margin: auto;
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .product-media-modal__content .media {
+      background: none;
+    }
+
+    .product-media-modal__model,
+    .product-media-modal__content .deferred-media {
+      width: 100%;
+    }
+
+    .product-media-modal .image--wrapper {
+      position: relative;
+    }
+
+    .product-media-modal .image--wrapper img {
+      border-radius: 4px;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .product-media-modal .active .image--wrapper::after {
+      box-shadow: 0 0 0 2px var(--color-base-accent-1);
+      content: '';
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+
+    .product-media-modal .thumb-type {
+      border-radius: 0 4px 0 4px;
+      bottom: 0;
+      left: 0;
+    }
+
+    .product-media-modal .thumb-type svg {
+      max-height: 1rem;
+      max-width: 1rem;
+    }
+
+    @media (min-width: 767px) {
+      .product-media-modal__thumbs > a {
+        width: var(--modal__thumb--width);
+      }
+    }
+
+    @media (min-width: 990px) {
+      .product-media-modal [role="dialog"] {
+        display: flex;
+        flex-direction: row-reverse;
+      }
+
+      .product-media-modal__content {
+        height: 100vh;
+      }
+
+      .product-media-modal__thumbs {
+        display: block;
+        height: calc(100vh - 2rem);
+        justify-items: center;
+        margin: 1rem;
+        padding: .25rem 0;
+        text-align: center;
+        width: calc(var(--modal__thumb--width) + 2.5rem);
+      }
+
+      .product-media-modal__thumbs > a {
+        display: inline-block;
+        margin: .25rem 0;
+      }
+
+      .product-media-modal__thumbs > a:first-child {
+        margin-top: 0;
+      }
+
+      .product-media-modal__thumbs > a:last-child {
+        margin-bottom: 0;
+      }
+
+      .product-media-modal .thumb-type svg {
+        max-height: none;
+        max-width: none;
+      }
+    }
+{% endstyle %}
+
+<div role="dialog" aria-label="{{ 'products.modal.label' | t }}" aria-modal="true" tabindex="-1">
+    <button
+        id="ModalClose-{{ modal_id }}"
+        type="button"
+        class="product-media-modal__toggle modal__close-button"
+        aria-label="{{ 'accessibility.close' | t }}"
+    >
+        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close">
+            <use href="#icon-close" />
+        </svg>
+    </button>
+
+    <div
+        class="product-media-modal__content"
+        role="document"
+        aria-label="{{ 'products.modal.label' | t }}"
+        tabindex="0"
+    >
+        {%- for media in product.media -%}
+            {%- if media.media_type == 'image' -%}
+                {% liquid
+                    assign mediaWidth = 1440
+                    if media.preview_image.width < mediaWidth
+                        assign mediaWidth = media.preview_image.width
+                    endif
+                %}
+                {{
+                    media.preview_image
+                    | image_url: width: mediaWidth
+                    | image_tag:
+                        data-media-id: media.id,
+                        loading: 'lazy',
+                        onload: 'this.closest("product-modal")?.hideLoading?.()'
+                }}
+            {%- else -%}
+                {% capture mediaHtml %}
+          <button id="Deferred-Poster-Modal-{{ media.id }}"
+            class="deferred-media__poster button--small button--tertiary"
+            type="button"
+          >
+            {% liquid
+              if media.media_type == 'model'
+                assign button_text = 'products.product.media.play_model' | t
+              else
+                assign button_text = 'products.product.media.play_video' | t
+              endif
+            -%}
+            <span class="deferred-media__poster-button motion-reduce" title="{{ button_text }}">
+              <span class="visually-hidden">{{ button_text }}</span>
+              {%- if media.media_type == 'model' -%}
+                {% render 'product__info-block--gallery--symbols', type: 'model' %}
+              {%- else -%}
+                {% render 'product__info-block--gallery--symbols', type: 'video' %}
+              {%- endif -%}
+            </span>
+            {% liquid
+              assign mediaWidth = 1440
+              if media.preview_image.width < mediaWidth
+                assign mediaWidth = media.preview_image.width
+              endif
+            %}
+            {{ media.preview_image |
+                image_url:
+                  width: mediaWidth |
+                image_tag:
+                  loading: 'lazy',
+                  onload: 'this.closest("product-modal")?.hideLoading?.()'
+            }}
+          </button>
+          {%- case media.media_type -%}
+            {%- when 'external_video' or 'video' -%}
+              {% render 'media__deferred-template'
+                media: media
+              %}
+            {%- when 'model' -%}
+              <template>
+                {{ media
+                  | media_tag:
+                    image_size: "2048x",
+                    toggleable: true
+                }}
+              </template>
+          {%- endcase -%}
+        {% endcapture %}
+
+                {%- if media.media_type == 'model' -%}
+                    <div class="product-media-modal__model" data-media-id="{{ media.id }}">
+                        <product-model class="deferred-media media" style="padding-top: min(calc(100vh - 12rem), 100%)">
+                            {{ mediaHtml }}
+                        </product-model>
+                        <button
+                            class="button product__xr-button button--tertiary"
+                            type="button"
+                            aria-label="{{ 'products.product.xr_button_label' | t }}"
+                            data-shopify-xr
+                            data-shopify-model3d-id="{{ media.id }}"
+                            data-shopify-title="title"
+                            data-shopify-xr-hidden
+                        >
+                            {% render 'product__info-block--gallery--symbols', type: 'model' %}
+                            {{ 'products.product.xr_button' | t }}
+                        </button>
+                    </div>
+                {%- else -%}
+                    <deferred-media
+                        class="deferred-media media"
+                        style="padding-top: min(calc(100vh - 12rem), {{ 1 | divided_by: media.aspect_ratio | times: 100 }}%)"
+                        data-media-id="{{ media.id }}"
+                    >
+                        {{ mediaHtml }}
+                    </deferred-media>
+                {%- endif -%}
+            {%- endif -%}
+        {%- endfor -%}
+    </div>
+    <div class="product-media-modal__thumbs scrollbar scrollbar-thin">
+        {% for media in product.media %}
+            <a
+                href="#"
+                class="transition-bezier"
+                onclick="this.closest('product-modal').showMedia(this.dataset.thumbnailFor);  return false;"
+                title="{{ media.alt }}"
+                data-thumbnail-for="{{ media.id }}"
+            ></a>
+        {% endfor %}
+    </div>
+</div>

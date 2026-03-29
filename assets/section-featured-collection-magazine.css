@@ -1,0 +1,120 @@
+.magazine .collection-inner {
+    --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+@media (min-width: 990px) {
+
+    .magazine .collection-inner {
+        display: flex;
+    }
+}
+
+.magazine .title-wrapper {
+    background: var(--magazine--title--background);
+    display: flex;
+    flex-direction: column;
+}
+
+.magazine .title-wrapper .heading {
+    display: flex;
+    justify-content: space-between;
+    margin: 0;
+    padding: 1rem;
+}
+
+.magazine .title-image {
+    display: flex;
+    height: 100%;
+    position: relative;
+}
+
+.magazine .title-image > .media {
+    display: contents;
+}
+
+@media (min-width: 990px) {
+    .magazine .title-wrapper {
+        width: 25%;
+    }
+
+    .magazine .title-wrapper .heading {
+        display: block;
+    }
+}
+
+.magazine .title-wrapper h2 {
+    color: var(--magazine--title--color);
+    margin: 0;
+}
+
+.magazine .title-wrapper h2::after {
+    display: none;
+}
+
+.magazine .button.view-all {
+    display: inline-flex;
+    max-height: 2.5rem;
+    min-width: 0px;
+    flex-shrink: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1rem;
+    line-height: 1.5rem;
+    font-weight: 500;
+    --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
+    box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+@media (min-width: 990px) {
+
+    .magazine .button.view-all {
+        margin-top: 1.5rem;
+    }
+}
+
+.magazine .button.view-all span {
+    display: none;
+}
+
+@media (min-width: 768px) {
+
+    .magazine .button.view-all span {
+        display: block;
+    }
+}
+
+@media (min-width: 990px) {
+
+    .magazine slider-component {
+        width: 75%;
+    }
+}
+
+.magazine .products {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    overflow: visible;
+}
+
+.magazine .rows-divider {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0.5rem;
+    margin-bottom: 0.25rem;
+    display: none;
+    height: 1px;
+    width: 91.666667%;
+    background-color: var(--color-foreground-10);
+}
+
+@media (min-width: 990px) {
+
+    .magazine .rows-divider {
+        display: block;
+    }
+}

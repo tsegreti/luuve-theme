@@ -1,0 +1,49 @@
+.section-image-with-text p a {
+    color: currentColor;
+}
+
+.image-with-text :is(.image-text) {
+    position: relative;
+}
+
+[data-current-preset='enduro'] .section-image-with-text .description {
+    font-family: var(--font-body-family-secondary);
+    font-weight: var(--font-body-family-secondary-weight);
+}
+
+@media screen and (min-width: 600px) {
+    .section-image-with-text .actions-block a {        
+        gap: .75rem;
+    }
+}
+
+@media (min-width: 990px) {
+    .section-image-with-text .with-underlayer {
+        padding: 2rem;
+        position: relative;
+    }
+
+    .section-image-with-text .with-underlayer::before {
+      background: var(--color-foreground-4);
+      content: '';
+      left: 0;
+      top: 0;
+      width: 33.3%;
+      bottom: 0;
+      position: absolute;
+      z-index: -1;
+    }
+
+    .section-image-with-text .with-underlayer.image-small::before {
+        width: 20%;
+    }
+
+    .section-image-with-text .with-underlayer.image-large::before {
+        width: 45%;
+    }
+
+    .section-image-with-text .with-underlayer.layout-text_first::before {
+        left: auto;
+        right: 0;
+    }
+}

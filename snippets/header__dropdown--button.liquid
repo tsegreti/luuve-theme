@@ -1,0 +1,32 @@
+{% comment %}
+    Render Link "View All" as a block in the header dropdown content.
+
+    Accepts:
+      - block:              {Object}
+      - blockOrder:         {Numb}
+      - parent_item_index:  {Numb}
+{% endcomment %}
+{%- liquid
+    assign selectedParentIndex = block.settings.item_menu_index
+    assign url = block.settings.page_url
+    assign media_condition = '(max-width: 989px)'
+-%}
+{%- unless block.settings.show_block_on_mobile %}
+    <style media="{{ media_condition }}">
+        .dropdown-inner__button[hidden-on-mobile] {
+            display: none;
+        }
+    </style>
+{% endunless -%}
+
+{%- if parent_item_index == selectedParentIndex %}
+    <div
+        class="dropdown-inner__button link-wrapper{% if settings.animation_on_reveal_assets %} reveal-slide-in{% endif %}"
+        data-block-index="{{ blockOrder }}"
+        {% unless block.settings.show_block_on_mobile %}
+            hidden-on-mobile
+        {% endunless %}
+    >
+        {% render 'header__dropdown-link-view-all', link_view_all: url %}
+    </div>
+{% endif -%}

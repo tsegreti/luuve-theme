@@ -1,0 +1,28 @@
+{%- comment -%}
+    Render template for DEFERRED-MEDIA tag.
+
+    Accepts:
+     -  media {Object}
+{%- endcomment -%}
+
+<template>
+    {%- case media.media_type -%}
+        {%- when 'external_video' -%}
+            {%- assign video_class = 'js-' | append: media.host -%}
+            {%- if media.host == 'youtube' -%}
+                {{
+                    media
+                    | external_video_url: autoplay: true, loop: false, playlist: media.external_id
+                    | external_video_tag: class: video_class, loading: 'lazy'
+                }}
+            {%- else -%}
+                {{
+                    media
+                    | external_video_url: autoplay: true, loop: false
+                    | external_video_tag: class: video_class, loading: 'lazy'
+                }}
+            {%- endif -%}
+        {%- when 'video' -%}
+            {{ media | media_tag: image_size: '2048x', autoplay: true, loop: false, controls: true, preload: 'none' }}
+    {%- endcase -%}
+</template>

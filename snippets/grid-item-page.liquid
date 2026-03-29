@@ -1,0 +1,26 @@
+{%- comment -%}
+    Renders an item for pages grid (or search results grid).
+
+    Accepts:
+    - page             {Object} Page Liquid object
+    - show_description {Boolean}
+{%- endcomment -%}
+
+<li
+    class="grid-item item-page"
+    data-page-id="{{ page.id }} reveal-item"
+    style="--image-width: {{ image_sizes_config | default: 240 | split: '|' | first }}px"
+>
+    <a href="{{ page.url }}" class="item-link">
+        <div class="item-image">
+            <p class="item-title">{{ page.title | escape }}</p>
+        </div>
+        <div class="item-details-wrapper">
+            {%- if show_description -%}
+                <div class="item-description rte">
+                    {{- page.content | strip_html | truncatewords: 36 -}}
+                </div>
+            {%- endif -%}
+        </div>
+    </a>
+</li>

@@ -1,0 +1,10 @@
+{%- comment -%}
+    Render filter reset button.
+
+    Accepts:
+     - filter: {Object}
+{%- endcomment -%}
+
+<a href="{{ filter.url_to_remove }}" class="facets__reset js-facet-remove button button--small button--secondary">
+    {{- 'sections.collection_template.reset' | t -}}
+</a>

@@ -1,0 +1,102 @@
+pickup-availability-drawer {
+  background: var(--color-background);
+  box-shadow: 0 0 1rem var(--color-foreground-50);
+  display: block !important;
+  left: 1.5rem;
+  margin: 1rem 0 0;
+  max-width: calc(100% - 2.5rem);
+  min-width: -moz-min-content;
+  min-width: min-content;
+  padding: 1.5rem 1.5rem 1rem;
+  position: absolute;
+  transform: scale(1);
+  transform-origin: 2rem -1.5rem;
+  visibility: visible;
+  z-index: 20;
+}
+
+pickup-availability-drawer:not([open]) {
+  visibility: hidden;
+  transform: scale(0);
+}
+
+pickup-availability-drawer[data-dropdown-dir=toTop] {
+  margin: 0 0 1rem;
+  transform: scale(1) translateY(calc(-100% - 3rem));
+}
+
+pickup-availability-drawer::after {
+  background: var(--color-background);
+  content: '';
+  display: block;
+  height: 1rem;
+  position: absolute;
+  top: -.5rem;
+  left: 1.5rem;
+  width: 1rem;
+  --tw-rotate: 45deg;
+  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}
+
+pickup-availability-drawer[data-dropdown-dir=toTop]::after {
+  top: auto;
+  bottom: -.5rem;
+}
+
+.pickup-availability-drawer--inner {
+  max-height: ;
+}
+
+.pickup-availability-header {
+  align-items: flex-start;
+  display: flex;
+  justify-content: space-between;
+}
+
+.pickup-availability-drawer-button {
+  flex-shrink: 0;
+  margin: -1rem -1rem 0 0;
+}
+
+.pickup-availability-drawer-button svg {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.pickup-availability-variant {
+  margin: 0 0 1rem;
+  font-style: italic;
+}
+
+.pickup-availability-variant > * + strong {
+  margin-left: 1rem;
+}
+
+.pickup-availability-list {
+  max-height: 55vh;
+  overflow: auto;
+}
+
+.pickup-availability-list__item {
+  border-top: 2px solid var(--color-foreground-4);
+  padding: 1rem 0;
+}
+
+.pickup-availability-location {
+  font-weight: 600;
+  margin: 0 0 .5rem;
+}
+
+.pickup-availability-address p {
+  margin: 0;
+  padding: 0 0 0 2.5rem;
+}
+
+@media all and (min-width: 768px) {
+  pickup-availability-drawer {
+    padding: 1.5rem 2rem 1rem;
+  }
+
+  .pickup-availability-drawer-button {
+    margin: -.75rem -1.25rem 0 0;
+  }
+}

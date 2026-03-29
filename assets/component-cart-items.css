@@ -1,0 +1,216 @@
+.cart-items {
+  font-size: calc(1rem - 1px);
+  line-height: 1.375rem;
+  border: 1px solid var(--color-foreground-8);
+  width: 100%}@media (min-width: 990px) {.cart-items {
+    display: table}}
+
+.cart-items thead {
+  background: #F6F5F4;
+  display: none}
+
+@media (min-width: 768px) {.cart-items thead {
+    display: table-header-group}}
+
+.cart-items thead th {
+  color: var(--color-foreground);
+  text-transform: uppercase;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 600}
+
+@media (min-width: 768px) {.cart-items tbody {
+    display: table-row-group}}
+
+.cart-item {
+  border-bottom: 1px solid var(--color-foreground-8);
+  position: relative;
+  display: table-row}
+
+.cart-item:last-child {
+  margin-bottom: 0px}
+
+@media (min-width: 990px) {.cart-item {
+    margin: 0px}}
+
+.cart-item:last-child {
+  border-bottom: 0;
+  margin-bottom: 0px}
+
+.cart-item__details {
+  color: var(--color-foreground-70);
+  grid-column: span 3;
+}
+
+.cart-item__details dl {
+  font-style: italic}
+
+.cart-item__details ul {
+  padding-top: 0.25rem}
+
+.cart-item__details .cart-item__price {
+  margin: .5rem 0 0;
+}
+
+.cart-item__details .cart-item__discounted-prices {
+  display: flex;
+  gap: .5rem;
+}
+
+.cart-item__vendor {
+  color: var(--color-foreground-50);
+  font-size: calc(1rem - 1px);
+  font-weight: 600;
+}
+
+.cart-item__name {
+  color: var(--color-foreground);
+  display: block;
+  font-weight: 600;
+  margin: 0 1.5rem 0 0;
+  word-break: break-word;
+}
+
+.cart-item__price-wrapper {
+  align-items: center;
+  display: grid;
+  font-size: calc(1rem + 1px);
+  font-weight: 600;
+  min-height: 2.25rem;
+  margin: 0;
+}
+
+.cart-item__discounted-prices dd {
+  margin: 0px}
+
+.cart-item__old-price {
+  opacity: 0.7}
+
+.cart-item cart-remove-button {
+  position: relative;
+  padding-left: 1rem;
+  padding-right: 1rem}
+
+.cart-item cart-remove-button a {
+  position: absolute;
+  top: 50%;
+  right: 0px;
+  display: flex;
+  height: 1rem;
+  width: 1rem;
+  transform: translateY(-50%);
+  background-color: transparent}
+
+.cart-item cart-remove-button svg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.cart-item .loading-overlay {
+  align-items: center}
+
+.cart-item__error {
+  display: flex}
+
+.cart-item__error-text {
+  order: 1;
+}
+
+.cart-item__error-text + svg {
+  width: 1.2rem;
+  margin-right: 0.7rem;
+}
+
+.cart-item__error-text:empty + svg {
+  display: none;
+}
+
+.product-option * {
+  margin: 0px;
+  display: inline}
+
+.cart-item > td + td {
+  vertical-align: middle}
+
+@media (min-width: 990px) {.cart-item > td + td {
+    padding-left: 1rem}}
+
+@media screen and (max-width: 480px) {
+  .cart-items .cart-item__media {
+    grid-area: media;
+    padding-bottom: 0;
+  }
+
+  .cart-items .cart-item__details {
+    grid-area: details;
+    padding-bottom: 0;
+  }
+
+  .cart-items .cart-item__quantity {
+    grid-area: quantity;
+  }
+
+  .cart-items .cart-item__totals {
+    grid-area: totals;
+  }
+
+  td.cart-item__media {
+    width: 125px;
+  }
+
+  tr.cart-item {
+    display: grid;
+    grid-template-areas:"media details"
+                        "media quantity"
+                        "media totals";    
+    justify-content: flex-start;
+  }
+  .cart-items td {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem}
+}
+
+@media (min-width: 767px) and (max-width: 989px) {
+  .cart-items .cart-item__media {
+    width: 20%;
+    padding-right: 1rem;
+  }
+
+  .cart-items .cart-item__details {
+    width: 45%;
+  }
+}
+
+.cart-item__quantity--inner {
+  display: flex;
+}
+
+@media screen and (min-width: 990px) {
+  .cart-item cart-remove-button a {
+    opacity: .2;
+    transition: opacity cubic-bezier(0.4, 0, 0.2, 1) 200ms;
+  }
+
+  .cart-item__media {
+    width: 180px;
+  }
+
+  .cart-item__name {
+    margin: 0;
+    font-size: 1rem;
+  }
+}
+
+.cart-item cart-remove-button a:focus {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .cart-item:hover cart-remove-button a {
+    opacity: 1;
+  }
+}

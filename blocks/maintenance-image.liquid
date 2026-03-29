@@ -1,0 +1,52 @@
+{% liquid
+    assign image_width = block.settings.image.width | default: '420'
+    assign image_sizes = image_width | append: 'px'
+%}
+
+<div
+    id="media-{{ block.id }}"
+    class="media {% if block.settings.is_background %}media-as-background{% endif %}"
+    style="width: {{ block.settings.image.width | default: 420 }}px;"
+>
+    <div
+        class="media"
+        style="padding-bottom: {% render 'helper__media-padding-bottom' image: block.settings.image image_ratio: 'native' %};"
+        {{ block.shopify_attributes }}
+    >
+        {% if block.settings.image == null %}
+            {{ 'image' | placeholder_svg_tag: 'placeholder' }}
+        {% else %}
+            {% render 'render-image',
+                image: block.settings.image,
+                width: image_width,
+                widths: image_width,
+                sizes: image_sizes,
+                css_class: 'maintenance_image'
+            %}
+        {% endif %}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.newsletter.blocks.maintenance_image.name",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.newsletter.blocks.maintenance_image.settings.title"
+    },
+    {
+      "type": "checkbox",
+      "id": "is_background",
+      "label": "t:sections.newsletter.blocks.maintenance_image.settings.is_background.label"
+    }
+  ],
+  "presets": [
+        {
+            "name": "t:sections.newsletter.blocks.maintenance_image.name",
+            "category": "t:sections.all.categories.maintenance"
+        }
+  ]
+}
+{% endschema %}

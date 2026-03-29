@@ -1,0 +1,50 @@
+{{ 'component-faqs.css' | asset_url | stylesheet_tag }}
+
+<faqs-accordion>
+    {%- assign faqs = product.metafields.custom.faq.value -%}
+    {%- assign block = section.blocks | where: 'type', 'faq' | first -%}
+
+    {%- if faqs != null and faqs != blank -%}
+        {%- for faq in faqs -%}
+            <details class="reveal-item">
+                <summary class="heading faq-title">
+                    <div>{{ faq.first }}</div>
+                    <span class="faq-icon faq-icon-plus">{%- render 'icons-solid', name: 'plus' -%}</span>
+                    <span class="faq-icon faq-icon-minus">{%- render 'icons-solid', name: 'minus' -%}</span>
+                </summary>
+                <div class="faq-content">
+                    <div class="faq-content--inner">
+                        {{ faq.last }}
+                    </div>
+                </div>
+            </details>
+        {%- endfor -%}
+    {%- else -%}
+        {% assign defaultFaqs = block.settings.default_faqs | strip_html | split: ':' %}
+        <details class="reveal-item">
+            <summary class="heading faq-title">
+                <div>{{ defaultFaqs.first }}</div>
+                <span class="faq-icon faq-icon-plus">{%- render 'icons-solid', name: 'plus' -%}</span>
+                <span class="faq-icon faq-icon-minus">{%- render 'icons-solid', name: 'minus' -%}</span>
+            </summary>
+            <div class="faq-content">
+                <div class="faq-content--inner">
+                    {{ defaultFaqs.last }}
+                </div>
+            </div>
+        </details>
+    {%- endif -%}
+    {%- if block.settings.link_to_faq_page != blank -%}
+        <div class="action reveal-item">
+            <a
+                href="{{ block.settings.link_to_faq_page }}"
+                class="link_to_faq_page"
+                title="{{ 'sections.product-tabs.faq.read_more' | t }}"
+            >
+                {{- 'sections.product-tabs.faq.read_more' | t -}}
+            </a>
+        </div>
+    {%- endif -%}
+</faqs-accordion>
+
+{% render 'initialize-deferred-scripts', init_faqs_accordion: true %}

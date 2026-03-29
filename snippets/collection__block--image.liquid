@@ -1,0 +1,45 @@
+{%- comment -%}
+    Render collection image using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+{%- endcomment -%}
+
+{%- liquid
+    assign sectioHasAsideColumn = false
+    for block in section.blocks
+        assign position = block.settings.position | split: '-' | first
+        case position
+            when 'left', 'right'
+                assign sectioHasAsideColumn = true
+        endcase
+    endfor
+
+    assign image = block.settings.image | default: collection.featured_image
+-%}
+
+<div class="collection__block collection__block--image" style="order: {{ blockOrder }}" {{ block.shopify_attributes }}>
+    {%- if image %}
+        {%- liquid
+            assign width = image.width
+            if sectioHasAsideColumn
+                if width > 920
+                    assign width = 920
+                endif
+            else
+                if width > 1176
+                    assign width = 1176
+                endif
+            endif
+
+            assign sizes = width | append: 'px'
+        -%}
+        <div
+            class="media"
+            style="padding-bottom: {% render 'helper__media-padding-bottom' image: image, image_ratio: block.settings.ratio %};"
+        >
+            {% render 'render-image', image: image, width: width, widths: width, sizes: sizes %}
+        </div>
+    {% endif -%}
+</div>

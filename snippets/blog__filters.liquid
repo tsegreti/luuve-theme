@@ -1,0 +1,56 @@
+{%- comment -%}
+    Render filters using blog tags
+
+    Accepts:
+     - blog          {Object}
+     - loader_target {String}
+{%- endcomment -%}
+
+<fetcher-component
+    id="blog-filters-{{ section.id }}"
+    data-section="{{ section.id }}"
+    data-loader-target="{{ loader_target }}"
+    data-updatable="true"
+>
+    <div class="current-tags--wrapper">
+        {%- unless current_tags == null %}
+            {% capture icon_close_html -%}
+        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close">
+          <use href="#icon-close"></use>
+        </svg>
+      {%- endcapture %}
+            {% for tag in current_tags %}
+                {{
+                    tag
+                    | append: icon_close_html
+                    | link_to_remove_tag: tag
+                    | replace: '<a ', '<a class="button button--small button--tertiary" '
+                }}
+                {% if forloop.last %}
+                    {{
+                        'sections.collection_template.clear_all'
+                        | t
+                        | link_to: blog.url, class: 'button button--small button--tertiary clear--all'
+                    }}
+                {% endif %}
+            {% endfor %}
+        {% endunless -%}
+    </div>
+
+    <div class="tags--wrapper">
+        <p class="heading">{{ 'sections.collection_template.filter_by_label' | t }}</p>
+
+        {% for tag in blog.all_tags %}
+            {% unless current_tags contains tag %}
+                {% capture link_html -%}
+              {%- if current_tags == nil -%}
+                {{ tag | link_to_tag: tag }}
+              {%- else -%}
+                {{ tag | link_to_add_tag: tag }}
+              {%- endif -%}
+            {% endcapture %}
+                {{ link_html | replace: '<a ', '<a class="button button--small button--tertiary" ' }}
+            {% endunless %}
+        {% endfor %}
+    </div>
+</fetcher-component>

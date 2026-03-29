@@ -1,0 +1,19 @@
+:is(.dropdown-inner__button) {
+        display: flex;
+        align-items: center;
+}
+    
+    :is(.dropdown-inner__button) a {
+        width: -moz-max-content;
+        width: max-content;        
+        font-size: 14px;
+    }
+
+.menu-drawer :is(.dropdown-inner__button) {
+        justify-content: center;        
+        padding: .5rem 0;
+    }
+
+.menu-drawer :is(.dropdown-inner__button) .icon {
+            display: none;
+        }

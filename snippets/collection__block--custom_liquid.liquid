@@ -1,0 +1,20 @@
+{%- comment -%}
+    Render block with custom liquid
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+{%- endcomment -%}
+
+<div
+    class="collection__block collection__block--custom_liquid"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {% unless block.settings.title == blank %}
+        <h5 class="title {% if settings.bold_first_heading_word %}heading-normal{% endif %}">
+            {% render 'helper__decorate-heading', heading: block.settings.title %}
+        </h5>
+    {% endunless %}
+    {{- block.settings.custom_liquid -}}
+</div>

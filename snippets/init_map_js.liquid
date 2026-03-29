@@ -1,0 +1,159 @@
+<script type="text/javascript" defer>
+    
+
+    /* @return {google.maps.position} */
+    function getGoogleLatitudeLongitude(position){
+       return new google.maps.LatLng(position.latitude, position.longitude)
+    }
+
+    /* @return {div map dimension} */
+    function mapDimension() {
+        return {
+            width: 100 + '%',
+            height: 600 + 'px'
+        }
+    }
+
+    /* @return {infoWindow} */
+    function initInfoWindow(marker) {
+        const comma = ',';
+        const shopName = `{{ shop_name }}` ? (`{{ shop_name }}`).toUpperCase().trim() : '';
+        const street = `{{ street }}` ? (`{{ street }}`).toUpperCase().trim() + comma : '';
+        const city = `{{ city }}` ? (`{{ city }}`).toUpperCase().trim() + comma : '';
+        const postcode = `{{ postcode }}` ? (`{{ postcode }}`).toUpperCase().trim() + comma : '';
+        const region = `{{ region }}` ? (`{{ region }}`).toUpperCase().trim() + comma : '';
+        const country = `{{ country }}` ? (`{{ country }}`).toUpperCase().trim() : '';
+        const phone = `{{ phone }}` ?  (`{{ phone }}`).toUpperCase().trim() + comma : '';
+        const email = `{{ email }}` ?  (`{{ email }}`).toLowerCase().trim() : '';
+
+        const address = [street, city, postcode, region, country];
+        /* clear empty data */
+        const filterAddress = address.filter(e => e);
+
+        /* if empty address data */
+        if (filterAddress.length === 0) return;
+
+        let infowindow;
+        const contentString =
+                '<div class="infowindow">' +
+                    '<h6><b>' + shopName + '</b></h6>' +
+                    '<p><span class="_street">' +
+                        street +
+                    '</span></p>' +
+                    '<p><span class="_city">' +
+                        city +
+                    '</span></p>' +
+                    '<p><span class="_postcode">' +
+                        postcode +
+                    '</span></p>' +
+                    '<p><span class="_region">' +
+                        region +
+                    '</span></p>' +
+                    '<p><span class="_country">' +
+                        country +
+                    '</span></p>' +
+                    '<div class="contact-info">' +
+                    '<p><span><b>Phone: </b>' +
+                        phone +
+                    '</span></p>' +
+                    '<p><span><b>E-mail: </b>' +
+                        email +
+                    '</span></p>' +
+                    '</div>' +
+                '</div>';
+
+        /* create infoWindow */
+        infowindow = new google.maps.InfoWindow({
+            content: contentString,
+            maxWidth: 350
+        });
+
+        /* open infoWindow on marker click */
+        google.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map, marker);
+        });
+
+        /* close infoWindow on map click */
+        google.maps.event.addListener(map, 'click', function() {
+            infowindow.close();
+        });
+    }
+
+    /* @return {map} */
+    async function showMapForm(divMap, lat, lng) {
+        let mapOptions = {
+            zoom: 15,
+            center: getGoogleLatitudeLongitude({
+                latitude: lat ? lat : 30.2672,
+                longitude: lng ? lng : -97.7431
+            }),
+            scrollwheel: false,
+            disableDoubleClickZoom: false,
+            disableDefaultUI: false,
+            mapTypeControl: true,
+            mapTypeControlOptions: {
+                style: google.maps.MapTypeControlStyle.DEFAULT
+            },
+            mapId: google.maps.MapTypeId.ROADMAP
+        };
+
+        divMap.style.width = mapDimension().width;
+        divMap.style.height = mapDimension().height;
+
+        // import map 
+        const { Map } = await google.maps.importLibrary("maps");
+
+        // import marker
+        const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+        const markerPosition = getGoogleLatitudeLongitude({ 
+            latitude: lat ? lat : 30.2672,
+            longitude: lng ? lng : -97.7431
+        });
+
+        // create map
+        map = new Map(divMap, mapOptions);
+        
+        // create marker
+        const marker = new AdvancedMarkerElement({
+            position: markerPosition,
+            map: map
+        });        
+        
+        initInfoWindow(marker);
+    }
+
+    /* init {callback} */
+    function initMap() {
+        if (typeof google == 'undefined') return;
+
+        const divMap = document.getElementById('map');
+
+        /* get store coordinates */
+        let lat = !isNaN(`{{ latitud }}`) ? parseFloat(`{{ latitud }}`) : '';
+        let lng = !isNaN(`{{ longitud }}`) ? parseFloat(`{{ longitud }}`) : '';
+
+        if (!lat || !lng)
+            document.querySelector('.error_coordinates')?.removeAttribute('hidden');
+
+        showMapForm(divMap, lat, lng);
+    }
+
+    /* init {map script} */
+    function loadScriptMaps() {
+        const container = document.getElementById('map');
+        const apiKey = `{{ api_key }}` ?? '';
+
+        if (!container) return;
+
+        const script = document.createElement("script");
+            script.src = "https://maps.googleapis.com/maps/api/js?key=" + apiKey + "&loading=async&callback=initMap";
+            script.type = "text/javascript";
+            script.async = true;
+
+        container.appendChild(script);
+    }
+
+    loadScriptMaps();
+
+</script>

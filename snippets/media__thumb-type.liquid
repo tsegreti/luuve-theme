@@ -1,0 +1,15 @@
+{%- comment -%}
+    Render thumb-type icon for media.
+
+    Accepts:
+     -  media {Object}
+{%- endcomment -%}
+
+<div class="thumb-type thumb-type--{{ media.media_type }}">
+    {%- case media.media_type %}
+        {% when 'model' %}
+            {% render 'product__info-block--gallery--symbols', type: 'badge-model' %}
+        {% when 'external_video' %}
+            {% render 'product__info-block--gallery--symbols', type: 'badge-video' %}
+    {% endcase -%}
+</div>

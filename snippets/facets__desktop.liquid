@@ -1,0 +1,189 @@
+{% comment %}
+    Render collection filters
+
+    Accepts:
+    - filters:                    {Array}
+    - filters_block:              {Object}
+    - form_after_open_html:       {String}  (optional)
+    - desktop_facets_type:        {String}  (optional)
+    - desktop_facets_open:        {Boolean} (optional)
+    - is_facets_slider:           {Boolean} (optional)
+    - is_render_theme_swatches:   {Boolean}
+    - is_animation_on_reveal:     {Boolean}
+{% endcomment %}
+
+{%- liquid
+    assign form_after_open_html = form_after_open_html | default: ''
+    assign desktop_facets_type = desktop_facets_type | default: 'button'
+    assign initially_opened = filters_block.settings.list_of_initially_opened | downcase
+
+    capture active_facets_count
+        render 'facets__get_active_count', filters: filters
+    endcapture
+    assign active_facets_count = active_facets_count | strip | plus: 0
+    assign possibleOptionName = settings.list_color_option_names | default: 'color,colour'
+-%}
+
+<collection-filters-form
+    id="CollectionFilters"
+    class="facets desktop-only facets__type-{{ desktop_facets_type }}"
+    data-loader-target="main-collection-products__wrapper"
+    data-section="{{ section.id }}"
+>
+    <form id="CollectionFiltersForm" class="facets__form">
+        {{- form_after_open_html -}}
+
+        <div
+            id="CollectionFiltersMobileActive"
+            class="active-facets active-facets-mobile"
+            data-updatable="true"
+        >
+            {%- if active_facets_count > 0 %}
+                <p class="active-facets__heading">
+                    {{ 'sections.collection_template.filter_by_label' | t }}
+                </p>
+                {% render 'facets__active', filters: filters %}
+                {% render 'facets__button--clear-all', collection: collection %}
+            {% endif -%}
+        </div>
+
+        {% capture facets_html %}
+      {%- unless filters == empty -%}
+        <p class="facets__heading mobile-only">{{ 'sections.collection_template.filter_by_label' | t }}</p>
+      {%- endunless -%}
+
+      {%- for filter in filters -%}
+        {% case filter.type %}
+        {% when 'boolean' or 'list' %}
+        {% assign filter_label = filter.label | downcase %}
+          <details class="facets__disclosure js-filter reveal-item"
+            data-index="{{ forloop.index }}"
+            {% if desktop_facets_type == 'buttons' %}data-advanced="true"{% endif%}
+            {% if desktop_facets_open or desktop_facets_type == 'accordion' and filter.active_values.size > 0 %}open{% endif %}
+            {% if desktop_facets_type == 'accordion' and initially_opened contains filter_label %}open{% endif %}
+          >
+            <summary id="CollectionFilterLabel-{{ filter.label | escape }}"
+              class="facets__summary{% if desktop_facets_type == 'buttons' %} button button--tertiary{% else %} collapsible{% endif %}"
+              data-updatable="true"
+            >
+              <span>{{ filter.label | escape }}</span>
+              <div class="count-bubble color-inverse">
+                {%- if filter.active_values.size > 0 -%}<span>{{ filter.active_values.size }}</span>{%- endif -%}
+              </div>
+              {% if desktop_facets_type == 'accordion' -%}{% render 'facets__button--reset' filter: filter %}{%- endif%}
+              <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" height="16" width="16"><use href="#icon-caret" /></svg>
+            </summary>
+            <div id="CollectionFilterOptions-{{ filter.label | escape }}"
+              class="facets__display transition-bezier"
+              data-updatable="true"
+            >
+              <div class="facets__header">
+                <span class="facets__selected no-js-hidden">
+                  {%- if filter.active_values.size > 0 -%}
+                    {{ 'sections.collection_template.filters_selected' | t: count: filter.active_values.size }}
+                  {%- endif -%}
+                </span>
+                {% render 'facets__button--reset' filter: filter %}
+              </div>
+
+              {%- liquid
+                assign is_swatches = false
+                assign filter_name = filter.label | downcase
+                if is_render_theme_swatches and possibleOptionName contains filter_name
+                  assign is_swatches = true
+                endif
+                if 'swatch|image' contains filter.presentation
+                  assign is_swatches = true
+                endif
+              -%}
+              <ul class="facets__list list-unstyled{% if is_swatches %} facets__swatches{% endif %}" role="list">
+                {%- for value in filter.values -%}
+                  <li class="list-menu__item facets__item">
+                    {% if is_swatches %}
+                      {%- render 'facets__facet--swatch'
+                        filter: filter
+                        value: value
+                        index: forloop.index
+                        is_mobile: false
+                      -%}
+                    {% else %}
+                      <label for="Filter-{{ filter.label | escape }}-{{ forloop.index }}" class="facet-checkbox{% if value.count == 0 and value.active == false %} facet-checkbox--disabled{% endif %}">
+                        <input type="checkbox"
+                          name="{{ value.param_name }}"
+                          value="{{ value.value }}"
+                          id="Filter-{{ filter.label | escape }}-{{ forloop.index }}"
+                          {% if value.active %}checked{% endif %}
+                          {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                        >
+
+                        {% render 'icons-outline'
+                          name: 'check'
+                          css_class: 'icon icon-checkmark'
+                        %}
+
+                        <span class="facet-checkbox--label">
+                          {{ value.label | escape }}
+                        </span>
+                        <span class="count">{{ value.count }}</span>
+                      </label>
+                    {% endif %}
+                  </li>
+                {%- endfor -%}
+              </ul>
+            </div>
+          </details>
+        {% when 'price_range' %}
+        {% assign filter_label = filter.label | downcase %}
+          <details class="facets__disclosure js-filter js-filter-price reveal-item"
+            data-index="{{ forloop.index }}"
+            {% if desktop_facets_type == 'buttons' %}data-advanced="true"{% endif%}
+            {% if desktop_facets_open or desktop_facets_type == 'accordion' and filter.min_value.value or desktop_facets_type == 'accordion' and filter.max_value.value %}open{% endif %}
+            {% if desktop_facets_type == 'accordion' and initially_opened contains filter_label %}open{% endif %}
+          >
+            <summary id="CollectionFilterLabel-{{ filter.label | escape }}"
+              class="facets__summary {% if desktop_facets_type == 'buttons' %}button button--tertiary{% else %}collapsible{% endif %}"
+              data-updatable="true"
+            >
+              <span>{{ filter.label | escape }}</span>
+              <span class="count-bubble color-inverse {%- if filter.min_value.value or filter.max_value.value -%}{{ filter.active_values.size }} count-bubble--dot{% endif %}"></span>
+              {% render 'facets__button--reset' filter: filter %}
+              <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" height="16" width="16">
+                <use href="#icon-caret" />
+              </svg>
+            </summary>
+            <div id="CollectionFilterOptions-{{ filter.label | escape }}"
+              class="facets__display transition-bezier"
+              data-updatable="true"
+            >
+              <div class="facets__header">
+                {%- assign max_price_amount = filter.range_max | money | escape -%}
+                <span class="facets__selected"{% if filter.min_value.value or filter.max_value.value %}data-range-applied="true"{% endif %}>{{ "sections.collection_template.max_price" | t: price: max_price_amount }}</span>
+                {% render 'facets__button--reset' filter: filter %}
+              </div>
+              {% render 'facets__facet--price-range' filter: filter index: forloop.index collection_title: collection.title %}
+            </div>
+          </details>
+        {% endcase %}
+      {%- endfor -%}
+      {%- unless filters == empty -%}
+        <noscript>
+          <button type="submit" class="facets__button button button--small">{{ 'sections.collection_template.filter_button' | t }}</button>
+        </noscript>
+      {%- endunless -%}
+    {% endcapture %}
+
+        {% if is_facets_slider -%}
+            <facets-slider>
+        {%- endif %}
+        <div class="facets__wrapper{% if desktop_facets_type == 'accordion' and is_animation_on_reveal %} reveal-slide-in{% endif -%}">
+            {{- facets_html | strip -}}
+        </div>
+        {% if is_facets_slider -%}
+            </facets-slider>
+        {%- endif %}
+
+        {% if collection.current_vendor or collection.current_type %}
+            <input type="hidden" name="q" value="{{ collection.current_vendor }}{{ collection.current_type }}">
+        {% endif %}
+    </form>
+</collection-filters-form>

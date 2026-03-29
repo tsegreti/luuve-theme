@@ -1,0 +1,48 @@
+{% comment %}
+    Accepts:
+     - cart_type {String} Cart type Shopify tries to render
+{% endcomment %}
+{% if settings.minicart_enabled %}
+    {% if request.path == routes.cart_url -%}
+        {% style %}
+            cart-sidebar#cart-sidebar {
+                display: none;
+            }
+        {% endstyle %}
+    {% endif %}
+    {% if cart_type == settings.minicart_type %}
+        <cart-sidebar id="cart-sidebar" hidden>
+            <div class="cart-sidebar__header">
+                <h2 class="h3">{{ 'sections.cart.title' | t }}</h2>
+                <button
+                    type="button"
+                    class="cart-sidebar__close modal__close-button"
+                    aria-label="{{ 'accessibility.close' | t }}"
+                >
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close">
+                        <use href="#icon-close" />
+                    </svg>
+                </button>
+            </div>
+            {%- unless settings.minicart_free_shipping_threshold == blank %}
+                <div id="cart-sidebar-shipping-bar" class="free-shipping-bar">
+                    {%- render 'cart-sidebar__shipping-bar' -%}
+                </div>
+            {% endunless -%}
+            <div class="cart-sidebar__items scrollbar scrollbar-thin" id="cart-sidebar-items">
+                {%- render 'cart-sidebar-items' -%}
+            </div>
+            <div class="cart-sidebar__footer" id="cart-sidebar-footer">
+                {%- render 'cart-sidebar-footer' -%}
+            </div>
+        </cart-sidebar>
+    {% endif %}
+
+    {% if settings.minicart_type == 'drawer' %}
+        <div class="cart-sidebar__overflow"></div>
+    {% endif %}
+
+    {% if cart_type == 'drawer' %}
+        {% render 'initialize-deferred-scripts', init_cart_sidebar: true %}
+    {% endif %}
+{% endif %}

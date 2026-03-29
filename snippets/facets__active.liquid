@@ -1,0 +1,48 @@
+{%- comment -%}
+    Render active filters
+
+    Accepts:
+     - filters: {Array}
+{%- endcomment -%}
+
+{%- capture htmlRemoveIcon -%}
+<svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close"><use href="#icon-close"/></svg>
+{%- endcapture -%}
+
+{%- for filter in filters -%}
+    {%- for value in filter.active_values -%}
+        <a
+            class="active-facets__item js-facet-remove button button--small"
+            href="{{value.url_to_remove }}"
+            data-filter-label="{{ filter.label | escape }}"
+            title="{{ filter.label | escape }} - {{ value.label | escape }}"
+        >
+            {{ value.label | escape }}
+            {{ htmlRemoveIcon }}
+        </a>
+    {%- endfor -%}
+    {%- if filter.type == 'price_range' -%}
+        {%- if filter.min_value.value != null or filter.max_value.value != null -%}
+            <a
+                class="active-facets__item js-facet-remove button button--small"
+                href="{{ filter.url_to_remove }}"
+                data-filter-label="{{ filter.label | escape }}"
+            >
+                <span>
+                    {%- if filter.min_value.value -%}
+                        {% render 'render-price', price: filter.min_value.value %}
+                    {%- else -%}
+                        {% render 'render-price', price: 0 %}
+                    {%- endif %}
+                    -
+                    {% if filter.max_value.value -%}
+                        {% render 'render-price', price: filter.max_value.value %}
+                    {%- else -%}
+                        {% render 'render-price', price: filter.range_max %}
+                    {%- endif -%}
+                </span>
+                {{ htmlRemoveIcon }}
+            </a>
+        {%- endif -%}
+    {%- endif -%}
+{%- endfor -%}

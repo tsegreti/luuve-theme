@@ -1,0 +1,84 @@
+{%- comment -%}
+    Render collection sorting
+
+    Accepts:
+    - collection: {Object}
+{%- endcomment -%}
+{%- liquid
+    assign form = form | default: ''
+    assign sort_by = collection.sort_by | default: collection.default_sort_by
+-%}
+
+<div class="collection-filters__item sorting">
+    <div class="collection-filters__field">
+        <label class="collection-filters__label no-js-hidden" for="SortBy-{{ sort_by }}">
+            {{- 'sections.collection_template.sort_by_label' | t -}}
+        </label>
+        <div id="{{ form }}SortBy" class="select" data-updatable="true">
+            <details class="disclosure" data-advanced="true">
+                <summary>
+                    {% liquid
+                        for option in collection.sort_options
+                            if option.value == sort_by
+                                echo option.name | escape
+                            endif
+                        endfor
+                    %}
+                </summary>
+                <div class="disclosure__list--wrapper panel transition-bezier">
+                    <ul role="list" class="disclosure__list scrollbar">
+                        {% for option in collection.sort_options %}
+                            <li class="disclosure__item">
+                                <a
+                                    href="#"
+                                    class="disclosure__link{% if option.value == sort_by %} disclosure__link--active{% endif %}"
+                                    data-value="{{ option.value }}"
+                                    onclick="with (document.getElementById('{{ form }}SortBy-select')) { value = this.dataset.value; form?.requestSubmit?.()}; return false;"
+                                >
+                                    {{- option.name | escape -}}
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </details>
+            <select
+                id="{{ form }}SortBy-select"
+                name="sort_by"
+                class="select__select collection-filters__sort hidden"
+                aria-describedby="a11y-refresh-page-message"
+                data-default="{{ collection.default_sort_by }}"
+                {% unless form == blank -%}
+                    form="{{ form }}"
+                {%- endunless %}
+            >
+                {%- for option in collection.sort_options -%}
+                    <option
+                        value="{{ option.value | escape }}"
+                        {% if option.value == sort_by %}
+                            selected="selected"
+                        {% endif %}
+                    >
+                        {{ option.name | escape }}
+                    </option>
+                {%- endfor -%}
+            </select>
+            <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret transition-bezier">
+                <use href="#icon-caret" />
+            </svg>
+        </div>
+        <noscript>
+            <style>
+                .collection-filters__item.sorting .disclosure {
+                    display: none;
+                }
+                .collection-filters__item.sorting [name=sort_by] {
+                    display: block;
+                }
+            </style>
+            <button type="submit" class="button button--small">
+                {{ 'sections.collection_template.sort_button' | t }}
+            </button>
+        </noscript>
+    </div>
+</div>

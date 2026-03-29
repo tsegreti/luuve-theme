@@ -1,0 +1,25 @@
+{%- comment -%}
+    Renders padding bottom value for media wrapper of IMG
+
+    Accepts:
+    - image         {Object}
+    - image_ratio   {String}
+{%- endcomment -%}
+
+{%- liquid
+    if image_ratio contains 'settings|'
+        assign optionKey = image_ratio | split: '|' | last
+        assign ratio = settings[optionKey]
+    else
+        assign ratio = image_ratio
+    endif
+
+    if ratio == 'native' or ratio == blank or ratio == null
+        assign ratio = 1
+        if image.aspect_ratio != null
+            assign ratio = 1 | divided_by: image.aspect_ratio | round: 4
+        endif
+    endif
+
+    echo 'calc({ratio} * 100%)' | replace: '{ratio}', ratio
+-%}

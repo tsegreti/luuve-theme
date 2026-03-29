@@ -1,0 +1,95 @@
+{%- liquid
+    assign paddingBottom = 75
+    if block.settings.image != blank
+        assign paddingBottom = 100 | divided_by: block.settings.image.aspect_ratio
+        assign imageWidth = '326,652,978,1182,1340,2364'
+        assign imageSizes = '(max-width: 767px) calc(100vw - 2rem - 2px), (max-width: 1279px) calc(100vw - 6rem - 2px), 1182px'
+    endif
+
+    assign block_index = section.blocks | find_index: 'id', block.id
+
+    assign focus_card_left = false
+    if section.settings.desktop_layout == 'left' and block_index == 0
+        assign focus_card_left = true
+    elsif section.settings.desktop_layout == 'right' and block_index == 2
+        assign focus_card_right = true
+    endif
+-%}
+
+<div
+    id="{{ block.id }}"
+    class="collage-card {% if block.settings.enable_inner_paddings%}image-paddings{% endif %} color-{{ block.settings.color_scheme }}{% if focus_card_left %} collage-card--left{% elsif focus_card_right %} collage-card--right{% endif %}"
+    {{ block.shopify_attributes }}
+>
+    <div
+        class="collage-content collage-card__image-wrapper media media--transparent"
+        {% if paddingBottom %}
+            style="padding-bottom: {{ paddingBottom }}%;"
+        {% endif %}
+    >
+        {%- if block.settings.image != blank -%}
+            {% render 'render-image',
+                image: block.settings.image,
+                widths: imageWidth,
+                sizes: imageSizes,
+                css_class: ''
+            %}
+        {%- else -%}
+            {{ 'image' | placeholder_svg_tag: 'placeholder-svg placeholder collage-card__image' }}
+        {%- endif -%}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.collage.blocks.collage-image.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.collage.blocks.collage-image.settings.image.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_inner_paddings",
+      "label": "t:sections.collage.blocks.collage-image.settings.enable_inner_paddings.label"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "t:sections.all.colors.accent_1.label"
+        },
+        {
+          "value": "accent-2",
+          "label": "t:sections.all.colors.accent_2.label"
+        },
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "inverse",
+          "label": "t:sections.all.colors.inverse.label"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label",
+      "info": "t:sections.collage.blocks.collage-image.settings.color_scheme.info"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collage.blocks.collage-image.name",
+      "category": "t:sections.all.categories.collage"
+    }
+  ]
+}
+{% endschema %}

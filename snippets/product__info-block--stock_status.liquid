@@ -1,0 +1,38 @@
+{%- comment -%}
+    Render product Stock status
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+
+<div
+    class="product__info-block product__info-block--stock-status reveal-item"
+    id="stock-info-{{ sectionId }}"
+    data-updatable="true"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {% if product.selected_or_first_available_variant.available %}
+        {% assign inventory_qty = product.selected_or_first_available_variant.inventory_quantity %}
+        <div class="stock-status stock-status__in-stock">
+            <span class="stock-status__icon-ellipse"></span>
+            <span>{{ 'products.product.stock.in' | t }}</span>
+            {% comment %}
+                If inventory_qty is 0 product is available then product inventory is not tracked.
+            {% endcomment %}
+            {% unless inventory_qty == 0 or inventory_qty > block.settings.stock_left_threshold %}
+                <span class="inventory-qty" data-qty="{{ inventory_qty }}">
+                    {{ 'products.product.stock.inventory_left' | t: qty: inventory_qty }}
+                </span>
+            {% endunless %}
+        </div>
+    {% else %}
+        <div class="stock-status stock-status__out-of-stock">
+            <span class="stock-status__icon-ellipse"></span>
+            <span>{{ 'products.product.stock.out' | t }}</span>
+        </div>
+    {% endif %}
+</div>

@@ -1,0 +1,27 @@
+{%- comment -%}
+    Render svg symbols for section "Testimonials".
+{%- endcomment -%}
+
+{%- liquid
+    assign has_stars = section.settings.show_rating
+    assign has_photo = section.settings.show_photo
+
+    unless has_stars
+        assign form = section.blocks | where: 'type', 'form' | first
+        unless form.settings.field_rating == 'hidden'
+            assign has_stars = true
+        endunless
+    endunless
+-%}
+
+{% if has_photo or has_stars %}
+    <svg xmlns="http://www.w3.org/2000/svg" hidden>
+        {% if has_photo %}
+        <symbol id="person-{{ section.id }}" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+            <path d="M332.64 64.58C313.18 43.57 286 32 256 32c-30.16 0-57.43 11.5-76.8 32.38-19.58 21.11-29.12 49.8-26.88 80.78C156.76 206.28 203.27 256 256 256s99.16-49.71 103.67-110.82c2.27-30.7-7.33-59.33-27.03-80.6zM432 480H80a31 31 0 01-24.2-11.13c-6.5-7.77-9.12-18.38-7.18-29.11C57.06 392.94 83.4 353.61 124.8 326c36.78-24.51 83.37-38 131.2-38s94.42 13.5 131.2 38c41.4 27.6 67.74 66.93 76.18 113.75 1.94 10.73-.68 21.34-7.18 29.11A31 31 0 01432 480z"></path>
+        </symbol>{% endif %}{% if has_stars %}
+        <symbol id="star-{{ section.id }}" viewBox="0 0 14 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M6.05544 0.717386C6.36673 -0.178174 7.63327 -0.178173 7.94456 0.717388L8.88756 3.43025C9.02488 3.82532 9.39357 4.09319 9.81174 4.10172L12.6832 4.16023C13.6312 4.17955 14.0225 5.3841 13.267 5.9569L10.9783 7.69206C10.645 7.94475 10.5042 8.37817 10.6253 8.77851L11.457 11.5275C11.7315 12.435 10.7069 13.1795 9.92866 12.6379L7.57118 10.9975C7.22786 10.7586 6.77214 10.7586 6.42882 10.9975L4.07134 12.6379C3.2931 13.1795 2.26845 12.435 2.54301 11.5275L3.37469 8.77851C3.49581 8.37817 3.35498 7.94475 3.02168 7.69206L0.732993 5.9569C-0.0225393 5.38409 0.368843 4.17955 1.31677 4.16023L4.18826 4.10172C4.60643 4.09319 4.97512 3.82532 5.11245 3.43025L6.05544 0.717386Z" fill="currentColor"/>
+        </symbol>{% endif %}
+    </svg>
+{% endif %}

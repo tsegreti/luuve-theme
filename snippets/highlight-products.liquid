@@ -1,0 +1,232 @@
+{% comment %}
+    Renders Highlight products list
+
+    Accepts:
+    - items_candidate:  {Object}
+    - box_position:     {String}
+    - heading_block:    {Object}
+    - separate_desription_with_products: {Bool}
+{% endcomment %}
+
+<div class="highlight-products {{ box_position }}">
+    <div class="content-wrapper">
+        {% unless separate_desription_with_products %}
+            {%- unless heading_block.settings.heading == blank %}
+                <div class="heading-wrapper">
+                    <{{ heading_block.settings.level }}
+                        class="banner__heading reveal-item"
+                        style="color: {{ heading_block.settings.heading_color }}"
+                    >
+                        <span>{{- heading_block.settings.heading -}}</span>
+                    </{{ heading_block.settings.level }}>
+                </div>
+            {%- endunless %}
+        {%- endunless %}
+        <slider-component
+            id="highlight-products"
+            class="highlight-products__wrapper"
+            data-loop="true"
+            data-slides-per-view="1"
+        >
+            <ul class="items-grid slider slider--desktop scrollbar scrollbar-thin" data-mode="row">
+                {%- for itemCandidate in items_candidate -%}
+                    {%- liquid
+                        if itemCandidate.object_type != null
+                            assign item = itemCandidate
+                        else
+                            assign item = all_products[itemCandidate]
+                        endif
+
+                        if item == null
+                            continue
+                        endif
+                        assign badge_size = section.settings.badge_size | default: 'md'
+                        assign product_form_id = 'product-form-' | append: 'banner-highlight-products' | append: '-' | append: item.id
+
+                        # using metafields to define the product badges
+                        assign newProduct = false
+                        for variant in item.variants
+                            if variant.metafields.custom.new != blank
+                                assign newProduct = true
+                            endif
+                        endfor
+                    -%}
+                    {% capture product_review %}
+                    {%- unless settings.review_apps == 'none' -%}
+                        {% case settings.review_apps %}
+                            {% when 'yotpo' %}
+                            <div class="yotpo-widget-instance" 
+                             data-yotpo-instance-id="911611" 
+                             data-yotpo-product-id="{{ item.id }}" 
+                             data-yotpo-cart-product-id="{{ item.id }}"
+                             data-yotpo-section-id="{{ template.name }}"></div>
+                            
+                            {% when 'judgeme' %}
+                            <div class='jdgm-widget jdgm-preview-badge'>
+                                {{- item.metafields.judgeme.badge -}}
+                            </div>
+
+                            {% when 'okendo' %}
+                                {% liquid 
+                                    assign okendo_data = item.metafields.okendo | json
+                                    assign review_count = okendo_data | replace:'{',''
+                                    assign review_count = review_count | replace:'}',''
+                                %}
+                                {%- unless review_count == blank -%}
+                                <div data-oke-star-rating data-oke-reviews-product-id="{{ item.id }}">
+                                    {{- item.metafields.okendo.StarRatingSnippet -}}
+                                </div>
+                                {%- endunless -%}
+                        {% endcase %}
+                    {%- endunless -%}
+                {% endcapture %}
+                    <li class="grid-item reveal-item slider__slide" data-product-id="{{ item.id }}">
+                        {%- unless separate_desription_with_products %}
+                            <div class="item-details-wrapper">
+                                <p class="item-title">{{ item.title }}</p>
+                            </div>
+                        {% endunless -%}
+
+                        <a href="{{ item.url }}" class="item-link" aria-label="{{ item.title }}">
+                            <div class="item-image">
+                                {% render 'badge-onsale', product: item, size: badge_size %}
+                                {% render 'badge-soldout', product: item, size: badge_size %}
+                                {% if newProduct %}
+                                    {% render 'badge-new', product: item, size: badge_size %}
+                                {% endif %}
+                                {% liquid
+                                    assign featuredImage = item.featured_media.preview_image
+                                    assign ratio = 1
+                                %}
+                                <div
+                                    class="media"
+                                    style="padding-bottom: {% render 'helper__media-padding-bottom' image: featuredImage image_ratio: ratio %};"
+                                >
+                                    {%- if featuredImage %}
+                                        {% render 'grid-item--item-image',
+                                            image: featuredImage,
+                                            image_ratio: section.settings.image_ratio,
+                                            image_sizes_config: sizes_config
+                                        %}
+                                    {% else %}
+                                        {{
+                                            item.id
+                                            | divided_by: 1000
+                                            | modulo: 4
+                                            | plus: 1
+                                            | prepend: 'product-'
+                                            | placeholder_svg_tag: 'placeholder-svg placeholder'
+                                        }}
+                                    {% endif -%}
+                                </div>
+                                {%- if settings.enable_quick_view -%}
+                                    <quick-view data-view-details="{{- 'products.product.view_full_details' | t -}}">
+                                        <button
+                                            type="button"
+                                            class="button button--small"
+                                            name="quick-view"
+                                            aria-label="{{ 'products.product.quick_view' | t }}"
+                                        >
+                                            <svg width="26" height="24">
+                                                <use href="#icon-eye" />
+                                                <span class="sr-only">{{ 'products.product.quick_view' | t }}</span>
+                                            </svg>
+                                        </button>
+                                    </quick-view>
+                                {%- endif -%}
+                            </div>
+                        </a>
+                        <div class="item-actions-wrapper highlight">
+                            {% if separate_desription_with_products %}
+                                <div class="item-details-wrapper">
+                                    <p class="item-title">{{ item.title }}</p>
+                                    <span class="item-review">{{- product_review -}}</span>
+                                    {%- render 'helper__decorate-product-price',
+                                        product: item,
+                                        showPriceLabel: settings.price_label
+                                    -%}
+                                </div>
+                            {% endif %}
+                            {%- liquid
+                                if item.has_only_default_variant
+                                    assign buttonName = 'add'
+                                    if item.selected_or_first_available_variant.available
+                                        assign buttonText = 'products.product.add_to_cart' | t
+                                        assign isButtonDisabled = false
+                                    else
+                                        assign buttonText = 'products.product.sold_out' | t
+                                        assign isButtonDisabled = true
+                                    endif
+                                else
+                                    assign buttonName = 'view'
+                                    assign buttonText = 'products.product.view_full_details' | t
+                                    assign isButtonDisabled = false
+                                endif
+                            -%}
+                            <button
+                                type="submit"
+                                name="{{ buttonName }}"
+                                class="button button--primary button--small"
+                                form="{{ product_form_id }}"
+                                aria-label="{{ buttonText }}"
+                                title="{{ buttonText }}"
+                                {% if isButtonDisabled %}
+                                    disabled
+                                {% endif %}
+                            >
+                                <span class="text">{{ buttonText }}</span>
+                                {%- if settings.current_theme_icons == 'enduro' %}
+                                    <svg
+                                        aria-hidden="true"
+                                        focusable="false"
+                                        role="presentation"
+                                        width="19"
+                                        height="19"
+                                        class="icon-cart"
+                                    >
+                                        <use href="#enduro-icon-cart" />
+                                    </svg>
+                                {% else %}
+                                    <svg
+                                        aria-hidden="true"
+                                        focusable="false"
+                                        role="presentation"
+                                        width="20"
+                                        height="20"
+                                        class="icon-cart"
+                                    >
+                                        <use href="#icon-cart" />
+                                    </svg>
+                                {% endif -%}
+                            </button>
+                            {%- if item.has_only_default_variant %}
+                                <product-form class="product-form visually-hidden">
+                                    {% form 'product',
+                                        item,
+                                        id: product_form_id,
+                                        class: 'form',
+                                        novalidate: 'novalidate',
+                                        data-type: 'add-to-cart-form'
+                                    %}
+                                        <input
+                                            type="hidden"
+                                            name="id"
+                                            value="{{ item.selected_or_first_available_variant.id }}"
+                                            disabled
+                                        >
+                                    {% endform %}
+                                </product-form>
+                            {% else %}
+                                <form
+                                    id="{{ product_form_id }}"
+                                    action="{{ item.url }}#has-options"
+                                ></form>
+                            {% endif -%}
+                        </div>
+                    </li>
+                {%- endfor -%}
+            </ul>
+            {% render 'slider__buttons', count: sourceCount %}
+        </slider-component>
+    </div>
+</div>

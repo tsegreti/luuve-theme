@@ -1,0 +1,35 @@
+{% comment %}
+    Renders "Sale" badge for product.
+    Text for badge you can find in localization files. Text supports string variables:
+        - {{ discount_percent }}
+        - {{ discount_amount }}
+        - {{ discount_amount_int }}
+
+    Accepts:
+    - product: {Object} Product
+    - position: {String} Position of badge (top-left | top-right | ... | in-content)
+    - size: {String} small | large
+{% endcomment %}
+
+{%- liquid
+    assign position = position | default: settings.badge_onsale__position
+    assign text = 'products.product.on_sale' | t
+    assign size = size | default: 'xs'
+-%}
+
+{%- if product.compare_at_price > product.price and text != blank -%}
+    {%- liquid
+        assign discount_percent = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round
+        assign discount_amount = product.compare_at_price | minus: product.price | money
+        assign discount_amount_int = product.compare_at_price | minus: product.price | divided_by: 100 | times: 100 | money_without_trailing_zeros
+    -%}
+    <div class="badge badge-size-{{ size }} badge-onsale {{ position }}" aria-hidden="true">
+        {{
+            'products.product.on_sale'
+            | t:
+                discount_percent: discount_percent,
+                discount_amount: discount_amount,
+                discount_amount_int: discount_amount_int
+        }}
+    </div>
+{%- endif -%}

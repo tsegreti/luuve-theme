@@ -1,0 +1,445 @@
+<link rel="stylesheet" href="{{ 'component-listing-grid.css' | asset_url }}" media="print" onload="this.media='all'">
+<noscript>{{ 'component-listing-grid.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- liquid
+    assign __class__ = 'product-tabs dynamic-page-width'
+    assign __class__ = __class__ | append: ' product-tabs--' | append: section.settings.tabs_layout
+
+    unless section.settings.tabs_layout == 'collapsed'
+        if section.settings.animation_on_reveal
+            assign __class__ = __class__ | append: ' reveal-slide-in'
+        endif
+    endunless
+-%}
+
+<product-tabs
+    class="{{ __class__ }}"
+    data-layout="{{ section.settings.tabs_layout }}"
+>
+    {% if section.settings.tabs_layout == 'expanded' %}
+        <div class="expanded-inner">
+            {% for block in section.blocks %}
+                {% render 'product-tabs__expanded', block: block %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="scrollbar scrollbar-thin" role="tablist">
+            {% for block in section.blocks %}
+                <input
+                    type="radio"
+                    class="visually-hidden"
+                    id="tab-{{ block.id }}"
+                    name="tabs-{{ section.id }}"
+                    {% if forloop.first %}
+                        checked
+                    {% endif %}
+                    data-index="{{ forloop.index }}"
+                >
+            {% endfor %}
+            <div class="product-tabs-title__desktop">
+                {% for block in section.blocks %}
+                    <h2
+                        id="tab-label-{{ block.id }}"
+                        class="tab-title outline-bottom"
+                        role="tab"
+                        aria-controls="tab-{{ block.id }}--content"
+                    >
+                        <label id="tab-label-{{ block.id }}-title" for="tab-{{ block.id }}">
+                            <span>{% render 'product-tabs__tab-heading', block: block %}</span>
+                        </label>
+                    </h2>
+                {% endfor %}
+            </div>
+            {% for block in section.blocks %}
+                <div class="tab-title-mobile-wrapper">
+                    <h2
+                        id="tab-label-{{ block.id }}"
+                        class="tab-title outline-bottom"
+                        role="tab"
+                        aria-controls="tab-{{ block.id }}--content"
+                    >
+                        <label id="tab-label-{{ block.id }}-title" for="tab-{{ block.id }}">
+                            <span>{% render 'product-tabs__tab-heading', block: block %}</span>
+                            <span class="tabs-icon icon-plus">{%- render 'icons-solid', name: 'plus' -%}</span>
+                            <span class="tabs-icon icon-minus">{%- render 'icons-solid', name: 'minus' -%}</span>
+                        </label>
+                    </h2>
+                </div>
+                {%- liquid
+                    capture tab_content
+                        render 'product-tabs__tab-content', block: block
+                    endcapture
+                    assign tab_content = tab_content | strip
+                -%}
+                {% if tab_content != blank %}
+                    <div
+                        id="tab-{{ block.id }}--content"
+                        class="tab-content"
+                        role="tabpanel"
+                        {{ block.shopify_attributes }}
+                    >
+                        {{ tab_content }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endif %}
+</product-tabs>
+
+{{ 'component-product-tabs.css' | asset_url | stylesheet_tag }}
+<noscript>{{ 'component-product-tabs.css' | asset_url | stylesheet_tag }}</noscript>
+
+{% style %}
+    @media screen and (max-width: 500px) {
+        .product-tabs .product-tabs-title__desktop {
+            display: none;
+        }
+    }
+    @media screen and (min-width: 501px) {
+        .product-tabs .tab-title-mobile-wrapper {
+            display: none;
+        }
+    }
+    {% for block in section.blocks -%}
+        #tab-{{ block.id }}:checked ~ .product-tabs-title__desktop #tab-label-{{ block.id }},
+        #tab-{{ block.id }}:checked ~ .tab-title-mobile-wrapper #tab-label-{{ block.id }}{%- unless forloop.last -%}, {% endunless -%}
+    {%- endfor %} {
+        background: {{ section.settings.collapsed_tabs_bg_gradient | default: section.settings.collapsed_tabs_bg }};
+        color: {{ section.settings.collapsed_tabs_color }};
+        border-radius: var(--button__border-radius);
+    }
+    @media screen and (max-width: 767px) {
+        {% for block in section.blocks -%}
+        #tab-{{ block.id }} ~ .tab-title-mobile-wrapper #tab-label-{{ block.id }} > label {
+            display: flex;
+            justify-content: space-between;
+        }
+        #tab-{{ block.id }}:checked ~ .tab-title-mobile-wrapper #tab-label-{{ block.id }} .tabs-icon.icon-plus {
+            display: none;
+        }
+        #tab-{{ block.id }}:checked ~ .tab-title-mobile-wrapper #tab-label-{{ block.id }} .tabs-icon.icon-minus {
+            display: block;
+        }{% endfor %}
+    }
+
+    .product-section-tabs {
+        background: {{ section.settings.section_tabs_bg_gradient | default: section.settings.section_tabs_bg }};
+    }
+    {% if section.settings.tabs_layout == 'collapsed' -%}
+        product-tabs [role=tablist] [role=tabpanel] {
+            display: none;
+        }
+    {% for block in section.blocks -%}
+        #tab-{{ block.id }}:checked ~ #tab-{{ block.id }}--content{%- unless forloop.last -%}, {% endunless -%}
+    {%- endfor %} {
+        display: block;
+        border-top: 1px solid var(--color-foreground-20);
+    }
+    {% for block in section.blocks -%}
+        #tab-{{ block.id }}:focus #tab-label-{{ block.id }} span:after{%- unless forloop.last -%}, {% endunless -%}
+    {% endfor %} {
+        width: calc(100% - .5rem);
+    }
+    @media (min-width: calc({{ settings.type_layout_max_width}}px)) {
+        #shopify-section-{{ section.id }} .tab-content .shopify-divine .jdgm-form-wrapper {
+            margin-right: calc(-1 * min(calc((100vw - {{ settings.type_layout_max_width}}px) / 2 + .25rem), 4rem));
+        }
+
+        #shopify-section-{{ section.id }} .tab-content .shopify-divine [data-number-of-reviews="0"] .jdgm-form-wrapper {
+            margin: 0 auto;
+        }
+    }{% endif %}
+{% endstyle %}
+
+{%- render 'initialize-deferred-scripts', init_product_tabs: true -%}
+
+{% schema %}
+{
+    "name": "t:sections.product-tabs.name",
+    "class": "spaced-section product-section-tabs",
+    "tag": "section",
+    "settings": [
+        {
+            "type": "select",
+            "id": "tabs_layout",
+            "label": "t:sections.product-tabs.settings.tabs_layout.label",
+            "default": "collapsed",
+            "options": [
+                {
+                    "value": "collapsed",
+                    "label": "t:sections.product-tabs.settings.tabs_layout.option__1.label"
+                },
+                {
+                    "value": "expanded",
+                    "label": "t:sections.product-tabs.settings.tabs_layout.option__2.label"
+                }
+            ]
+        },
+        {
+            "type": "header",
+            "content": "t:sections.product-tabs.settings.header.content"
+        },
+        {
+            "type": "color",
+            "id": "collapsed_tabs_color",
+            "label": "t:sections.product-tabs.settings.collapsed_tabs_color.label",
+            "default": "#000000"
+        },
+        {
+            "type": "color",
+            "id": "collapsed_tabs_bg",
+            "label": "t:sections.product-tabs.settings.collapsed_tabs_bg.label"
+        },
+        {
+            "type": "color_background",
+            "id": "collapsed_tabs_bg_gradient",
+            "label": "t:sections.product-tabs.settings.collapsed_tabs_bg_gradient.label",
+            "default": "linear-gradient(to left, #A0E8FE 0%, #FCE0FC 100%)"
+        },
+        {
+            "type": "color",
+            "id": "section_tabs_bg",
+            "label": "t:sections.product-tabs.settings.section_tabs_bg.label",
+            "default": "#F6F5F4"
+        },
+        {
+            "type": "color_background",
+            "id": "section_tabs_bg_gradient",
+            "label": "t:sections.product-tabs.settings.section_tabs_bg_gradient.label"
+        },
+        {
+            "type": "checkbox",
+            "id": "animation_on_reveal",
+            "label": "t:sections.all.settings.animation_on_reveal.label",
+            "default": true
+        }
+    ],
+    "max_blocks": 7,
+    "blocks": [
+        {
+            "type": "@app"
+        },
+{
+    "type": "custom_liquid",
+    "name": "t:sections.custom-liquid.name",
+    "settings": [
+        {
+            "type": "inline_richtext",
+            "id": "heading",
+            "label": "t:sections.product-tabs.blocks.all.settings.heading.label",
+            "default": "Tab"
+        },
+        {
+            "type": "liquid",
+            "id": "custom_liquid",
+            "label": "t:sections.custom-liquid.settings.custom_liquid.label",
+            "info": "t:sections.custom-liquid.settings.custom_liquid.info"
+        },
+        {
+            "type": "richtext",
+            "id": "metafields_custom_data",
+            "label": "t:sections.product-tabs.blocks.all.settings.metafields_custom_data.label",
+            "info": "t:sections.product-tabs.blocks.all.settings.metafields_custom_data.info"
+        }
+    ]
+}
+,
+{
+    "type": "description",
+    "name": "t:sections.product-tabs.blocks.description.name",
+    "settings": [
+        {
+            "type": "inline_richtext",
+            "id": "heading",
+            "label": "t:sections.product-tabs.blocks.all.settings.heading.label",
+            "default": "Product Description"
+        }
+    ]
+}
+,
+{
+    "type": "details",
+    "name": "t:sections.product-tabs.blocks.details.name",
+    "settings": [
+        {
+            "type": "inline_richtext",
+            "id": "heading",
+            "label": "t:sections.product-tabs.blocks.all.settings.heading.label",
+            "default": "Details"
+        },
+        {
+            "type": "select",
+            "id": "details_position",
+            "label": "t:sections.product-tabs.blocks.details.settings.details_position.label",
+            "options": [
+                {
+                    "value": "details_in_list",
+                    "label": "t:sections.product-tabs.blocks.details.settings.details_position.details_in_list.label"
+                },
+                {
+                    "value": "details_in_row",
+                    "label": "t:sections.product-tabs.blocks.details.settings.details_position.details_in_row.label"
+                }
+            ],
+            "default": "details_in_list"
+        }
+    ]
+}
+,
+{
+    "type": "faq",
+    "name": "t:sections.product-tabs.blocks.faq.name",
+    "settings": [
+        {
+            "type": "inline_richtext",
+            "id": "heading",
+            "label": "t:sections.product-tabs.blocks.faq.settings.heading.label",
+            "info": "t:sections.product-tabs.blocks.faq.settings.heading.info",
+            "default": "Frequently Asked Questions"
+        },
+        {
+            "type": "inline_richtext",
+            "id": "default_faqs",
+            "label": "t:sections.product-tabs.blocks.faq.settings.default_faqs.label",
+            "info": "t:sections.product-tabs.blocks.faq.settings.default_faqs.info",
+            "default": "What level of performance can I expect from 4K Color Drive?:This tv comes equipped with a 4k color drive, which allows the tv to accurately reproduce a wider spectrum of colors. you’ll experience an exceptionally vibrant, pristine image that makes each scene more lifelike."
+        },
+        {
+            "type": "url",
+            "id": "link_to_faq_page",
+            "label": "t:sections.product-tabs.blocks.faq.settings.link_to_faq_page.label"
+        }
+    ]
+},
+{
+    "type": "reviews",
+    "name": "t:sections.product-tabs.blocks.reviews.name",
+    "settings": [
+        {
+            "type": "inline_richtext",
+            "id": "heading",
+            "label": "t:sections.product-tabs.blocks.all.settings.heading.label",
+            "default": "Reviews"
+        }
+    ]
+}
+,
+{
+    "type": "similar",
+    "name": "t:sections.product-tabs.blocks.similar.name",
+    "settings": [
+        {
+            "type": "inline_richtext",
+            "id": "heading",
+            "label": "t:sections.product-tabs.blocks.all.settings.heading.label",
+            "default": "Similar Products"
+        },
+        {
+            "type": "product_list",
+            "id": "source",
+            "limit": 6,
+            "label": "t:sections.all.promote_source.label",
+            "info": "t:sections.all.promote_source.info"
+        },
+        {
+            "type": "checkbox",
+            "id": "is_random",
+            "default": true,
+            "label": "t:sections.all.promote_random.label"
+        },
+        {
+            "type": "range",
+            "id": "products_per_page",
+            "min": 2,
+            "max": 6,
+            "step": 1,
+            "default": 4,
+            "label": "t:sections.product-tabs.blocks.similar.settings.products_per_page.label"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.product-card.header"
+        },
+        {
+            "type": "select",
+            "id": "badge_size",
+            "options": [
+                {
+                    "value": "xs",
+                    "label": "t:sections.all.product-card.badge_size.options__1.label"
+                },
+                {
+                    "value": "sm",
+                    "label": "t:sections.all.product-card.badge_size.options__2.label"
+                },
+                {
+                    "value": "md",
+                    "label": "t:sections.all.product-card.badge_size.options__3.label"
+                },
+                {
+                    "value": "lg",
+                    "label": "t:sections.all.product-card.badge_size.options__4.label"
+                },
+                {
+                    "value": "xl",
+                    "label": "t:sections.all.product-card.badge_size.options__5.label"
+                }
+            ],
+            "default": "sm",
+            "label": "t:sections.all.product-card.badge_size.label"
+        },
+        {
+            "type": "select",
+            "id": "image_ratio",
+            "label": "t:sections.all.product-card.image_ratio.label",
+            "options": [
+                {
+                    "value": "settings|product_card_image_ratio",
+                    "label": "t:sections.all.product-card.image_ratio.options.default"
+                },
+                {
+                    "value": "native",
+                    "label": "t:sections.all.product-card.image_ratio.options.native"
+                },
+                {
+                    "value": "1",
+                    "label": "t:sections.all.product-card.image_ratio.options.1_by_1"
+                },
+                {
+                    "value": "5/4",
+                    "label": "t:sections.all.product-card.image_ratio.options.4_by_5"
+                }
+            ],
+            "default": "settings|product_card_image_ratio"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_to_cart_button",
+            "default": false,
+            "label": "t:sections.all.product-card.show_to_cart_button.label"
+        }
+    ]
+}
+
+    ],
+    "presets": [
+        {
+            "name": "t:sections.product-tabs.presets.collapsed",
+            "settings": {
+                "tabs_layout": "collapsed"
+            },
+            "blocks": [
+                {
+                    "type": "description"
+                },
+                {
+                    "type": "similar"
+                }
+            ]
+        }
+    ],
+    "enabled_on": {
+        "templates": ["product"]
+    }
+}
+{% endschema %}

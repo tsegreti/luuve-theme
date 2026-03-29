@@ -1,0 +1,33 @@
+:is(.with--noise-effect):is(.featured-product):after,
+	:is(.with--noise-effect) :is(.image-text):after,
+	:is(.with--noise-effect):is(.icons-bar):after,
+	:is(.with--noise-effect):is(.countdown-timer):after,
+	:is(.with--noise-effect):is(.footer-content):after,
+	:is(.with--noise-effect):is(.footer-middle):after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-image: var(--image-noise);
+		pointer-events: none;
+	}	
+	/* featured product - activate info blocks */	
+	:is(.with--noise-effect):is(.featured-product) .product__info-block,
+		:is(.with--noise-effect):is(.featured-product) .product__view-details {
+			position: relative;
+			z-index: 1;
+		}
+
+/* testimonials section & footer bottom sections */
+
+:is(.footer-bottom-section):has(.with--noise-effect):after, :is(.section-testimonials):has(.with--noise-effect):after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background-image: var(--image-noise);
+	}

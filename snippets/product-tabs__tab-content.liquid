@@ -1,0 +1,165 @@
+{%- comment -%}
+    Render product tab content base on section block.
+
+    Accepts:
+    - block: {Object}
+{%- endcomment -%}
+
+{%- case block.type -%}
+    {%- when '@app' -%}
+        {%- render block -%}
+    {%- when 'description' -%}
+        {%- if product.description != blank and product.description != '' -%}
+            <div class="rte product-descrition reveal-item">{{ product.description }}</div>
+        {%- endif -%}
+
+    {%- when 'details' -%}
+        {%- if product.metafields.my_fields.details.value != blank -%}
+            {%- render 'metafields-product-details', details_position: block.settings.details_position -%}
+        {%- endif -%}
+    {%- when 'faq' -%}
+        {%- render 'metafields-product-faq' -%}
+
+    {%- when 'custom_liquid' -%}
+        {{- block.settings.custom_liquid -}}
+        {%- assign metafield_custom_data = block.settings.metafields_custom_data -%}
+        {% comment %}Render Single Line text; Text; Rich text using METAFIELDS{% endcomment %}
+        {% unless metafield_custom_data == blank %}
+            <div class="metafields_data rte reveal-item">
+                {{- metafield_custom_data -}}
+            </div>
+        {% endunless %}
+
+    {%- when 'reviews' -%}
+        <div class="shopify-block shopify-app-block" data-block-handle="review_widget">
+            {%- case settings.review_apps -%}
+                {%- when 'judgeme' -%}
+                    {%- if block.settings.enable_theme_appearance -%}
+                        {{ 'component-tabs--judgeme.css' | asset_url | stylesheet_tag }}
+                    {%- endif -%}
+                    {%- assign has_legacy = false -%}
+                    {%- if product.metafields.judgeme.widget.size > 20 %}
+                        {%- assign has_legacy = true -%}
+                    {% endif -%}
+                    <div style="clear:both"></div>
+                    <div
+                        id="judgeme_product_reviews"
+                        class="jdgm-widget jdgm-review-widget"
+                        data-product-title="{{ product.title | escape }}"
+                        data-id="{{ product.id }}"
+                        data-product-id="{{ product.id }}"
+                        data-widget="review"
+                        data-auto-install="false"
+                        data-shop-reviews-count="{{ shop.metafields.judgeme.shop_reviews_count | default: 0 | escape }}"
+                        data-entry-point="review_widget.js"
+                        data-entry-key="review-widget/main.js"
+                    >
+                        {%- if has_legacy %}
+                            <div class="jdgm-legacy-widget-content" style="display: none;">
+                                {{ product.metafields.judgeme.widget }}
+                            </div>
+                        {% endif -%}
+                    </div>
+                    <script>
+                        jdgm.data ||= {};
+                        jdgm.data.reviewWidget ||= {};
+                        jdgm.data.reviewWidget[{{ product.id }}] = {{ product.metafields.judgeme.review_widget_data }}
+                    </script>
+                    <script type="module">
+                        document.querySelectorAll('.product__title--rating').forEach((el) => {
+                            const jw = el.querySelector('.jdgm-widget');
+                            if (jw) jw.style.pointerEvents = 'none';
+
+                            el.addEventListener('click', async (event) => {
+                              event.preventDefault();
+
+                              if (!customElements.get('product-tabs')) {
+                                const { load } = await import('deferred');
+                                await load('productTabs', el);
+                                await customElements.whenDefined('product-tabs');
+                              }
+
+                              el.click(); // Trigger the click again after loading the tab if needed
+                            });
+                        });
+                    </script>
+
+                {%- when 'yotpo' -%}
+                    <div
+                        class="yotpo yotpo-main-widget"
+                        data-product-id="{{ product.id }}"
+                        data-name="{{ product.title | escape }}"
+                        data-url="{{ shop.url }}{{ product.url }}"
+                        data-image-url="{{ product.featured_image | image_url }}"
+                        data-description="{{ product.description | strip_html | escape }}"
+                        data-price="{{ product.price | money }}"
+                        data-currency="{{ shop.currency }}"
+                    ></div>
+                    <script type="module">
+                        document.querySelectorAll('.product__title--rating')
+                            .forEach(el => {
+                                let yw = el.querySelector('.yotpo-main-widget');
+
+                                if (yw) yw.style.pointerEvents = 'none';
+
+                                el.addEventListener('click', async (event) => {
+                                    event.preventDefault();
+
+                                    if (!customElements.get('product-tabs')) {
+                                        const { load } = await import('deferred');
+                                        await load('productTabs', el);
+                                        await customElements.whenDefined('product-tabs');
+                                    }
+
+                                    el.click(); // Trigger the click again after loading the tab if needed
+                                });
+                            });
+                    </script>
+
+                {%- when 'okendo' -%}
+                    {%- if shop.metafields.okendo.WidgetPreRenderBodyStyleTags != blank -%}
+                        {{- shop.metafields.okendo.WidgetPreRenderBodyStyleTags -}}
+                    {%- endif -%}
+                    <div data-oke-widget data-oke-reviews-product-id="shopify-{{ product.id }}">
+                        {{- product.metafields.okendo.ReviewsWidgetSnippet -}}
+                    </div>
+            {%- endcase -%}
+        </div>
+    {%- when 'similar' -%}
+        {%- liquid
+            assign items = block.settings.source
+            assign hideTitle = true
+
+            if items.count == 0 and block.settings.is_random
+                capture handels
+                    render 'helper__get-similar-products', product: product, limit: block.settings.products_per_page
+                endcapture
+                assign items = handels | split: '|'
+            endif
+        -%}
+        {%- if items.count > 0 or items.size > 0 -%}
+            {%- unless hideTitle -%}
+                <h2>{{ 'products.similar_products' | t }}</h2>
+            {%- endunless -%}
+            {%- liquid
+                assign has_side_column = false
+                if section.settings.tabs_layout == 'expanded'
+                    assign has_side_column = true
+                endif
+            -%}
+            {%- render 'grid-items',
+                ul_id: 'similar-products-tabbed',
+                ul_class: 'products',
+                has_side_column: has_side_column,
+                items: items,
+                limit: block.settings.products_per_page,
+                mode: 'grid',
+                columns: block.settings.products_per_page,
+                badge_size: block.settings.badge_size,
+                image_ratio: block.settings.image_ratio,
+                product_secondary_image: settings.product_card_secondary_image,
+                product_to_cart_button: block.settings.show_to_cart_button,
+                product_show_vendor: settings.product_card_vendor
+            -%}
+        {%- endif -%}
+{%- endcase -%}

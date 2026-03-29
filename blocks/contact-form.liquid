@@ -1,0 +1,112 @@
+<div class="contact__form reveal-item" {{ block.shopify_attributes }}>
+    {%- if section.settings.contact_form_title != blank -%}
+        {{ section.settings.contact_form_title }}
+    {%- endif -%}
+    {%- form 'contact', id: 'ContactForm' -%}
+        {%- if form.posted_successfully? -%}
+            <div class="form-status form-status-list form__message form__message--success" tabindex="-1" autofocus>
+                {% render 'icons-outline', name: 'check-circle' %}
+                <p>{{ 'templates.contact.form.post_success' | t }}</p>
+            </div>
+        {%- elsif form.errors -%}
+            {%- liquid
+                assign error_message = 'Some error happend... :('
+                if form.errors contains 'email'
+                    assign error_message = form.errors.translated_fields.email | capitalize | append: ' ' | append: form.errors.messages.email
+                endif
+
+                render 'message-error', text: error_message
+            %}
+        {%- endif -%}
+        <div class="contact__fields reveal-item">
+            <div class="field">
+                <label class="field__label" for="ContactForm-name">{{ 'templates.contact.form.name' | t }}</label>
+                <input
+                    class="field__input"
+                    autocomplete="name"
+                    type="text"
+                    id="ContactForm-name"
+                    name="contact[{{ 'templates.contact.form.name' | t }}]"
+                    value="{% if form.name %}{{ form.name }}{% elsif customer %}{{ customer.name }}{% endif %}"
+                    placeholder="{{ 'templates.contact.form.name' | t }}"
+                >
+            </div>
+            <div class="field field--with-error">
+                <label class="field__label" for="ContactForm-email">
+                    {{- 'templates.contact.form.email' | t }}
+                    <span aria-hidden="true">*</span></label
+                >
+                <input
+                    autocomplete="email"
+                    type="email"
+                    id="ContactForm-email"
+                    class="field__input"
+                    name="contact[email]"
+                    spellcheck="false"
+                    autocapitalize="off"
+                    value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                    aria-required="true"
+                    required
+                    {% if form.errors contains 'email' %}
+                        aria-invalid="true"
+                        aria-describedby="ContactForm-email-error"
+                    {% endif %}
+                    placeholder="{{ 'templates.contact.form.email_placeholder' | t }}"
+                >
+            </div>
+        </div>
+        <div class="field reveal-item">
+            <label class="field__label" for="ContactForm-phone">{{ 'templates.contact.form.phone' | t }}</label>
+            <input
+                type="tel"
+                id="ContactForm-phone"
+                class="field__input"
+                autocomplete="tel"
+                name="contact[{{ 'templates.contact.form.phone' | t }}]"
+                pattern="[0-9\-]*"
+                value="{% if form.phone %}{{ form.phone }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                placeholder="{{ 'templates.contact.form.phone' | t }}"
+            >
+        </div>
+        <div class="field reveal-item">
+            <label class="form__label field__label" for="ContactForm-body">
+                {{- 'templates.contact.form.comment' | t }}
+                <span aria-hidden="true">*</span></label
+            >
+            <textarea
+                rows="10"
+                id="ContactForm-body"
+                class="text-area field__input"
+                name="contact[{{ 'templates.contact.form.comment' | t }}]"
+                placeholder="{{ 'templates.contact.form.comment_placeholder' | t }}"
+                aria-required="true"
+                required
+            >
+        {{- form.body -}}
+      </textarea>
+        </div>
+        <div class="contact__button reveal-item">
+            <button type="submit" class="button button--primary">
+                {{ 'templates.contact.form.send' | t }}
+                {%- if settings.current_theme_icons == 'enduro' %}
+                    {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+                {% else %}
+                    {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+                {% endif -%}
+            </button>
+        </div>
+    {%- endform -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.contact-form.blocks.form.name",
+  "tag": null,
+  "settings": [],
+  "presets": [
+      {
+        "name": "t:sections.contact-form.blocks.form.name",
+      }
+  ]
+}
+{% endschema %}

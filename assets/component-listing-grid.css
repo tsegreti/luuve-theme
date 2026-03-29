@@ -1,0 +1,17 @@
+.classic ul {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.sorting [data-advanced=true].open ~ .icon-caret {
+    transform: rotate(180deg);
+}
+
+/* STYLES FOR SCREENS 768PX AND OVER */
+
+@media (min-width: 768px) {
+    .collection-grid-section {
+        /* prevent horisontal scroll on small screens when hover over item */
+        overflow-x: clip;
+    }
+}

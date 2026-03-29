@@ -1,0 +1,373 @@
+{%- liquid
+    assign itemCandidates = section.settings.source
+    if itemCandidates.count == 0 and section.settings.is_random
+        capture handels
+            render 'helper__get-similar-products', product: product, limit: section.settings.products_per_page
+        endcapture
+        assign itemCandidates = handels | split: '|'
+    endif
+
+    assign image_width = '240'
+    assign image_sizes = '(max-width: 639px) 44vw, (max-width: 767px) 28vw, (max-width: 1279px) 20vw, {image_width}px'
+    assign image_sizes = image_sizes | replace: '{image_width}', image_width
+
+    assign totalPrice = 0
+    if product.selected_or_first_available_variant.available
+        assign totalPrice = product.selected_or_first_available_variant.price
+    endif
+
+    assign titlePosition = settings.section_heading_position
+
+    assign __class__ = 'fbt dynamic-page-width'
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+
+    if section.settings.enable_grayscale_effect
+        assign __class__ = __class__ | append: ' with--grayscale-effect'
+    endif
+-%}
+
+{%- if itemCandidates.count > 0 or itemCandidates.size > 0 -%}
+    {%- comment -%}
+        Prepare settings for item image
+    {%- endcomment -%}
+    {%- liquid
+        assign mode = mode | default: 'list'
+        capture sizes_config
+            render 'grid-item--item-image--sizes', mode: mode, columns: section.settings.products_per_page, has_side_column: true
+        endcapture
+    -%}
+
+    {{ 'section-bought-together.css' | asset_url | stylesheet_tag }}
+
+    {% if section.settings.use_sign_between_items %}
+        {{ 'section-bought-together-sign.css' | asset_url | stylesheet_tag }}
+    {% endif %}
+    {% style %}
+        #shopify-section-{{ section.id }} .heading.position_{{ titlePosition }} {
+            align-items: {{ titlePosition }};
+        }
+        {% if section.settings.border_bottom -%}
+        @media (min-width: 990px) {
+            #shopify-section-{{ section.id }} {
+                border-bottom: 2px solid var(--color-foreground-4);
+                padding-bottom: 5rem;
+            }
+        }
+
+        {% endif -%}
+        @media (min-width: calc({{ settings.type_layout_max_width}}px)) {
+            #shopify-section-{{ section.id }} bought-together {
+                --bought-together--spacing-x: min(calc((100vw - {{ settings.type_layout_max_width}}px) / 2 + .25rem), 4rem);
+            }
+        }
+    {% endstyle %}
+
+    <div class="{{ __class__ }}">
+        <bought-together data-size="{{ section.settings.products_per_page | plus: 1 }}">
+            {%- if section.settings.heading != blank -%}
+                <div class="heading position_{{ titlePosition }}">
+                    <h2 class="title reveal-item">{{ section.settings.heading }}</h2>
+                </div>
+            {%- endif -%}
+            <div class="items">
+                <ul class="items-grid scrollbar scrollbar-thin" data-mode="grid">
+                    {% assign formId = 'product-form-' | append: section.id %}
+                    {%- for itemCandidate in itemCandidates limit: section.settings.products_per_page -%}
+                        {%- liquid
+                            if itemCandidate.object_type != null
+                                assign item = itemCandidate
+                            else
+                                assign item = all_products[itemCandidate]
+                            endif
+
+                            if item == null
+                                continue
+                            endif
+
+                            assign isAvailable = item.selected_or_first_available_variant.available
+                        -%}
+                        <li class="grid-item">
+                            <input
+                                type="checkbox"
+                                name="items[{{ forloop.index }}][id]"
+                                value="{{ item.selected_or_first_available_variant.id }}"
+                                id="item-{{ section.id }}__{{ forloop.index }}"
+                                form="{{ formId }}"
+                                {% if isAvailable %}
+                                    checked
+                                {% else %}
+                                    disabled
+                                {% endif %}
+                                class="visually-hidden"
+                            >
+                            <label for="item-{{ section.id }}__{{ forloop.index }}" class="item-checkbox">
+                                <span
+                                    data-label-unselected="{{ 'sections.product-bought-together.label' | t }}"
+                                    data-label-selected="{{ 'sections.product-bought-together.label_selected' | t }}"
+                                >
+                                </span>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="12"
+                                    height="9"
+                                    viewBox="0 0 12 9"
+                                    fill="none"
+                                >
+                                    <path d="M1 3L5 7L11 1" stroke="white" stroke-width="2"/>
+                                </svg>
+                                <span class="visually-hidden">
+                                    {{- 'sections.product-bought-together.choose_product' | t: name: item.title -}}
+                                </span>
+                            </label>
+                            <a href="{{ item.url }}" class="item-link">
+                                <div class="item-image">
+                                    {% render 'badge-onsale', product: item, size: section.settings.badge_size %}
+                                    {% render 'badge-soldout', product: item, size: section.settings.badge_size %}
+                                    {% assign featuredImage = item.featured_media.preview_image %}
+                                    <div
+                                        class="media"
+                                        style="padding-bottom: {% render 'helper__media-padding-bottom' image: featuredImage image_ratio: section.settings.image_ratio %};"
+                                    >
+                                        {% if featuredImage %}
+                                            {% render 'grid-item--item-image',
+                                                image: featuredImage,
+                                                image_ratio: section.settings.image_ratio,
+                                                image_sizes_config: sizes_config
+                                            %}
+                                        {% else %}
+                                            {{
+                                                item.id
+                                                | divided_by: 1000
+                                                | modulo: 4
+                                                | plus: 1
+                                                | prepend: 'product-'
+                                                | placeholder_svg_tag: 'placeholder-svg placeholder'
+                                            }}
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="item-details-wrapper">
+                                    {% if settings.product_card_vendor -%}
+                                        <p class="item-vendor">
+                                            <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
+                                            <span>{{ item.vendor | default: 'vendor' }}</span>
+                                        </p>
+                                    {%- endif %}
+                                    <p class="item-title">{{ item.title }}</p>
+                                    {% render 'helper__decorate-product-price',
+                                        product: item,
+                                        showPriceLabel: settings.price_label
+                                    %}
+                                    {% if settings.product_card_rating -%}
+                                        <div class="shopify-product-reviews-badge" data-id="{{ item.id }}"></div>
+                                    {%- endif %}
+                                    {%- liquid
+                                        if isAvailable
+                                            assign totalPrice = totalPrice | plus: item.price
+                                        endif
+                                    -%}
+                                </div>
+                            </a>
+                        </li>
+                    {%- endfor -%}
+                    <li class="grid-item summary reveal-item">
+                        {% liquid
+                            assign itemsSize = section.settings.products_per_page | plus: 1
+                            assign padding = 1
+
+                            case itemsSize
+                                when 2
+                                    assign padding = 4
+                                else
+                                    assign padding = 5
+                            endcase
+
+                            assign padding = padding | append: 'rem'
+                        %}
+                        <div class="wrapper" style="max-height: calc(100% - {{ padding }} - 8px);">
+                            <span class="label">{{ 'sections.product-bought-together.total_price' | t }}</span>
+                            {% render 'render-price',
+                                price: totalPrice,
+                                css_class: 'price regular-price price--final'
+                            %}
+
+                            <product-form class="product-form">
+                                <div class="message-wrapper" role="alert" hidden>
+                                    {% render 'message-error' %}
+                                </div>
+
+                                {% form 'product',
+                                    product,
+                                    id: formId,
+                                    class: 'form visually-hidden',
+                                    novalidate: 'novalidate',
+                                    data-type: 'add-to-cart-form'
+                                %}
+                                    <input
+                                        type="hidden"
+                                        name="items[0][id]"
+                                        value="{{ product.selected_or_first_available_variant.id }}"
+                                        {% unless product.selected_or_first_available_variant.available %}
+                                            disabled
+                                        {% endunless %}
+                                    >
+                                {% endform %}
+                                <div class="product-form__buttons">
+                                    <button
+                                        type="submit"
+                                        name="add"
+                                        class="product-form__submit button button--primary"
+                                        form="{{ formId }}"
+                                        {% if product.selected_or_first_available_variant.available %}
+                                            data-to-cart-available="true"
+                                        {% endif %}
+                                    >
+                                        {% comment %}
+                                            <svg class="transition-bezier" aria-hidden="true" focusable="false" role="presentation" width="16" height="16">
+                                                <use href="#icon-cart"></use>
+                                            </svg>
+                                        {% endcomment %}
+                                        <span class="text">{{ 'products.product.add_to_cart' | t }}</span>
+                                    </button>
+                                </div>
+                            </product-form>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <template data-id="price" data-price-sample="{{ 36999 | money_without_currency }}">
+                {% render 'render-price', price: 36999, css_class: 'price regular-price price--final' %}
+            </template>
+        </bought-together>
+    </div>
+
+    {% render 'initialize-deferred-scripts', init_bought_together: true %}
+{%- endif -%}
+
+{% schema %}
+{
+    "name": "t:sections.product-bought-together.name",
+    "tag": "section",
+    "class": "spaced-section",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "border_bottom",
+            "label": "t:sections.all.settings.border_bottom.label"
+        },
+        {
+            "type": "inline_richtext",
+            "id": "heading",
+            "default": "Frequently bought together",
+            "label": "t:sections.product-bought-together.settings.heading.label"
+        },
+        {
+            "type": "product_list",
+            "id": "source",
+            "limit": 4,
+            "label": "t:sections.all.promote_source.label",
+            "info": "t:sections.all.promote_source.info"
+        },
+        {
+            "type": "checkbox",
+            "id": "is_random",
+            "default": true,
+            "label": "t:sections.all.promote_random.label"
+        },
+        {
+            "type": "checkbox",
+            "id": "use_sign_between_items",
+            "default": false,
+            "label": "t:sections.product-bought-together.settings.use_sign_between_items.label"
+        },
+        {
+            "type": "range",
+            "id": "products_per_page",
+            "min": 1,
+            "max": 4,
+            "step": 1,
+            "default": 4,
+            "label": "t:sections.product-bought-together.settings.products_per_page.label"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.product-card.header"
+        },
+        {
+            "type": "select",
+            "id": "badge_size",
+            "options": [
+                {
+                    "value": "xs",
+                    "label": "t:sections.all.product-card.badge_size.options__1.label"
+                },
+                {
+                    "value": "sm",
+                    "label": "t:sections.all.product-card.badge_size.options__2.label"
+                },
+                {
+                    "value": "md",
+                    "label": "t:sections.all.product-card.badge_size.options__3.label"
+                },
+                {
+                    "value": "lg",
+                    "label": "t:sections.all.product-card.badge_size.options__4.label"
+                },
+                {
+                    "value": "xl",
+                    "label": "t:sections.all.product-card.badge_size.options__5.label"
+                }
+            ],
+            "default": "md",
+            "label": "t:sections.all.product-card.badge_size.label"
+        },
+        {
+            "type": "select",
+            "id": "image_ratio",
+            "label": "t:sections.all.product-card.image_ratio.label",
+            "options": [
+                {
+                    "value": "settings|product_card_image_ratio",
+                    "label": "t:sections.all.product-card.image_ratio.options.default"
+                },
+                {
+                    "value": "native",
+                    "label": "t:sections.all.product-card.image_ratio.options.native"
+                },
+                {
+                    "value": "1",
+                    "label": "t:sections.all.product-card.image_ratio.options.1_by_1"
+                },
+                {
+                    "value": "5/4",
+                    "label": "t:sections.all.product-card.image_ratio.options.4_by_5"
+                }
+            ],
+            "default": "settings|product_card_image_ratio"
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_grayscale_effect",
+            "label": "t:sections.all.settings.enable_grayscale_effect.label",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "animation_on_reveal",
+            "label": "t:sections.all.settings.animation_on_reveal.label",
+            "default": true
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.product-bought-together.name"
+        }
+    ],
+    "enabled_on": {
+        "templates": ["product"]
+    }
+}
+{% endschema %}

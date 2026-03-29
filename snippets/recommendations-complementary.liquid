@@ -1,0 +1,42 @@
+{%- comment -%}
+    Recommendations & Complementary products
+
+      Accepts:
+       -  intent:     {String}
+       -  appearance: {String}
+       -  mode_view:  {String}
+       -  sectionId:  {String}
+       -  product_id: {String}
+       -  limit:      {String}
+       -  heading:    {String}
+       -  mode:       {String}
+{%- endcomment -%}
+
+{% style %}
+    @media (min-width: 640px) and (max-width: 768px) {
+      #shopify-section-{{ section.id }} .slider .grid-item {
+        width: calc(33.333333% - 2 * var(--grid-item-gap, 1rem) / 3);
+      }
+    }
+{% endstyle %}
+{%- liquid
+    assign limit = limit | default: section.settings.products_to_show
+    assign mode = mode | default: 'grid'
+    assign sectionId = sectionId | default: section.id
+    assign product_id = product_id | default: product.id
+-%}
+<product-recommendations
+    data-url="{{ routes.product_recommendations_url }}"
+    data-params='{"section_id": "{{ sectionId }}", "product_id": "{{ product_id }}", "limit": {{ limit }}, "intent": "{{ intent }}"}'
+    data-mode-view="{{ mode }}"
+>
+    {%- liquid
+        capture html
+            render 'featured-collection', data_source: intent, appearance: appearance, heading: heading, mode: mode
+        endcapture
+
+        echo html | replace: '"collection-inner"', '"collection-inner visually-hidden"'
+    -%}
+</product-recommendations>
+
+{% render 'initialize-deferred-scripts', init_product_recommendations: true %}

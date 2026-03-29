@@ -1,0 +1,139 @@
+{%- liquid
+    if section.blocks.size > 1
+        assign enable_slider = true
+    else
+        assign enable_slider = false
+    endif
+
+    case section.settings.text_position
+        when 'top'
+            assign text_position = 'column-reverse'
+        when 'bottom'
+            assign text_position = 'column'
+        when 'left'
+            assign text_position = 'row-reverse'
+        when 'right'
+            assign text_position = 'row'
+        else
+            assign text_position = 'theme-appearance'
+    endcase
+
+    unless block.settings.custom_icon == blank
+        assign icon_width = block.settings.custom_icon.width
+        assign inline_styles = 'width: Wpx' | replace: 'W', icon_width
+        assign iconWidth_2x = icon_width | times: 2
+        assign icon_sizes = icon_width | append: 'px'
+        assign icon_widths = icon_width | append: ', ' | append: iconWidth_2x
+    endunless
+-%}
+<li class="icons-bar-item{% if enable_slider %} slider__slide{% endif %} reveal-item" {{ block.shopify_attributes }}>
+    {% if text_position == 'theme-appearance' %}<div class="icons-bar__item-wrapper">{% endif %}
+    {%- if block.settings.custom_icon == blank %}
+        {%- unless block.settings.icon == blank %}
+            <div class="icons-bar-icon">
+                {% if block.settings.icon contains 'divine' %}
+                    {% render 'theme-icons', name: block.settings.icon %}
+                {% else %}
+                    {% render 'icons-bar__icon', name: block.settings.icon, css_class: 'ionicon' %}
+                {% endif %}
+            </div>
+        {% endunless -%}
+    {% else %}
+        {{
+            block.settings.custom_icon
+            | image_url: width: icon_width
+            | image_tag: loading: 'lazy', sizes: icon_sizes, widths: icon_widths, style: inline_styles
+        }}
+    {% endif -%}
+    {%- unless block.settings.text == blank %}
+        <div class="icons-bar-text">
+            {%- if block.settings.heading_font_size > 0 %}
+                <span style="font-size: {{  block.settings.heading_font_size }}px;">
+                    {{ block.settings.text | strip_html }}
+                </span>
+            {% else %}
+                {{ block.settings.text }}
+            {% endif -%}
+        </div>
+    {% endunless -%}
+    {% if text_position == 'theme-appearance' %}</div>{% endif %}
+
+    {%- unless block.settings.text_underneath_icon == blank -%}
+        <div class="icons-bar-subtitle subtitle-underneath-icon">{{ block.settings.text_underneath_icon }}</div>
+    {%- endunless -%}
+</li>
+{% if section.settings.separator == true %}
+    <li class="icons-bar-item-separator"></li>
+{% endif %}
+
+{% schema %}
+{
+    "name": "t:sections.icons_bar.blocks.icon.name",
+    "tag": null,
+    "settings": [
+        {
+            "type": "select",
+            "id": "icon",
+            "options": [
+                { "value": "", "label": "None"},
+                { "value": "academic-cap", "label": "Academic cap"},
+                { "value": "adjustments", "label": "Adjustments"},
+                { "value": "bell", "label": "Bell"},
+                { "value": "cake", "label": "Cake"},
+                { "value": "cash", "label": "Cash"},
+                { "value": "chart-pie", "label": "Chart pie"},
+                { "value": "chat-alt-2", "label": "Chat"},
+                { "value": "clipboard-check", "label": "Checked"},
+                { "value": "clock", "label": "Clock"},
+                { "value": "menu", "label": "Menu"},
+                { "value": "pencil", "label": "Pencil"},
+                { "value": "scale", "label": "Scale"},
+                { "value": "share", "label": "Share"},
+                { "value": "shield-check", "label": "Shield"},
+                { "value": "sparkles", "label": "Sparkles"},
+                { "value": "thumb-up", "label": "Thumb up"},
+                { "value": "trash", "label": "Trash"},
+                { "value": "divine-shipping", "label": "Truck"},
+                { "value": "divine-lock", "label": "Lock"},
+                { "value": "divine-returns", "label": "Returns"}
+            ],
+            "default": "divine-shipping",
+            "label": "t:sections.icons_bar.blocks.icon.settings.icon.label"
+        },
+        {
+            "type": "image_picker",
+            "id": "custom_icon",
+            "label": "t:sections.icons_bar.blocks.icon.settings.custom_icon.label"
+        },
+        {
+            "type": "richtext",
+            "id": "text",
+            "label": "t:sections.icons_bar.blocks.icon.settings.text.label",
+            "default": "<h6>Item Title</h6>"
+        },
+        {
+            "type": "range",
+            "id": "heading_font_size",
+            "min": 0,
+            "max": 96,
+            "step": 1,
+            "unit": "px",
+            "label": "t:sections.icons_bar.blocks.icon.settings.heading_font_size.label",
+            "info": "t:sections.icons_bar.blocks.icon.settings.heading_font_size.info",
+            "default": 0
+        },
+        {
+            "type": "richtext",
+            "id": "text_underneath_icon",
+            "label": "t:sections.icons_bar.blocks.icon.settings.text_underneath_icon.label",
+            "info": "t:sections.icons_bar.blocks.icon.settings.text_underneath_icon.info",
+            "default": "<p>Describe the item, make announcements or welcome customers to your store.</p>"
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.icons_bar.blocks.icon.name"
+        }
+    ]
+}
+{% endschema %}

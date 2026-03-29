@@ -1,0 +1,17 @@
+{%- comment -%}
+    Render product using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+
+<div
+    class="product__info-block product__info-block--app"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {% render block %}
+</div>

@@ -1,0 +1,44 @@
+#newsletter-form-footer {
+    display: flex;
+    margin: 1rem 0 0;
+    position: relative;
+}
+
+#newsletter-form-footer .newsletter-form__field-wrapper {
+    flex: 1;
+}
+
+#newsletter-form-footer button {
+    --color-button-text: currentColor;
+    --color-button-background: transparent;
+    border: none;
+    box-shadow: none;
+    font-size: 0px;
+    z-index: 10;
+    margin-left: -3rem;
+    width: 3rem;
+    min-width: 0px;
+    padding: 0px;
+}
+
+#newsletter-form-footer button:hover,
+#newsletter-form-footer button:focus,
+#newsletter-form-footer button:active {
+    box-shadow: none;;
+}
+
+#newsletter-form-footer button svg {
+    height: 2rem;
+    width: 2rem;
+}
+
+#newsletter-form-footer .field {
+    margin: 0px;
+}
+
+#newsletter-form-footer .form__message {
+    position: absolute;
+    top: 2.5rem;
+    width: 83.333333%;
+    border-radius: 0.25rem;
+}

@@ -1,0 +1,100 @@
+.loading-overlay {
+  background-color: rgba(var(--color-base-background-1-rgb), 0.6);
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 40;
+}
+
+.loading-overlay__spinner {
+  margin: 0 auto;
+  width: 3rem;
+  height: 3rem;
+}
+
+.spinner {
+  animation: rotator 1.4s linear infinite;
+}
+
+@keyframes rotator {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(270deg);
+  }
+}
+
+.path {
+  stroke-dasharray: 280;
+  stroke-dashoffset: 0;
+  transform-origin: center;
+  stroke: currentColor;
+  animation: dash 1.4s ease-in-out infinite;
+}
+
+@keyframes dash {
+  0% {
+    stroke-dashoffset: 280;
+  }
+  50% {
+    stroke-dashoffset: 75;
+    transform: rotate(135deg);
+  }
+  100% {
+    stroke-dashoffset: 280;
+    transform: rotate(450deg);
+  }
+}
+
+.loading .loading-overlay,
+.loading-overlay:not(.hidden) {
+  display: flex;
+}
+
+button.loading {
+  position: relative;
+}
+
+.grid-item .loading-overlay,
+.slider__slide .loading-overlay,
+button .loading-overlay {
+  align-items: center;
+}
+
+[data-mode="grid"] .item-actions-wrapper button .loading-overlay {
+  border-radius: 100%;
+  bottom: -2px;
+  left: -2px;
+  right: -2px;
+  top: -2px;
+}
+
+.grid-item .loading-overlay__spinner,
+.slider__slide .loading-overlay__spinner,
+button .loading-overlay__spinner {
+  height: 2rem;
+  width: 2rem;
+}
+
+.loading-overlay:not(.hidden) + .cart-item__price-wrapper,
+.loading-overlay:not(.hidden) ~ cart-remove-button {
+  opacity: 50%;
+}
+
+.loading-overlay:not(.hidden) ~ cart-remove-button {
+  pointer-events: none;
+  cursor: default;
+}
+
+.collection > .loading-overlay {
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
+
+.collection > .loading-overlay .loading-overlay__spinner {
+  margin-left: 0px;
+}
+

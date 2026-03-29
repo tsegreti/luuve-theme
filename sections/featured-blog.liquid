@@ -1,0 +1,162 @@
+{% render 'featured-blog',
+    blog: section.settings.blog,
+    articles_list: null,
+    articles_limit: section.settings.post_limit,
+    heading: section.settings.heading,
+    excerpt_limit: section.settings.excerpt_limit,
+    show_title: section.settings.show_title,
+    show_author: section.settings.show_author,
+    show_comments: section.settings.show_comments,
+    show_date: section.settings.show_date,
+    show_image: section.settings.show_image,
+    show_link: section.settings.show_link,
+    tags_limit: section.settings.tags_limit,
+    individual_title_positioning: section.settings.enable_section_title_positioning,
+    section_title_position: section.settings.section_heading_position,
+    description: section.settings.description,
+    item_card_background: section.settings.card_background
+%}
+
+{% schema %}
+{
+  "name": "t:sections.featured-blog.name",
+  "tag": "section",
+  "class": "spaced-section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "default": "Featured recent posts",
+      "label": "t:sections.featured-blog.settings.heading.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "description",
+      "label": "t:sections.featured-blog.settings.description.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_section_title_positioning",
+      "label": "t:sections.featured-blog.settings.enable-section-title-positioning.label",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "section_heading_position",
+      "default": "flex-start",
+      "label": "t:sections.featured-blog.settings.section_heading_position.label",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:sections.featured-blog.settings.section_heading_position.options.flex-start"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.featured-blog.settings.section_heading_position.options.center"
+        },
+        {
+          "value": "end",
+          "label": "t:sections.featured-blog.settings.section_heading_position.options.end"
+        }
+      ]
+    },
+    {
+      "type": "blog",
+      "id": "blog",
+      "label": "t:sections.featured-blog.settings.blog.label"
+    },
+    {
+      "type": "range",
+      "id": "post_limit",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 3,
+      "label": "t:sections.featured-blog.settings.post_limit.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grayscale_effect",
+      "label": "t:sections.all.settings.enable_grayscale_effect.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-blog.settings.header.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "default": true,
+      "label": "t:sections.featured-blog.settings.show_image.label",
+      "info": "t:sections.featured-blog.settings.show_image.info"
+    },
+    {
+      "type": "range",
+      "id": "tags_limit",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "default": 3,
+      "unit": "tag",
+      "label": "t:sections.main-blog.settings.tags_limit.label",
+      "info": "t:sections.main-blog.settings.tags_limit.info"
+    },
+    {
+      "type": "range",
+      "id": "excerpt_limit",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 30,
+      "unit": "wrd",
+      "label": "t:sections.main-blog.settings.excerpt_limit.label",
+      "info": "t:sections.main-blog.settings.excerpt_limit.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "t:sections.featured-blog.settings.show_title.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "default": false,
+      "label": "t:sections.main-blog.settings.show_date.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_link",
+      "default": true,
+      "label": "t:sections.featured-blog.settings.show_link.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comments",
+      "default": true,
+      "label": "t:sections.featured-blog.settings.show_comments.label"
+    },
+    {
+      "type": "color",
+      "id": "card_background",
+      "label": "t:sections.featured-blog.settings.card_background.label",
+      "default": "#FFFFFF"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.featured-blog.presets.name",
+      "settings": {
+        "blog": "News"
+      }
+    }
+  ]
+}
+{% endschema %}

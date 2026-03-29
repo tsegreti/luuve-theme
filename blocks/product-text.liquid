@@ -1,0 +1,77 @@
+{%- liquid
+    assign product = section.settings.product | default: product
+    assign block_index = block.settings.block_order
+-%}
+{%- render 'product__info-block--text',
+    block: block,
+    product: product,
+    blockOrder: block_index,
+    sectionId: section.id
+-%}
+{% schema %}
+{
+    "name": "t:sections.main-product.blocks.text.name",
+    "tag": null,
+    "settings": [
+        {
+            "type": "richtext",
+            "id": "text",
+            "default": "<p>Text block. Give customers additional information about the product(s), shipping, discount, etc.</p>",
+            "label": "t:sections.main-product.blocks.text.settings.text.label"
+        },
+        {
+            "type": "select",
+            "id": "text_style",
+            "options": [
+                {
+                    "value": "body",
+                    "label": "t:sections.main-product.blocks.text.settings.text_style.options__1.label"
+                },
+                {
+                    "value": "subtitle",
+                    "label": "t:sections.main-product.blocks.text.settings.text_style.options__2.label"
+                },
+                {
+                    "value": "uppercase",
+                    "label": "t:sections.main-product.blocks.text.settings.text_style.options__3.label"
+                }
+            ],
+            "default": "body",
+            "label": "t:sections.main-product.blocks.text.settings.text_style.label"
+        },
+        {
+            "type": "checkbox",
+            "id": "is_collapsed",
+            "default": true,
+            "label": "t:sections.main-product.blocks.all.settings.is_collapsed.label",
+            "info": "t:sections.main-product.blocks.all.settings.is_collapsed.info"
+        },
+        {
+            "type": "range",
+            "id": "initial_lines",
+            "min": 1,
+            "max": 20,
+            "step": 1,
+            "default": 1,
+            "label": "t:sections.main-product.blocks.all.settings.initial_lines.label"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.advanced.header.content"
+        },
+        {
+            "type": "number",
+            "id": "block_order",
+            "label": "t:sections.all.advanced.block_order.label",
+            "info": "t:sections.all.advanced.block_order.info",
+            "default": 19
+        }
+    ],
+     "presets": [
+        {
+            "name": "t:sections.main-product.blocks.text.name",
+            "category": "t:sections.all.categories.product-information"
+        }
+    ]
+}
+{% endschema %}

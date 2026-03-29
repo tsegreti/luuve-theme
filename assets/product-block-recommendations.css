@@ -1,0 +1,122 @@
+.product__info-block--recommendations:has(.no-recommendations),
+.product__info-block--recommendations:has(.no-recommendations, .grid-item) .loader-when-empty {
+  display: none;
+}
+
+.product__info-block--recommendations > h2 {
+  margin-top: 0;
+}
+
+.product__info-block--recommendations > h2 svg {
+  display: inline;
+}
+
+.product__info-block--recommendations > h2 span {
+  vertical-align: middle;
+  display: inline-block;
+  font-size: 1.25rem;
+  font-weight: 600;
+  max-width: calc(100% - 10rem);
+  overflow-wrap: break-word;
+}
+
+.product__info-block--recommendations product-recommendations {
+  display: block;
+}
+
+.product__info-block--recommendations slider-component .grid-item :is(quick-view, .grid-item__swatch-wrapper) {
+  display: none !important;
+}
+
+.product__info-block--recommendations slider-component .slider-counter {
+  display: block !important;
+}
+
+.product__info-block--recommendations .grid-item .item-title {
+  -webkit-line-clamp: initial;
+}
+
+.product__info-block--recommendations:not(.product__info-block--collapsible_tab) ul {
+  padding-bottom: 0 !important;
+  padding-top: 0 !important;
+}
+
+.product__info-block--recommendations ul .label.visually-hidden + .price--final {
+  font-size: 1rem;
+}
+
+.product__info-block--recommendations [data-mode-view=grid] .item-details-wrapper {
+    position: relative;
+  }
+
+.product__info-block--recommendations [data-mode-view=grid] ul {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+.product__info-block--recommendations [data-mode-view=grid] ul .grid-item {
+      width: 50% !important;      
+    }
+
+.product__info-block--recommendations [data-mode-view=list] ul {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;  
+  }
+
+.product__info-block--recommendations [data-mode-view=list] ul .item-actions-wrapper button {
+        font-size: .75rem;
+        height: 2.5rem !important;
+      }
+
+.product__info-block--recommendations [data-mode-view=list] ul .item-actions-wrapper button svg { display:none; }
+
+.product__info-block--recommendations [data-mode-view=list] ul .item-actions-wrapper .price--final {
+        font-size: 1rem !important;
+      }
+
+.product__info-block--recommendations [data-mode-view=list] ul .grid-item {
+      width: 100% !important;
+    }
+
+.product__info-block--recommendations [data-mode-view=list] ul .grid-item .item-link {
+        --columns-gap: .75rem !important;
+      }
+
+.product__info-block--recommendations [data-mode-view=list] ul .grid-item::before {
+        content: none !important;
+      }
+
+.product__info-block--recommendations [data-mode-view=list] ul .item-details-wrapper {
+      width: 100%;
+    }
+
+.product__info-block--recommendations [data-mode-view=list] squama-item .item-link:before {
+    content: none !important;
+  }
+
+.product__info-block--recommendations [data-mode-view=list] .slider-buttons .slider__button > svg {
+    width: 3rem;
+  }
+
+.product__info-block--recommendations [data-mode-view=list] .accordion__content {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+.product__info-block--recommendations .slider-buttons .slider__button {
+  padding: .5rem;
+}
+
+.product__info-block--recommendations.accordion .slider-buttons {
+  position: initial !important;
+}
+
+.product__info-block--recommendations [data-mode="grid"] .item-actions-wrapper button .loading-overlay {
+  border-radius: 0;
+}
+
+@media screen and (min-width: 1200px) {
+  .product__info-block--recommendations slider-component {
+    --slider-component--margin: 0 -1rem;
+  }
+}

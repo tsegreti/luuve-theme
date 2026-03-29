@@ -1,0 +1,175 @@
+{%- liquid
+    assign bg_color = 'transparent'
+    unless section.settings.use_background_transparent
+        assign bg_color = settings.breadcrumbs_background_gradient | default: settings.breadcrumbs_background
+    endunless
+-%}
+
+{% style %}
+    #shopify-section-{{ section.id }} {
+      background: {{ bg_color }};
+      opacity: 1;
+      transition: opacity 1s;
+    }
+    {% if template == 'product' %}
+      {% if settings.templates_list_to_overlap_header contains 'product' %}
+      #shopify-section-{{ section.id }} {
+        visibility: hidden;
+        margin-bottom: 6rem;
+      }{% endif %}
+    {% endif %}
+    #shopify-section-{{ section.id }}:hover,
+    #shopify-section-{{ section.id }}:focus {
+      opacity: .75;
+    }
+    {% if section.settings.border_bottom or section.settings.border_top -%}
+    #shopify-section-{{ section.id }} {
+      {% if section.settings.border_bottom -%}
+        border-bottom: 1px solid #e6e6e6;
+      {%- endif %}
+      {% if section.settings.border_top -%}
+        border-top: 1px solid #e6e6e6;
+      {%- endif %}
+    }
+    {% endif -%}
+
+    .breadcrumbs {
+      padding: .25rem;
+    }
+    .breadcrumbs .items {
+      color: {{ settings.breadcrumbs_foreground }};
+      display: flex;
+      gap: .5rem;
+      overflow: auto;
+      white-space: nowrap;
+    }
+    .breadcrumbs .item {
+      align-items: center;
+      display: flex;
+      gap: .5rem;
+      padding: .5rem 0;
+      font-size: 0.875rem;{% unless settings.current_presets == 'enduro' %}
+      text-transform: uppercase;{% endunless %}
+    }
+    .breadcrumbs .item a {
+      display: block;
+      max-width: 14rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .breadcrumbs .item:last-child .icon-slash {
+      display: none;
+    }
+{% endstyle %}
+
+<div class="dynamic-page-width breadcrumbs" aria-label="breadcrumbs">
+    <ul class="items scrollbar">
+        <li class="item">
+            <a href="{{ shop.url }}" title="{{ 'general.breadcrumbs.home_page' | t }}">
+                {{- 'general.breadcrumbs.home_link' | t -}}
+            </a>
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                role="presentation"
+                class="icon icon-slash"
+                height="12"
+                width="12"
+            >
+                <use href="#icon-slash"></use>
+            </svg>
+        </li>
+        {%- assign t = template | split: '.' | first -%}
+        {%- case t -%}
+            {%- when 'page' -%}
+                <li class="item">
+                    <strong>{{ page.title }}</strong>
+                </li>
+
+            {%- when 'collection' -%}
+                {% if collection.handle -%}
+                    <li class="item">
+                        <strong>{{ collection.title }}</strong>
+                    </li>
+                {% endif %}
+
+            {%- when 'product' -%}
+                {%- if collection.title -%}
+                    <li class="item">
+                        {{ collection.title | link_to: collection.url }}
+                        <svg
+                            aria-hidden="true"
+                            focusable="false"
+                            role="presentation"
+                            class="icon icon-slash"
+                            height="12"
+                            width="12"
+                        >
+                            <use href="#icon-slash"></use>
+                        </svg>
+                    </li>
+                {%- endif -%}
+                <li class="item">
+                    <strong>{{ product.title }}</strong>
+                </li>
+
+            {%- when 'article' -%}
+                {%- if article.url -%}
+                    <li class="item">
+                        {{ blog.title | link_to: blog.url }}
+                        <svg
+                            aria-hidden="true"
+                            focusable="false"
+                            role="presentation"
+                            class="icon icon-slash"
+                            height="12"
+                            width="12"
+                        >
+                            <use href="#icon-slash"></use>
+                        </svg>
+                    </li>
+                {%- endif -%}
+                <li class="item">
+                    <strong>{{ article.title }}</strong>
+                </li>
+
+            {%- else -%}
+                <li class="item requested_path">
+                    <strong>{{ page_title }}</strong>
+                </li>
+        {%- endcase -%}
+    </ul>
+</div>
+
+{{ 'component-breadcrumbs.css' | asset_url | stylesheet_tag }}
+
+{% schema %}
+{
+  "name": "t:sections.breadcrumbs.name",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "border_top",
+      "label": "t:sections.breadcrumbs.settings.border_top.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "border_bottom",
+      "label": "t:sections.breadcrumbs.settings.border_bottom.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "use_background_transparent",
+      "label": "t:sections.breadcrumbs.settings.use_background_transparent.label",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.breadcrumbs.presets.name"
+    }
+  ]
+}
+{% endschema %}

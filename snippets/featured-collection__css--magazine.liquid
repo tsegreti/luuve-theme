@@ -1,0 +1,68 @@
+{% comment %}
+    Add styles for magazine cover of section "Featured collection"
+
+     -  block {Object}
+{% endcomment %}
+
+<link
+    rel="stylesheet"
+    href="{{ 'section-featured-collection-magazine.css' | asset_url }}"
+    media="print"
+    onload="this.media='all'"
+>
+<noscript>{{ 'section-featured-collection-magazine.css' | asset_url | stylesheet_tag }}</noscript>
+
+{% style %}
+    #shopify-section-{{ section.id }} {
+        --magazine--title--color: {{ block.settings.text_color }};
+        --magazine--title--background: {% if block.settings.background_gradient != blank -%}
+            {{ block.settings.background_gradient }}
+        {%- else -%}
+            {{ block.settings.background }}
+        {%- endif %};{% if section.settings.border_top %}
+        border-top: 2px solid var(--color-foreground-4);
+        padding-top: 2.5rem;{% endif %}
+    }
+    #shopify-section-{{ section.id }} slider-component > ul {
+        --grid-item-gap: 0px;
+        margin: 0;
+        padding: 1rem 0 .5rem;
+    }
+    #shopify-section-{{ section.id }} .view-all {
+        --color-button-text: {{ block.settings.button_text_color }};
+        --color-button-border: {{ block.settings.button_background }};
+        --color-button-background: {{ block.settings.button_background }};
+        --color-link: rgba({{ block.settings.text_color.red }}, {{ block.settings.text_color.green }}, {{ block.settings.text_color.blue }}, .8);
+        --color-link-hover: {{ block.settings.text_color }};
+        text-decoration: none;
+    }
+    #shopify-section-{{ section.id }} .grid-item {
+        padding: .5rem;
+    }
+    #shopify-section-{{ section.id }} .slider-buttons {
+        margin: 0;
+        padding: 0 .5rem .5rem;
+        {% if section.settings.show_slider_buttons == false or section.settings.products_appearance == 'grid' -%}
+        display: none;
+        {%- endif %}
+    }
+    @media (min-width: 990px), print {
+        #shopify-section-{{ section.id }} slider-component > ul {
+            margin: 0;
+            padding: {% if section.settings.products_appearance == 'slider' and section.settings.show_slider_buttons -%}
+                .5rem .5rem 3.5rem
+            {%- else -%}
+                .5rem
+            {%- endif %};
+        }
+        #shopify-section-{{ section.id }} .slider-buttons {
+            position: relative;
+            z-index: 10;
+        }
+
+        #shopify-section-{{ section.id }} .collection-inner .title-wrapper._sticky {
+            position: sticky;
+            top: 5rem;
+        }
+    }
+{% endstyle %}

@@ -1,0 +1,67 @@
+{%- comment -%}
+    Render block contacts
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+{%- endcomment -%}
+
+<div
+    class="collection__block collection__block--contacts"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {% unless block.settings.heading == blank %}
+        <h2 class="title h5{% if settings.bold_first_heading_word %} heading-normal{% endif %}">
+            {% render 'helper__decorate-heading', heading: block.settings.heading %}
+        </h2>
+    {% endunless %}
+    <div class="content">
+        {% if block.settings.show_phone %}
+            <a href="phoneto:{{ settings.contact_phone }}" title="{{ 'header_top.contact_phone.title' | t }}">
+                {% render 'icons-solid', name: 'phone' %}
+                <span>{{ settings.contact_phone }}</span>
+            </a>
+        {% endif %}
+        {% if block.settings.show_email %}
+            <a href="mailto:{{ settings.contact_email }}" title="{{ 'header_top.contact_email.title' | t }}">
+                {% render 'icons-solid', name: 'mail' %}
+                <span>{{ settings.contact_email }}</span>
+            </a>
+        {% endif %}
+        {% if block.settings.show_instagram %}
+            {% liquid
+                assign needles = 'http:||'
+                assign needles = 'https:||' | prepend: needles
+                assign needles = '//www.instagram.com/||' | prepend: needles
+                assign needles = '//instagram.com/||' | prepend: needles
+                assign needles = needles | split: '||'
+                assign handle = settings.social_instagram_link
+                for needle in needles
+                    assign handle = handle | replace_first: needle, ''
+                endfor
+            -%}
+            <a href="https://ig.me/m/{{ handle }}" title="{{ 'general.social.titles.instagram' | t }}" target="_blank">
+                {% render 'icons-ion', name: 'logo-instagram', css_class: 'instagram' %}
+                <span>@{{ handle | replace: '/', '' }}</span>
+            </a>
+        {% endif %}
+        {% if block.settings.show_facebook %}
+            {% liquid
+                assign needles = 'http:||'
+                assign needles = 'https:||' | prepend: needles
+                assign needles = '//www.facebook.com/||' | prepend: needles
+                assign needles = '//facebook.com/||' | prepend: needles
+                assign needles = needles | split: '||'
+                assign handle = settings.social_facebook_link
+                for needle in needles
+                    assign handle = handle | replace_first: needle, ''
+                endfor
+            -%}
+            <a href="https://m.me/{{ handle }}" title="{{ 'general.social.titles.facebook' | t }}" target="_blank">
+                {% render 'theme-icons', name: 'facebook-messenger', css_class: 'messenger' %}
+                <span>@{{ handle | replace: '/', '' }}</span>
+            </a>
+        {% endif %}
+    </div>
+</div>

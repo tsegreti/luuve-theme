@@ -1,0 +1,107 @@
+{%- comment -%}
+    Render product title using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+{%- liquid
+    assign __class__ = 'product__info-block product__info-block--border product__info-block--title'
+    if block.settings.show_price
+        assign __class__ = __class__ | append: ' product__info-block--title-with-price'
+    endif
+    if block.settings.show_badges
+        assign __class__ = __class__ | append: ' product__info-block--title-with-badge'
+    endif
+
+    assign heading_tag = heading_tag | default: 'h1'
+-%}
+<div class="{{ __class__ }}" style="order: {{ blockOrder }}" {{ block.shopify_attributes }}>
+    <div class="product__title--wrapper">
+        <div class="product__title--info reveal-item">
+            {% unless block.settings.text_before == blank %}
+                <p class="product__title--before">{{ block.settings.text_before }}</p>
+            {% endunless %}
+            {%- if block.settings.show_sku -%}
+                <div id="block-title-sku-{{ sectionId }}" class="product__title--sku" data-updatable="true">
+                    {%- if product == null -%}
+                        {%- assign sku = 'demo-sku' -%}
+                    {%- else -%}
+                        {%- assign sku = product.selected_or_first_available_variant.sku -%}
+                    {%- endif -%}
+                    {%- unless sku == '' or sku == null -%}
+                        <span class="label">{{ 'products.product.sku' | t }}</span>
+                        <span class="value">{{ sku }}</span>
+                    {%- endunless -%}
+                </div>
+            {%- endif -%}
+        </div>
+        <{{ heading_tag }} class="product__title reveal-item">
+            {{- product.title | escape | default: 'Product title' -}}
+        </{{ heading_tag }}>
+        {% unless block.settings.text_after == blank %}
+            <p class="product__title--after reveal-item">{{ block.settings.text_after }}</p>
+        {% endunless %}
+    </div>
+
+    <div
+        id="block-title-price-{{ sectionId }}"
+        class="product__price product__title--price reveal-item"
+        data-updatable="true"
+    >
+        {%- unless settings.review_apps == 'none' -%}
+            {% case settings.review_apps %}
+                {% when 'yotpo' %}
+                    <a
+                        href="#shopify-product-reviews"
+                        class="product__title--rating"
+                        title="{{ 'sections.main-product.title.reviews' | t }}"
+                    >
+                        <div
+                            class="yotpo-widget-instance"
+                            data-yotpo-instance-id="911611"
+                            data-yotpo-product-id="{{ product.id }}"
+                            data-yotpo-cart-product-id="{{ product.id }}"
+                            data-yotpo-section-id="{{ template.name }}"
+                        ></div>
+                    </a>
+
+                {% when 'judgeme' %}
+                    {% assign rating_size = product.metafields.judgeme | replace: '{', '' %}
+                    {% assign rating_size = rating_size | replace: '}', '' %}
+                    <a
+                        href="#shopify-product-reviews"
+                        class="product__title--rating"
+                        title="{{ 'sections.main-product.title.reviews' | t }}"
+                        {% unless rating_size == 0 %}
+                            tabindex="-1"
+                        {% endunless %}
+                    >
+                        <span class="jdgm-widget jdgm-preview-badge">
+                            {{- product.metafields.judgeme.badge -}}
+                        </span>
+                    </a>
+
+                {% when 'okendo' %}
+                    <a
+                        href="#shopify-product-reviews"
+                        class="product__title--rating"
+                        title="{{ 'sections.main-product.title.reviews' | t }}"
+                    >
+                        <div data-oke-star-rating data-oke-reviews-product-id="shopify-{{ product.id }}">
+                            {{- product.metafields.okendo.StarRatingSnippet -}}
+                        </div>
+                    </a>
+            {% endcase %}
+        {%- endunless -%}
+        {%- render 'price',
+            product: product,
+            use_variant: true,
+            show_badges: true,
+            show_stock: false,
+            show_sku: false
+        -%}
+    </div>
+</div>

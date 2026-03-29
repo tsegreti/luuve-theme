@@ -1,0 +1,117 @@
+popup-banner .popup-modal__toggle {
+    top: .5rem;
+    margin-right: .5rem;
+}
+
+popup-banner [role=dialog] {
+    margin-top: calc(45vh - var(--clientHeight, 50vh) / 2);
+}
+
+.popup-banner__text {
+    flex-grow: 1;
+    padding: 1rem 1.5rem;   
+}
+
+.popup-banner__text.no-image {
+    text-align: center;
+}
+
+.popup-banner__text > * {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+.popup-banner__text .newsletter-form {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 20rem;
+}
+
+.popup-banner__text .newsletter-form__button {
+    width: 100%;
+}
+
+.popup-banner__text .newsletter-form__button > svg {
+    width: 3rem;
+    height: 1rem;
+}
+
+.popup-banner__content {
+    display: flex;
+    align-items: center;
+}
+
+.popup-banner__content > * {
+    width: 100%;
+}
+
+.popup-banner__content > .media {
+    display: none;
+}
+
+.popup-banner__content > .media:last-child {
+    display: block;
+    padding-bottom: var(--media--padding-bottom);
+}
+
+popup-banner[data-image-only="true"] .popup-modal__toggle {
+    background-color: rgba( var(--color-background-rgb), .75);
+}
+
+popup-banner .newsletter-form:has(.form__message--success) .newsletter-form__field-wrapper {
+    display: none;
+}
+
+popup-banner[data-image-underneath="true"] .popup-modal__content {
+    background-image: var(--popup-image);
+    background-position: center;
+    background-size: cover;
+    border-radius: 10px;
+}
+
+popup-banner[data-image-underneath="true"] .popup-modal__content-info {
+    background: var(--color-background);
+    border-radius: 10px;
+    margin: 5rem auto;
+    max-width: 28rem;
+    overflow: hidden;
+}
+
+popup-banner[data-image-underneath="true"] .popup-modal__toggle,
+popup-banner[data-image-only="true"] .popup-modal__toggle {
+    background: var(--color-foreground);
+    border-radius: 100%;
+    color: var(--color-background);
+    padding: 0.5rem;
+}
+
+popup-banner[data-image-underneath="true"] .popup-modal__toggle svg,
+popup-banner[data-image-only="true"] .popup-modal__toggle svg {
+    height: 1.25rem;
+    width: 1.25rem;
+}
+
+body[data-current-preset="enduro"] popup-banner [type="email"] {
+    padding-left: 3rem;
+}
+
+body[data-current-preset="enduro"] popup-banner .newsletter-form__field-wrapper {
+    text-align: left;
+}
+
+@media all and (min-width: 480px) {
+    .popup-banner__content > .media:not(:last-child) {
+        display: block;
+    }
+}
+
+@media all and (min-width: 640px) {
+    popup-banner .popup-modal__toggle {
+        top: 1rem;
+        margin-right: 1rem;
+    }
+
+    .popup-banner__text {
+        padding: 2rem 2.5rem;
+    }
+}

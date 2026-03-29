@@ -1,0 +1,79 @@
+comparison-slider .comparison-label {
+    font-size: 0;
+    line-height: 0;
+}
+
+comparison-slider .comparison-label,
+comparison-slider .comparison-range {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    -webkit-appearance: none;
+       -moz-appearance: none;
+            appearance: none;
+    outline: none;
+    cursor: ew-resize;
+    opacity: 0;
+    z-index: 12;
+}
+
+comparison-slider .comparison-slider__icon-wrapper {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 4px;
+    height: 100%;    
+    opacity: 1;
+    z-index: 11;
+}
+
+comparison-slider .slider-toggler {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+    align-items: center;    
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+    border-radius: 50%;
+    transform-origin: center;
+    transform: translate(-50%, -50%);
+}
+
+.comparison-wrapper {
+    outline: 1px solid var(--color-foreground-10);
+}
+
+comparison-slider .description {
+    box-shadow: var(--color-foreground-10) 0px 0px 3px;
+}
+
+comparison-slider .comparison-range::-webkit-slider-thumb {
+    opacity: 0;
+}
+
+comparison-slider .comparison-range::-ms-fill-lower {
+    background-color: transparent;
+}
+
+@media(min-width: 990px), print {
+    comparison-slider .comparison-range {    
+        top: 50%;
+        transform: translateY(-50%);    
+        height: 2rem;    
+    }
+
+    comparison-slider .slider-toggler {
+        width: 3rem;
+        height: 3rem;
+    }
+}

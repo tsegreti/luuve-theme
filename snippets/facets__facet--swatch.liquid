@@ -1,0 +1,47 @@
+{%- comment -%}
+    Render swatches filter
+
+    Accepts:
+     - filter    {Object}
+     - value     {Object}
+     - index     {Number}
+     - is_mobile {Boolean}
+{%- endcomment -%}
+
+{% liquid
+    if value.swatch.color
+        assign option_background = value.swatch.color
+    elsif value.swatch.image or value.image
+        assign option_background = value.swatch.image | default: value.image | image_url | prepend: "url('" | append: "')"
+    else
+        assign filter_name_sanitized = filter.label | downcase | remove: ' ' | remove: '/' | remove: ',' | remove: '.'
+        capture option_background
+            render 'swatch-options__option-background', option_name: filter_name_sanitized, value: value.value
+        endcapture
+    endif
+    assign input_id = filter.label | escape
+    if is_mobile
+        assign input_id = input_id | append: '-mobile'
+    endif
+%}
+<input
+    type="checkbox"
+    name="{{ value.param_name }}"
+    value="{{ value.value }}"
+    id="Filter-{{ input_id }}-{{ index }}"
+    class="visually-hidden"
+    {% if value.active %}
+        checked
+    {% endif %}
+    {% if value.count == 0 and value.active == false %}
+        disabled
+    {% endif %}
+>
+<label
+    for="Filter-{{ input_id }}-{{ index }}"
+    title="{{ value.label | escape }} ({{ value.count }})"
+    style="--swatch-option-background: {{ option_background | strip }}"
+    class="facet-checkbox{% if value.count == 0 and value.active == false %}{% if is_mobile %} mobile-facets__label{% else %} facet-checkbox{% endif %}--disabled{% endif %}"
+>
+    {{ value.label | escape }}
+</label>

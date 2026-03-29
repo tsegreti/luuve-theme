@@ -1,0 +1,76 @@
+{% comment %}
+    Render localization language switcher
+
+    Accepts:
+     - form_id {String}
+{% endcomment %}
+
+{%- assign formIdNoScript = form_id | append: 'NoScript' -%}
+
+{%- if localization.available_languages.size > 1 -%}
+    <div class="localization-language-wrapper">
+        <noscript>
+            {%- form 'localization', id: formIdNoScript, class: 'localization-form' -%}
+                <div class="localization-form__select select">
+                    <span class="visually-hidden" id="{{ formIdNoScript }}Label">
+                        {{- 'localization.language_label' | t -}}
+                    </span>
+                    <select
+                        class="localization-selector"
+                        name="locale_code"
+                        aria-labelledby="{{ formIdNoScript }}Label"
+                    >
+                        {%- for language in localization.available_languages -%}
+                            <option
+                                value="{{ language.iso_code }}"
+                                lang="{{ language.iso_code }}"
+                                {%- if language.iso_code == localization.language.iso_code %}
+                                    selected
+                                {% endif %}
+                            >
+                                {%- if settings.show_switcher_language_flag %}
+                                    {% render 'flag', language_code: language.iso_code %}
+                                {% endif -%}
+                                {{ language.endonym_name | capitalize }}
+                            </option>
+                        {%- endfor -%}
+                    </select>
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret">
+                        <use href="#icon-caret" />
+                    </svg>
+                </div>
+                <button type="submit">{{ 'localization.update_language' | t }}</button>
+            {%- endform -%}
+        </noscript>
+
+        <localization-form data-panel-source="switcher__list-languages">
+            {%- form 'localization', id: form_id, class: 'localization-form no-js-hidden' -%}
+                <span class="visually-hidden" id="{{ form_id }}Label">{{ 'localization.language_label' | t }}</span>
+                <div class="disclosure">
+                    {% capture button_inner_html %}
+                        {%- if settings.show_switcher_language_flag %}
+                        <span class="language-icon__wrapper">
+                            {%- render 'flag' language_code: localization.language.iso_code flag_as_img: true -%}
+                        </span>
+                        {% endif -%}
+                        <span>
+                            {%- if settings.show_language_iso_code %}
+                            {{ localization.language.iso_code | capitalize }}
+                            {% else %}
+                            {{ localization.language.endonym_name | capitalize }}
+                            {% endif -%}
+                        </span>
+                    {% endcapture %}
+                    {% render 'switcher__disclosure-button', form_id: form_id, inner_html: button_inner_html %}
+                    <div
+                        class="localization-panel disclosure__list--wrapper loader-when-empty transition-bezier"
+                        hidden
+                        data-search-placeholder="{{ 'localization.search_placeholder' | t }}"
+                        data-localization-size="{{ localization.available_languages.size }}"
+                    ></div>
+                </div>
+                <input type="hidden" name="locale_code" value="{{ localization.language.iso_code }}">
+            {%- endform -%}
+        </localization-form>
+    </div>
+{%- endif -%}

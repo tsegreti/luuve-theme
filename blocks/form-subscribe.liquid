@@ -1,0 +1,71 @@
+{%- capture form_html %}
+  {%- liquid
+    assign form_id = 'newsletter-form'
+    assign form_newsletter_class = 'newsletter-form'
+    if block.settings.minimal_form
+      assign form_newsletter_class = form_newsletter_class | append: ' minimal-form'
+    endif
+  -%}
+  {%- render 'form-subscribe'
+    id: form_id
+    class: form_newsletter_class
+    block_order: forloop.index
+    use_email_min_form: block.settings.minimal_form
+  -%}
+{% endcapture -%}
+
+<div class="form-newsletter_container" {{ block.shopify_attributes }}>
+    {% unless block.settings.button_style_secondary %}
+        {% assign form_html = form_html | replace: 'button--secondary', 'button--primary' %}
+    {% endunless -%}
+
+    {{- form_html -}}
+</div>
+
+{% if block.settings.minimal_form %}
+    {% style %}
+        #shopify-block-{{ block.id }} .newsletter-form__field-wrapper button {
+          position: absolute;
+          right: 0.15rem;
+          top: 0.15rem;
+          height: calc(3rem - 5px);
+          min-width: 4rem;
+        }
+        :not(.newsletter-with-image) #shopify-block-{{ block.id }} .newsletter-form__field-wrapper button {
+          min-width: 3rem; {% if settings.current_presets == 'enduro' %}
+          {% if template.name != "password" %}
+                color: var(--color-base-link);{% else %}
+                color: var(--color-foreground);{%endif%}{% endif %}
+        }{% if settings.current_presets == 'enduro' %}
+        :not(.newsletter-with-image) #shopify-block-{{ block.id }} .newsletter-form__field-wrapper button > svg {
+          --icon-width: 1rem;
+        }{% endif %}
+    {% endstyle %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "t:sections.newsletter.blocks.email_form.name",
+  "class": "reveal-item",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "button_style_secondary",
+      "default": false,
+      "label": "t:sections.all.button_style_secondary.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "minimal_form",
+      "label": "t:sections.newsletter.blocks.email_form.settings.minimal_form",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.newsletter.blocks.email_form.name",
+      "category": "t:sections.all.categories.forms"
+    }
+  ]
+}
+{% endschema %}

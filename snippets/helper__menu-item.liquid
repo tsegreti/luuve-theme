@@ -1,0 +1,48 @@
+{% comment %}
+    Render menu item
+
+    Accepts:
+     -  item {Object} Menu item (link)
+{% endcomment %}
+
+{% capture itemHtml %}
+    {%- if item.url == blank -%}
+        <span>{{ item.title }}</span>
+    {%- else -%}
+        <a href="{{ item.url }}" class="{% if item.current %}menu-item--active{% endif %}">{{ item.title }}</a>
+    {%- endif -%}
+{% endcapture %}
+
+{% if item.links == blank %}
+    {{ itemHtml }}
+{% else %}
+    {% capture childrenHtml %}
+        <ul>
+            {% for link in item.links -%}
+                <li>
+                    {%- render 'helper__menu-item' item: link -%}
+                </li>
+            {%- endfor %}
+        </ul>
+    {% endcapture %}
+    <details
+        {% if childrenHtml contains 'menu-item--active' or itemHtml contains 'menu-item--active' %}
+            open
+        {% endif %}
+    >
+        <summary>
+            {{ itemHtml }}
+            <svg
+                aria-hidden="true"
+                focusable="false"
+                role="presentation"
+                class="icon icon-caret"
+                height="12"
+                width="12"
+            >
+                <use href="#icon-caret"></use>
+            </svg>
+        </summary>
+        {{ childrenHtml }}
+    </details>
+{% endif %}

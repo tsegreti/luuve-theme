@@ -1,0 +1,423 @@
+{% comment %}
+    Renders an item for product grid
+
+    Accepts:
+    - product:              {Object}  Product Liquid object
+    - image_ratio           {String}
+    - image_sizes_config    {String}
+    - image_preload         {Boolean}
+    - image_loading         {String}  (Optional) Set loading startegy for main image. Default: lazy
+    - show_secondary_image  {Boolean} (Optional) Show the secondary image on hover. Default: false
+    - show_to_cart_button   {Boolean}
+    - show_description      {Boolean}
+    - show_options_colors   {Boolean} Show color swatches. When unset use theme settings
+    - uniq_id               {String}  (Optional)
+    - is_media_slider       {Bool}
+{% endcomment %}
+
+{%- liquid
+    if product.media[1] != null and show_secondary_image
+        assign show_secondary_image = true
+    else
+        assign show_secondary_image = false
+    endif
+
+    if show_secondary_image and is_media_slider
+        assign show_secondary_image = false
+    endif
+
+    unless current_collection
+        assign current_collection = collection
+    endunless
+
+    assign on_sale = false
+    if product.compare_at_price > product.price
+        assign on_sale = true
+    endif
+
+    assign sold_out = false
+    if product.available == false
+        assign sold_out = true
+    endif
+
+    assign show_to_cart_button = show_to_cart_button | default: false
+    if uniq_id == null
+        assign uniq_id = section.id
+    endif
+
+    assign product_form_id = 'product-form-' | append: uniq_id | append: '-' | append: product.id
+-%}
+
+<li
+    class="grid-item{% if sold_out %} sold-out{% endif %}{% if on_sale %} on-sale{% endif %} reveal-item"
+    data-product-id="{{ product.id }}"
+    style="--image-width: {{ image_sizes_config | default: 240 | split: '|' | first }}px"
+>
+    <squama-item>
+        <a href="{{ product.url | within: current_collection }}" class="item-link">
+            <div class="item-image {% if show_secondary_image %}item-image__with-secondary{% endif %}">
+                <!-- badges_html -->
+                {% assign featuredImage = product.featured_media.preview_image %}
+                {%- if is_media_slider %}
+                    {% if product.media.size > 2 %}
+                        <slider-component class="slideshow" data-loop="false">
+                            <ul class="item-grid--media-slider slider slider--desktop">
+                                {% for media in product.media %}
+                                    <li class="slider__slide">
+                                        <div
+                                            class="media"
+                                            style="padding-bottom: {% render 'helper__media-padding-bottom' image: featuredImage image_ratio: image_ratio %};"
+                                        >
+                                            {% render 'grid-item--item-image',
+                                                image: media,
+                                                image_ratio: image_ratio,
+                                                image_sizes_config: image_sizes_config,
+                                                image_loading: image_loading,
+                                                image_preload: image_preload
+                                            %}
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                            <div class="slider-pagination slider-pagination--floating media-slider-bullets no-js-hidden">
+                                {%- for i in (1..product.media.size) %}
+                                    <p>&nbsp;</p>
+                                {% endfor -%}
+                            </div>
+                            {%- render 'slider__buttons',
+                                count: 0,
+                                left_icon_name: 'arrow-left',
+                                right_icon_name: 'arrow-right'
+                            -%}
+                        </slider-component>
+                    {% else %}
+                        <div
+                            class="media"
+                            style="padding-bottom: {% render 'helper__media-padding-bottom' image: featuredImage image_ratio: image_ratio %};"
+                        >
+                            {% if featuredImage %}
+                                {% render 'grid-item--item-image',
+                                    image: featuredImage,
+                                    image_ratio: image_ratio,
+                                    image_sizes_config: image_sizes_config,
+                                    image_loading: image_loading,
+                                    image_preload: image_preload
+                                %}
+                            {% else %}
+                                {{
+                                    product.id
+                                    | divided_by: 1000
+                                    | modulo: 4
+                                    | plus: 1
+                                    | prepend: 'product-'
+                                    | placeholder_svg_tag: 'placeholder-svg placeholder'
+                                }}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                {% else %}
+                    <div
+                        class="media"
+                        style="padding-bottom: {% render 'helper__media-padding-bottom' image: featuredImage image_ratio: image_ratio %};"
+                    >
+                        {% if featuredImage %}
+                            {% render 'grid-item--item-image',
+                                image: featuredImage,
+                                image_ratio: image_ratio,
+                                image_sizes_config: image_sizes_config,
+                                image_loading: image_loading,
+                                image_preload: image_preload
+                            %}
+                            {% if show_secondary_image %}
+                                {% render 'grid-item--item-image',
+                                    image: product.media[1].preview_image,
+                                    image_ratio: image_ratio,
+                                    image_sizes_config: image_sizes_config
+                                %}
+                            {% endif %}
+                        {% else %}
+                            {{
+                                product.id
+                                | divided_by: 1000
+                                | modulo: 4
+                                | plus: 1
+                                | prepend: 'product-'
+                                | placeholder_svg_tag: 'placeholder-svg placeholder'
+                            }}
+                        {% endif %}
+                    </div>
+                {% endif -%}
+
+                {% if mode == 'grid' or mode == 'mozaic' %}
+                    <div class="item-actions-wrapper">
+                        {%- if show_to_cart_button != false -%}
+                            {%- liquid
+                                if product.has_only_default_variant
+                                    assign buttonName = 'add'
+                                    if product.selected_or_first_available_variant.available
+                                        assign buttonText = 'products.product.add_to_cart' | t
+                                        assign isButtonDisabled = false
+                                    else
+                                        assign buttonText = 'products.product.sold_out' | t
+                                        assign isButtonDisabled = true
+                                    endif
+                                else
+                                    assign buttonName = 'view'
+                                    assign buttonText = 'products.product.view_full_details' | t
+                                    assign isButtonDisabled = false
+                                endif
+                            -%}
+                            <button
+                                type="submit"
+                                name="{{ buttonName }}"
+                                class="button button--primary button--small"
+                                form="{{ product_form_id }}"
+                                aria-label="{{ buttonText }}"
+                                title="{{ buttonText }}"
+                                {% if isButtonDisabled %}
+                                    disabled
+                                {% endif %}
+                            >
+                                <span
+                                    {% if mode == 'list' %}
+                                    {% else %}
+                                        class="sr-only"
+                                    {% endif %}
+                                >
+                                    {{- buttonText -}}
+                                </span>
+                                {%- if settings.current_theme_icons == 'enduro' %}
+                                    <svg
+                                        aria-hidden="true"
+                                        focusable="false"
+                                        role="presentation"
+                                        width="19"
+                                        height="19"
+                                        class="icon-cart"
+                                    >
+                                        <use href="#enduro-icon-cart" />
+                                    </svg>
+                                {% else %}
+                                    <svg
+                                        aria-hidden="true"
+                                        focusable="false"
+                                        role="presentation"
+                                        width="17"
+                                        height="20"
+                                        class="icon-cart"
+                                    >
+                                        <use href="#icon-cart" />
+                                    </svg>
+                                {% endif -%}
+                            </button>
+                        {%- endif -%}
+
+                        {% if settings.enable_quick_view %}
+                            <quick-view data-view-details="{{- 'products.product.view_full_details' | t -}}">
+                                <button
+                                    type="button"
+                                    class="button button--small"
+                                    name="quick-view"
+                                    aria-label="{{ 'products.product.quick_view' | t }}"
+                                >
+                                    <svg width="26" height="24">
+                                        <use href="#icon-eye" />
+                                        <span class="sr-only">{{ 'products.product.quick_view' | t }}</span>
+                                    </svg>
+                                </button>
+                            </quick-view>
+                        {% endif %}
+                    </div>
+                    {% if show_options_colors or show_options_colors == null and settings.product_card_swatch_colors %}
+                        {%- render 'grid-items__swatch-options',
+                            form: product_form_id,
+                            product: product,
+                            uniq_id: uniq_id
+                        -%}
+                    {% endif %}
+                {% endif %}
+            </div>
+            {%- if mode == 'grid' or mode == 'mozaic' %}
+                {%- if settings.current_presets == 'enduro' %}
+                    <div class="item-line-separator"></div>
+                {% endif -%}
+            {% endif -%}
+            <div class="item-details-wrapper">
+                {%- if show_vendor -%}
+                    <p class="item-vendor">
+                        <span class="sr-only">{{ 'accessibility.vendor' | t }}</span>
+                        <span>{{ product.vendor | default: 'vendor' }}</span>
+                    </p>
+                {%- endif -%}
+                <p class="item-title">{{ product.title | default: 'Example product title' }}</p>
+
+                {%- unless settings.review_apps == 'none' -%}
+                    {% case settings.review_apps %}
+                        {% when 'yotpo' %}
+                            <div
+                                class="yotpo-widget-instance"
+                                data-yotpo-instance-id="911611"
+                                data-yotpo-product-id="{{ product.id }}"
+                                data-yotpo-cart-product-id="{{ product.id }}"
+                                data-yotpo-section-id="{{ template.name }}"
+                            ></div>
+
+                        {% when 'judgeme' %}
+                            <div class="jdgm-widget jdgm-preview-badge">
+                                {{- product.metafields.judgeme.badge -}}
+                            </div>
+
+                        {% when 'okendo' %}
+                            {% liquid
+                                assign okendo_data = product.metafields.okendo | json
+                                assign review_count = okendo_data | replace: '{', ''
+                                assign review_count = review_count | replace: '}', ''
+                            %}
+                            {%- unless review_count == blank -%}
+                                <div data-oke-star-rating data-oke-reviews-product-id="{{ product.id }}">
+                                    {{- product.metafields.okendo.StarRatingSnippet -}}
+                                </div>
+                            {%- endunless -%}
+                    {% endcase %}
+                {%- endunless -%}
+
+                {% if mode == 'list' %}
+                    {%- if show_options_colors
+                        or show_options_colors == null
+                        and settings.product_card_swatch_colors
+                    -%}
+                        {%- render 'grid-items__swatch-options',
+                            form: product_form_id,
+                            product: product,
+                            uniq_id: uniq_id
+                        -%}
+                    {%- endif -%}
+                {% endif %}
+                {% unless mode == 'list' %}
+                    {% render 'helper__decorate-product-price',
+                        product: product,
+                        showPriceLabel: settings.price_label
+                    %}
+                {% endunless %}
+
+                {%- if show_description -%}
+                    <div class="item-description rte">
+                        {{- product.description | strip_html | truncatewords: 36 -}}
+                    </div>
+                {%- endif -%}
+            </div>
+            {% if mode == 'list' %}
+                <div class="item-actions-wrapper">
+                    {% render 'helper__decorate-product-price',
+                        product: product,
+                        showPriceLabel: settings.price_label
+                    %}
+                    {%- if show_to_cart_button != false -%}
+                        {%- liquid
+                            if product.has_only_default_variant
+                                assign buttonName = 'add'
+                                if product.selected_or_first_available_variant.available
+                                    assign buttonText = 'products.product.add_to_cart' | t
+                                    assign isButtonDisabled = false
+                                else
+                                    assign buttonText = 'products.product.sold_out' | t
+                                    assign isButtonDisabled = true
+                                endif
+                            else
+                                assign buttonName = 'view'
+                                assign buttonText = 'products.product.view_full_details' | t
+                                assign isButtonDisabled = false
+                            endif
+                        -%}
+                        <button
+                            type="submit"
+                            name="{{ buttonName }}"
+                            class="button button--primary button--small"
+                            form="{{ product_form_id }}"
+                            aria-label="{{ buttonText }}"
+                            title="{{ buttonText }}"
+                            {% if isButtonDisabled %}
+                                disabled
+                            {% endif %}
+                        >
+                            <span
+                                {% if mode == 'list' %}
+                                {% else %}
+                                    class="sr-only"
+                                {% endif %}
+                            >
+                                {{- buttonText -}}
+                            </span>
+                            {%- if settings.current_theme_icons == 'enduro' %}
+                                <svg
+                                    aria-hidden="true"
+                                    focusable="false"
+                                    role="presentation"
+                                    width="19"
+                                    height="19"
+                                    class="icon-cart"
+                                >
+                                    <use href="#enduro-icon-cart" />
+                                </svg>
+                            {% else %}
+                                <svg
+                                    aria-hidden="true"
+                                    focusable="false"
+                                    role="presentation"
+                                    width="17"
+                                    height="20"
+                                    class="icon-cart"
+                                >
+                                    <use href="#icon-cart" />
+                                </svg>
+                            {% endif -%}
+                        </button>
+                    {%- endif -%}
+
+                    {% if settings.enable_quick_view %}
+                        <quick-view data-view-details="{{- 'products.product.view_full_details' | t -}}">
+                            <button
+                                type="button"
+                                class="button button--small"
+                                name="quick-view"
+                                aria-label="{{ 'products.product.quick_view' | t }}"
+                            >
+                                <svg width="26" height="24">
+                                    <use href="#icon-eye" />
+                                    <span>{{ 'products.product.quick_view' | t }}</span>
+                                </svg>
+                            </button>
+                        </quick-view>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </a>
+    </squama-item>
+    {%- if show_to_cart_button != false and product.id != blank -%}
+        {% if product.has_only_default_variant %}
+            <product-form class="product-form sr-only">
+                {% form 'product',
+                    product,
+                    id: product_form_id,
+                    class: 'form',
+                    novalidate: 'novalidate',
+                    data-type: 'add-to-cart-form'
+                %}
+                    <input
+                        type="hidden"
+                        name="id"
+                        value="{{ product.selected_or_first_available_variant.id }}"
+                        disabled
+                    >
+                {% endform %}
+            </product-form>
+        {% else %}
+            <form
+                id="{{ product_form_id }}"
+                action="{{ product.url | within: current_collection }}#has-options"
+                novalidate
+            ></form>
+        {% endif %}
+    {% endif %}
+</li>

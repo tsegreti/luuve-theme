@@ -1,0 +1,27 @@
+{%- if settings.current_theme_icons == 'enduro' %}
+    <svg aria-hidden="true" focusable="false" role="presentation" width="19" height="19" class="icon-cart">
+        <use href="#enduro-icon-cart" />
+    </svg>
+{% else %}
+    <svg aria-hidden="true" focusable="false" role="presentation" width="17" height="20" class="icon-cart">
+        <use href="#icon-cart" />
+    </svg>
+{% endif -%}
+<span class="cart-label">
+    {{ 'templates.cart.cart' | t }}
+    {% comment %}
+        {%- if cart == empty -%}
+          {{ 'templates.cart.cart' | t }}
+        {%- else -%}
+          {{ 'sections.header.cart_count' | t: count: cart.item_count }}
+        {%- endif -%}
+    {% endcomment %}
+</span>
+<div class="cart-count-bubble">
+    {%- if cart.item_count > 0 -%}
+        <span aria-hidden="true">{{ cart.item_count }}</span>
+    {%- endif -%}
+</div>
+<svg aria-hidden="true" focusable="false" role="presentation" width="19" height="19" class="icon-x" hidden>
+    <use href="#icon-x" />
+</svg>

@@ -1,0 +1,52 @@
+text-expandable {
+    display: -webkit-box;
+    -webkit-line-clamp: var(--line-clamp, 3);
+    -webkit-box-orient: vertical;
+    overflow: clip;
+    position: relative;
+}
+
+text-expandable.fallback--max-height {
+    display: block;
+    max-height: calc(var(--line-clamp, 3) * 1.5rem);
+}
+
+text-expandable[data-expanded="true"] {
+    --line-clamp: 9999 !important;
+    overflow: auto;
+}
+
+text-expandable[data-expanded="true"]:has(.btn--collapse:not([hidden])) {
+    padding-bottom: 1.5rem;
+}
+
+text-expandable.fallback--max-height[data-expanded="true"] {
+    max-height: none !important;
+}
+
+text-expandable > .btn--expand,
+text-expandable > .btn--collapse {
+    --tw-ring-inset: inset;
+    border-radius: var(--button__border-radius);
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: var(--color-background);
+    padding-left: 1rem;
+    background: linear-gradient(to right, transparent 0, var(--color-background) .5rem);
+}
+
+text-expandable > .btn--expand:hover,
+text-expandable > .btn--expand:focus:not(:focus-visible),
+text-expandable > .btn--expand:active,
+text-expandable > .btn--collapse:hover,
+text-expandable > .btn--collapse:focus:not(:focus-visible),
+text-expandable > .btn--collapse:active {
+    box-shadow: none;
+}
+
+/* fix for RTE last paragraph */
+
+text-expandable.rte:has(.btn--collapse) > p:nth-last-child(3) {
+    margin-bottom: 0;
+}

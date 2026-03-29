@@ -1,0 +1,104 @@
+{%- comment -%}
+    Render styles for header Localization forms: Language switcher and Country Switcher
+{%- endcomment -%}
+
+{% style %}
+    .header__icons .localization-currency-wrapper,
+    .header__icons .localization-language-wrapper,
+    #header-top-inner .switcher-wrapper {
+        display: none;
+    }
+
+    .language-icon__wrapper {
+        align-items: center;
+        border-radius: 100%;
+        display: flex;
+        flex-shrink: 0;
+        height: 20px;
+        justify-content: center;
+        margin-right: .25rem;
+        overflow: hidden;
+        width: 20px;
+    }
+
+    .language-icon__wrapper i {
+        font-size: 2rem;
+        font-style: normal;
+        max-height: 100%;
+        position: relative;
+        vertical-align: top;
+    }
+
+    .language-icon__wrapper img {
+        height: 100%;
+        position: absolute;
+        width: 100%;
+    }
+
+    @media (min-width: 990px), print {
+        #header-top-inner .switcher-wrapper {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        #header-top-inner .localization-currency-wrapper,
+        #header-top-inner .localization-language-wrapper {
+            display: block;
+            font-size: 0.75rem;
+            line-height: normal;
+        }
+
+        #header-top-inner .localization-selector .localization-form__currency-name,
+        #header-top-inner .localization-selector .localization-form__country,
+        #header-top-inner .localization-selector .localization-form__currency::before,
+        #header-top-inner .localization-selector .localization-form__currency::after {
+            display: none;
+        }
+
+        #header-top-inner .language-icon__wrapper ~ span,
+        #header-top-inner .localization-selector .localization-form__currency {
+            font-weight: 600;
+        }
+
+        #header-top-inner .language-icon__wrapper i {
+            max-height: 1.25rem;
+        }
+
+        #header-top-inner .localization-selector {
+            gap: .5rem;
+            width: auto;
+        }
+        #header-top-inner button.localization-selector {
+            padding: 0;
+            margin-right: .5rem;
+            background: transparent;
+            border-color: transparent;
+            color: inherit;
+        }
+
+        .localization-form__currency {
+            white-space: nowrap;
+        }
+
+        .header__icons .localization-currency-wrapper,
+        .header__icons .localization-language-wrapper {
+            display: block;
+        }
+
+        .header__icons .localization-language-wrapper button .language-icon__wrapper ~ span,
+        .header__icons .localization-selector .localization-form__currency-name,
+        .header__icons .localization-selector .localization-form__country,
+        .header__icons .localization-selector .localization-form__currency::before,
+        .header__icons .localization-selector .localization-form__currency::after {
+            display: none;
+        }
+
+        .header__icons .localization-selector {
+            gap: .25rem;
+            width: auto;
+        }
+        .header__icons button.localization-selector {
+            padding-right: .25rem;
+        }
+    }
+{% endstyle %}

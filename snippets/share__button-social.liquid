@@ -1,0 +1,48 @@
+{%- comment -%}
+    Render button share on social.
+
+    Accepts:
+     -  social           {String}
+     -  object_to_share  {Object}
+{%- endcomment -%}
+
+{%- liquid
+    assign url = shop.url | append: object_to_share.url
+    assign href = '#'
+    case social
+        when 'facebook'
+            assign href = 'https://www.facebook.com/sharer/sharer.php?u=' | append: url
+        when 'twitter'
+            assign text = object_to_share.title
+            assign text = text | url_param_escape
+            assign href = 'https://twitter.com/intent/tweet?url=' | append: url
+            assign href = href | append: '&text=' | append: text
+        when 'pinterest'
+            assign text = object_to_share.title
+            assign text = text | url_param_escape
+            assign image = object_to_share.featured_image | default: object_to_share.image | image_url: width: 1440 | url_param_escape
+            assign href = 'https://pinterest.com/pin/create/button/?url=' | append: url
+            assign href = href | append: '&description=' | append: text
+            assign href = href | append: '&media=' | append: image
+    endcase
+-%}
+
+<a
+    class="share-button__button share-button__button--{{ social }} button button--tertiary button--small"
+    href="{{ href }}"
+    onclick="window.open(this.href, 'popup', 'width=600,height=400'); return false;"
+    target="_blank"
+    title="{{ 'general.share.share_' | append: social | t }}"
+>
+    {% case social %}
+        {% when 'facebook' %}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 14" fill="none">
+                <path d="M7.45988 0.549553C7.24786 0.518142 6.51758 0.455322 5.6695 0.455322C3.89483 0.455322 2.67769 1.53897 2.67769 3.52566V5.23751H0.675293V7.56186H2.67769V13.5219H5.08056V7.56186H7.0751L7.38135 5.23751H5.08056V3.75339C5.08056 3.08592 5.26117 2.62262 6.22703 2.62262H7.45988L7.45988 0.549553Z" fill="currentColor"/>
+            </svg>
+        {% when 'pinterest' %}
+            {% render 'icons-ion', name: 'logo-pinterest' %}
+        {% when 'twitter' %}
+            {% render 'icons-ion', name: 'logo-twitter' %}
+    {% endcase %}
+    <span>{{ 'general.share.share_' | append: social | t }}</span>
+</a>

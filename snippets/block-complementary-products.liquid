@@ -1,0 +1,20 @@
+{% comment %}
+    Renders Upsell product in the Minicart template
+
+    Accepts:
+    - sectionId: {String}
+    - productId: {String}
+{% endcomment %}
+
+<product-block-recommendations>
+    {%- render 'recommendations-complementary',
+        sectionId: sectionId,
+        product_id: productId,
+        intent: settings.minicart_upsell_products_intent,
+        limit: settings.minicart_upsell_products_limit,
+        appearance: 'slider',
+        heading: settings.minicart_upsell_products_heading,
+        mode: 'list'
+    -%}
+</product-block-recommendations>
+{{ 'component-minicart-recommendations.css' | asset_url | stylesheet_tag }}

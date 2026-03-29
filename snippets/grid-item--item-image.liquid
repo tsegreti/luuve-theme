@@ -1,0 +1,52 @@
+{% comment %}
+    Render grid item image
+
+    Accepts:
+     - image              {Object}
+     - image_ratio        {String}
+     - image_sizes_config {String}
+     - image_preload      {Boolean}
+     - image_loading      {String}  (Optional)
+{% endcomment %}
+
+{%- liquid
+    assign image_loading = image_loading | default: 'lazy'
+
+    if image_ratio contains 'settings|'
+        assign optionKey = image_ratio | split: '|' | last
+        assign ratio = settings[optionKey]
+    else
+        assign ratio = image_ratio
+    endif
+
+    case ratio
+        when '1'
+            assign multiplier = image.aspect_ratio | round: 4
+        when '5/4'
+            assign multiplier = image.aspect_ratio | times: 5 | divided_by: 4 | round: 4
+        else
+            assign multiplier = 1
+    endcase
+
+    assign sizes = image_sizes_config | strip | split: '|'
+
+    assign imageWidth = sizes[0] | default: image.width
+    assign imageWidthList = sizes[1] | split: ','
+    assign imgSizes = sizes[2] | replace: '{m}', multiplier
+
+    assign widths = ''
+    for width in imageWidthList
+        assign w = width | times: multiplier | round: 0
+        if w > 0
+            assign widths = widths | append: w
+            unless forloop.last
+                assign widths = widths | append: ','
+            endunless
+        endif
+    endfor
+-%}
+{{
+    image
+    | image_url: width: imageWidth
+    | image_tag: loading: image_loading, sizes: imgSizes, widths: widths, preload: image_preload
+}}

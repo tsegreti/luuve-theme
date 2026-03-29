@@ -1,0 +1,11 @@
+{%- comment -%}
+    Render error message
+
+    Accepts:
+    - text: {String} (Optional)
+{%- endcomment -%}
+
+<div class="form__message--error form__message" tabindex="-1">
+    {% render 'icons-outline', name: 'x-circle' %}
+    <p class="error-message">{{ text }}</p>
+</div>

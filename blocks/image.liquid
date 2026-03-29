@@ -1,0 +1,43 @@
+{%- liquid
+    assign loading_strategy = 'lazy'
+    assign fetchpriority = 'low'
+    assign is_preload = false
+    assign sizes = '100vw'
+-%}
+
+<div class="block-image" id="block-{{ block.id }}" {{ block.shopify_attributes }}>
+    {% if block.settings.image == blank %}
+        {{ 'lifestyle-1' | placeholder_svg_tag }}
+    {% else -%}
+        {%- render 'render-image',
+            image: block.settings.image,
+            sizes: sizes,
+            loading_strategy: loading_strategy,
+            is_preload: is_preload,
+            fetchpriority: fetchpriority
+        -%}
+    {% endif %}
+</div>
+{% style %}
+    :is(.block-image) {padding: 1rem;}
+    :is(.block-image) img {margin: 0 auto;}
+    :is(.block-image) svg {height: 124px; width: 100%; fill: #808080;}
+{% endstyle %}
+{% schema %}
+{
+  "name": "t:sections.all.blocks.image.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.slider.blocks.image.settings.image.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.all.blocks.image.name"
+    }
+  ]
+}
+{% endschema %}

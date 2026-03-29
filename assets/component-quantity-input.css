@@ -1,0 +1,62 @@
+quantity-input {        
+    height: calc(3rem - 2px);        
+    display: flex;        
+    align-items: stretch}
+
+body[data-current-preset]:not([data-current-preset="enduro"]) quantity-input {        
+    gap: 1rem}
+
+quantity-input .quantity__button {
+    --color-button-background: var(--color-base-background-1);
+    border: 1px solid var(--color-foreground-8);
+    color: var(--color-foreground);
+    box-shadow: none;    
+    padding: .75rem;
+}
+
+body[data-current-preset] quantity-input .quantity__button svg {
+    --icon-width: 1.25rem;    
+    pointer-events: none;    
+}
+
+quantity-input .quantity__input {
+    -moz-appearance: textfield;
+    background: var(--color-base-background-1);
+    border: 1px solid var(--color-foreground-8);
+    box-shadow: none;
+    margin: 0 -.25rem;
+    padding: .25rem 0;
+    text-align: center;
+    width: 3.5rem;
+}
+
+body[data-current-preset="enduro"] :is(.color-inverse) quantity-input {            
+            outline: 1px solid #6D6D6D;
+        }
+
+body[data-current-preset="enduro"] :is(.color-inverse) .quantity__button,
+        body[data-current-preset="enduro"] :is(.color-inverse) .quantity__input {
+            color: var(--color-base-background-1);
+            background: var(--color-base-text);
+            border: 0;
+        }
+
+quantity-input .quantity__input:focus,
+quantity-input .quantity__button:focus:not(:focus-visible) {
+    box-shadow: none;
+}
+
+quantity-input .quantity__input::-webkit-outer-spin-button,
+quantity-input .quantity__input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+html.no-js quantity-input .quantity__input {        
+    width: 4rem}
+
+@media (hover: hover) {
+    quantity-input .quantity__button:hover {
+        box-shadow: none;
+    }
+}

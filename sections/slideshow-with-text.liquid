@@ -1,0 +1,233 @@
+{%- liquid
+    assign __class__ = 'slideshow-with-text'
+    assign __class__ = __class__ | append: ' visibility--' | append: section.settings.visibility
+
+    if section.settings.full_width
+        assign __class__ = __class__ | append: ' full--width '
+    else
+        assign __class__ = __class__ | append: ' dynamic-page-width'
+    endif
+
+    assign __class__ = __class__ | append: ' layout-' | append: section.settings.layout
+
+    if section.settings.use_zigzag_shape
+        assign __class__ = __class__ | append: ' layout-zigzag'
+    endif
+
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+
+    if section.settings.autoplay
+        assign autoplayInterval = section.settings.delay | plus: 0
+    else
+        assign autoplayInterval = 0
+    endif
+
+    assign slider_list_class = 'slider slider--desktop'
+-%}
+
+{% style %}
+    #shopify-section-{{ section.id }} {
+        display: none;
+    }
+{% endstyle %}
+
+{%- capture text_html %}
+ 	{%- content_for 'block', type: 'heading', id: 'heading' -%}
+  	{%- content_for 'block', type: 'description', id: 'description' -%}
+  	{%- content_for 'block', type: 'button', id: 'button' -%}
+{% endcapture -%}
+
+{%- capture sliders %}
+	{%- content_for 'blocks' -%}
+{% endcapture -%}
+
+<div class="{{ __class__ }}">
+    <div class="slideshow-wrapper">
+        <slider-component
+            data-slides-per-view="1"
+            data-autoplay="{{ autoplayInterval }}"
+            data-loop="{% if section.settings.loop %}true{% else %}false{% endif %}"
+            data-multiple-items="false"
+        >
+            <ul class="{{ slider_list_class }}" id="Slider-{{ section.id }}" role="list">
+                {{ sliders }}
+            </ul>
+            {% if section.settings.navigation and sliders.size > 1 -%}
+                {% render 'slider__buttons' %}
+            {%- endif %}
+        </slider-component>
+    </div>
+    {%- liquid
+        assign content_class = 'content-wrapper'
+        assign content_class = content_class | append: ' text_position--' | append: section.settings.text_position
+        assign content_class = content_class | append: ' text_align--' | append: section.settings.text_align
+    -%}
+    <div class="{{ content_class }}" style="background: {{ section.settings.content_background }};">
+        {{- text_html -}}
+    </div>
+</div>
+
+{% render 'slideshow-with-text__styles' %}
+
+{% schema %}
+{
+    "name": "t:sections.slideshow_with_text.name",
+    "class": "slider-section spaced-section",
+    "max_blocks": 10,
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "full_width",
+            "label": "t:sections.faq-section.settings.full_width.label",
+            "default": true
+        },
+        {
+            "type": "select",
+            "id": "visibility",
+            "label": "t:sections.slider.settings.visibility.label",
+            "options": [
+                {
+                    "value": "always",
+                    "label": "t:sections.slider.settings.visibility.options.always.label"
+                },
+                {
+                    "value": "mobile",
+                    "label": "t:sections.slider.settings.visibility.options.mobile.label"
+                },
+                {
+                    "value": "desktop",
+                    "label": "t:sections.slider.settings.visibility.options.desktop.label"
+                }
+            ],
+            "default": "always"
+        },
+        {
+            "type": "checkbox",
+            "id": "animation_on_reveal",
+            "label": "t:sections.all.settings.animation_on_reveal.label",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "use_zigzag_shape",
+            "label": "t:sections.image-with-text.settings.use_zigzag_shape.label",
+            "default": false
+        },
+        {
+            "type": "header",
+            "content": "t:sections.slideshow_with_text.settings.header__1.content"
+        },
+        {
+            "type": "checkbox",
+            "id": "loop",
+            "label": "t:sections.slider.settings.loop.label",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "autoplay",
+            "label": "t:sections.slider.settings.autoplay.label",
+            "default": true
+        },
+        {
+            "type": "text",
+            "id": "delay",
+            "label": "t:sections.slider.settings.delay.label",
+            "info": "t:sections.slider.settings.delay.info",
+            "default": "5"
+        },
+        {
+            "type": "checkbox",
+            "id": "navigation",
+            "label": "t:sections.slider.settings.navigation.label",
+            "default": true
+        },
+        {
+            "type": "header",
+            "content": "t:sections.slideshow_with_text.settings.header__2.content"
+        },
+        {
+            "type": "select",
+            "id": "layout",
+            "options": [
+                {
+                    "value": "image_first",
+                    "label": "t:sections.image-with-text.settings.layout.options__1.label"
+                },
+                {
+                    "value": "text_first",
+                    "label": "t:sections.image-with-text.settings.layout.options__2.label"
+                }
+            ],
+            "default": "image_first",
+            "label": "t:sections.image-with-text.settings.layout.label"
+        },
+        {
+          "type": "select",
+          "id": "text_position",
+          "options": [
+                {
+                    "value": "start",
+                    "label": "t:sections.all.alignments.top.label"
+                },
+                {
+                    "value": "center",
+                    "label": "t:sections.all.alignments.center.label"
+                },
+                {
+                    "value": "end",
+                    "label": "t:sections.all.alignments.bottom.label"
+                }
+            ],
+            "label": "t:sections.image-with-text.settings.text_position.label",
+            "info": "t:sections.image-with-text.settings.text_position.info",
+            "default": "center"
+        },
+        {
+            "type": "select",
+            "id": "text_align",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "t:sections.image-with-text.settings.text_align.option__1.label"
+                },
+                {
+                    "value": "center",
+                    "label": "t:sections.all.alignments.center.label"
+                },
+                {
+                    "value": "right",
+                    "label": "t:sections.image-with-text.settings.text_align.option__3.label"
+                }
+            ],
+            "default": "center",
+            "label": "t:sections.image-with-text.settings.text_align.label"
+        },
+        {
+            "type": "color",
+            "id": "content_background",
+            "label": "t:sections.image-with-text.settings.text_block_background.label",
+            "default": "#ffffff"
+        }
+    ],
+    "blocks": [
+        { "type": "@theme" },
+        { "type": "slider-image" }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.slideshow_with_text.presets.name",
+            "blocks": [
+                {
+                    "type": "slider-image"
+                },
+                {
+                    "type": "slider-image"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,17 @@
+{%- comment -%}
+    Render search results title using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+{%- endcomment -%}
+
+<div class="search__block search__block--title" style="order: {{ blockOrder }}" {{ block.shopify_attributes }}>
+    <h1>
+        {%- if search.performed -%}
+            {{- 'templates.search.title' | t: terms: search.terms | escape -}}
+        {%- else -%}
+            {{- 'general.search.search' | t: terms: search.terms | escape -}}
+        {%- endif -%}
+    </h1>
+</div>

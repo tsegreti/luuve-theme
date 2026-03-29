@@ -1,0 +1,20 @@
+{%- comment -%}
+    Render active filters
+
+    Accepts:
+     - filters: {Array}
+{%- endcomment -%}
+
+{%- liquid
+    assign count = 0
+    for filter in filters
+        assign count = count | plus: filter.active_values.size
+        if filter.type == 'price_range'
+            if filter.min_value.value != null or filter.max_value.value != null
+                assign count = count | plus: 1
+            endif
+        endif
+    endfor
+
+    echo count
+-%}

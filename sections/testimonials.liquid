@@ -1,0 +1,804 @@
+{%- liquid
+    if section.settings.page == null
+        assign data = section.settings.fallback_data
+        assign data = data | default: '[{"name": "First C.", "photo": "michael.png", "location": "City, Country", "date": "Jan, 2024", "rating": "5", "testimonial": "Give real customer feedback about store experience, and share thoughts about the product, or service.", "product": "Product title"},{"name": "Second C.", "photo": "adeline.png", "location": "City, Country", "date": "Dec, 2023", "rating": "5", "testimonial": "Give real customer feedback about store experience, and share thoughts about the product, or service.", "product": "Product title"}, {"name": "Third C.", "photo": "samantha.png", "location": "City, Country", "date": "Nov, 2023", "rating": "4", "testimonial": "Give real customer feedback about store experience, and share thoughts about the product, or service.", "product": "Product title"}]'
+        assign data = data | strip
+        assign first_char = data | slice: 0, 1
+        assign last_char = data | slice: -1, 1
+        if first_char == '[' and last_char == ']'
+            assign number_of_chars_to_return = data | size | minus: 2
+            assign data = data | slice: 1, number_of_chars_to_return | strip
+            assign data = data | replace: '} , {', '},{'
+            assign data = data | replace: '}, {', '},{'
+            assign data = data | replace: '} ,{', '},{'
+            assign first_char = data | slice: 0, 1
+            assign last_char = data | slice: -1, 1
+            if first_char == '{' and last_char == '}'
+                assign number_of_chars_to_return = data | size | minus: 2
+                assign data = data | slice: 1, number_of_chars_to_return | strip
+                assign data = data | split: '},{'
+            endif
+        endif
+    else
+        assign data = section.settings.page.metafields.custom.testimonials.value
+    endif
+
+    assign data_json = data | json
+
+    assign testimonial_per_page = section.settings.per_page
+    if section.settings.show_all
+        assign testimonial_per_page = null
+    endif
+
+    assign titlePosition = settings.section_heading_position
+    assign heading = section.blocks | where: 'type', 'heading' | first
+
+    assign hex = section.settings.product_title_color_background
+    assign hexGlass = hex | append: '49'
+
+    assign __class__ = 'testimonials dynamic-page-width'
+
+    if section.settings.full_width
+        assign __class__ = 'full--width'
+    endif
+    assign __class__ = __class__ | append: ' color-' | append: section.settings.color_scheme
+
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+
+    if section.settings.enable_noise_effect
+        assign __class__ = __class__ | append: ' with--noise-effect'
+    endif
+
+    assign has_blocks = false
+    for block in section.blocks
+        if block.settings.testimonial != blank
+            assign has_blocks = true
+            break
+        endif
+    endfor
+-%}
+
+{% render 'testimonials-styles' %}
+
+<div class="{{ __class__ }}">
+    {% unless heading == null %}
+        <div class="testimonials-heading heading position_{{ titlePosition }} dynamic-page-width">
+            <{{ heading.settings.level }} class="title reveal-item" {{ heading.shopify_attributes }}>
+                <span>{{ heading.settings.heading }}</span>
+            </{{ heading.settings.level }}>
+            {% unless heading.settings.sub_title == blank %}
+                <p class="subtitle h5 reveal-item">{{ heading.settings.sub_title }}</p>
+            {% endunless %}
+        </div>
+    {% endunless %}
+    {%- liquid
+        assign tag_name = 'slider-component'
+        if section.settings.appearance == 'grid'
+            assign tag_name = 'div'
+        endif
+
+        assign list_class = 'testimonials testimonials-grid'
+        case section.settings.appearance
+            when 'slider'
+                assign list_class = list_class | append: ' slider slider--desktop slider--tablet slider--mobile'
+            when 'mixed'
+                assign list_class = list_class | append: ' mixed-layout slider slider--tablet slider--mobile'
+            when 'grid'
+                assign list_class = list_class | append: ' grid-layout'
+        endcase
+    -%}
+    <{{ tag_name }} class="testimonials-wrapper" data-loop="false">
+        <ul class="{{ list_class }}">
+            {% if has_blocks == false %}
+                {% if data_json contains '[' and data_json contains ']' and data_json contains '":' %}
+                    {% comment %}JSON format uses{% endcomment %}
+
+                    {% for item in data limit: testimonial_per_page %}
+                        {%- liquid
+                            if item.testimonial == null
+                                assign photo = blank
+                                assign name = blank
+                                assign location = blank
+                                assign date = blank
+                                assign rating = 0
+                                assign testimonial = blank
+                                assign image = blank
+                                assign product = blank
+
+                                assign raw_item = item
+
+                                assign first_char = raw_item | slice: 0, 1
+                                assign last_char = raw_item | slice: -1, 1
+                                if first_char == '"' and last_char == '"'
+                                    assign number_of_chars_to_return = raw_item | size | minus: 2
+                                    assign raw_item = raw_item | slice: 1, number_of_chars_to_return | strip
+                                endif
+
+                                assign raw_item = raw_item | replace: '": "', '":"'
+                                assign raw_item = raw_item | replace: '" : "', '":"'
+                                assign raw_item = raw_item | replace: '" :"', '":"'
+
+                                assign raw_item = raw_item | replace: '", "', '","'
+                                assign raw_item = raw_item | replace: '" , "', '","'
+                                assign raw_item = raw_item | replace: '" ,"', '","'
+
+                                assign raw_item = raw_item | split: '","'
+
+                                for field in raw_item
+                                    if field contains 'photo":"'
+                                        assign photo = field | replace_first: 'photo":"', ''
+                                    endif
+                                    if field contains 'name":"'
+                                        assign name = field | replace_first: 'name":"', ''
+                                    endif
+                                    if field contains 'location":"'
+                                        assign location = field | replace_first: 'location":"', ''
+                                    endif
+                                    if field contains 'date":"'
+                                        assign date = field | replace_first: 'date":"', ''
+                                    endif
+                                    if field contains 'rating":"'
+                                        assign rating = field | replace_first: 'rating":"', '' | plus: 0
+                                    endif
+                                    if field contains 'testimonial":"'
+                                        assign testimonial = field | replace_first: 'testimonial":"', ''
+                                    endif
+                                    if field contains 'image":"'
+                                        assign image = field | replace_first: 'image":"', ''
+                                    endif
+                                    if field contains 'product":"'
+                                        assign product = field | replace_first: 'product":"', ''
+                                    endif
+                                endfor
+                            else
+                                assign photo = item.photo | default: blank
+                                assign name = item.name | default: blank
+                                assign location = item.location | default: blank
+                                assign date = item.date | default: blank
+                                assign rating = item.rating | default: 0 | plus: 0
+                                assign testimonial = item.testimonial | default: blank
+                                assign image = item.image | default: blank
+                                assign product = item.product | default: blank
+                            endif
+                        -%}
+                        <li class="testimonial{% unless section.settings.appearence == 'grid' %} slider__slide{% endunless %} reveal-item">
+                            {% if section.settings.show_product_info %}
+                                <div class="product-info">
+                                    <div class="product-image media">
+                                        {%- if image != blank %}
+                                            {% assign img_url = image | file_img_url: 'master' %}
+                                            <img
+                                                src="{{ img_url }}"
+                                                alt="{{ 'sections.testimonials.no_testimonials.image_alt' | t: image: product }}"
+                                                loading="lazy"
+                                            >
+                                        {% else %}
+                                            {{ 'collection-6' | placeholder_svg_tag: 'placeholder' }}
+                                        {% endif %}
+                                    </div>
+                                    {%- if section.settings.show_product_title and product %}
+                                        <div class="title-container">
+                                            <p class="product-title">{{ product }}</p>
+                                        </div>
+                                    {% endif -%}
+                                </div>
+                            {% endif %}
+                            <div class="testimonial-inner">
+                                {% capture customer_image_html %}
+                            {% if section.settings.show_photo %}
+                                <div class="photo media">
+                                    {%- if photo != blank %}
+                                        {% assign img_url = photo | file_img_url: 'master' %}
+                                        {% if img_url contains '?v=' %}
+                                            <img src="{{ img_url }}"
+                                                alt="{{ 'sections.testimonials.no_testimonials.photo_alt' | t: name: name }}"
+                                                loading="lazy"
+                                            />
+                                        {% else %}
+                                            {% assign photo = blank %}
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if photo == blank %}
+                                        <svg class="placeholder" aria-hidden="true" focusable="false">
+                                            <use href="#person-{{ section.id }}"></use>
+                                        </svg>
+                                    {% endif -%}
+                                </div>
+                            {% endif %}
+                        {% endcapture %}
+                                {% if section.settings.card_design == 'grid' %}
+                                    {{ customer_image_html -}}
+                                {%- endif %}
+                                <div class="text rte">
+                                    {% if section.settings.show_rating %}
+                                        <div class="rating">
+                                            {% for i in (1..5) %}
+                                                <svg
+                                                    {% if rating > forloop.index0 %}
+                                                        class="active"
+                                                    {% endif %}
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    width="14"
+                                                    height="13"
+                                                >
+                                                    <use href="#star-{{ section.id }}"></use>
+                                                </svg>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+                                    &ldquo;{{ testimonial }}&rdquo;
+                                </div>
+                                <div class="author-info">
+                                    {% if section.settings.card_design == 'list' %}
+                                        {{ customer_image_html }}
+                                    {% endif %}
+                                    <div>
+                                        {%- unless name == blank %}
+                                            <p class="author">{{ name }}</p>
+                                        {% endunless -%}
+                                        {%- unless location == blank %}
+                                            <p class="location">{{ location }}</p>
+                                        {% endunless -%}
+                                        {%- if section.settings.show_date and date != blank %}
+                                            <p class="date">{{ date }}</p>
+                                        {% endif -%}
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    {% else %}
+                        <li class="no-testimonials-info">
+                            <div class="testimonial-inner">
+                                <div class="photo media">
+                                    {%- capture placeholder_html -%}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512"><path d="M256 56C145.72 56 56 145.72 56 256s89.72 200 200 200 200-89.72 200-200S366.28 56 256 56zm0 82a26 26 0 11-26 26 26 26 0 0126-26zm48 226h-88a16 16 0 010-32h28v-88h-16a16 16 0 010-32h32a16 16 0 0116 16v104h28a16 16 0 010 32z"/></svg>
+                            {%- endcapture -%}
+                                    {{ placeholder_html | replace_first: '<svg', '<svg class="placeholder"' }}
+                                </div>
+                                <div class="text rte">{{ 'sections.testimonials.no_testimonials.message' | t }}</div>
+                                <p class="author">{{ 'sections.testimonials.no_testimonials.heading' | t }}</p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li class="no-testimonials-info">
+                        <div class="testimonial-inner">
+                            <div class="text rte">{{ 'sections.testimonials.no_testimonials.valid_format' | t }}</div>
+                        </div>
+                    </li>
+                {% endif %}
+            {% else %}
+                {% for block in section.blocks %}
+                    {% if block.settings.product_image != blank
+                        or block.settings.product_title != blank
+                        or block.settings.customer_image != blank
+                        or block.settings.rating != blank
+                        or block.settings.testimonial != blank
+                        or block.settings.author_name != blank
+                        or block.settings.location != blank
+                        or block.settings.date != blank
+                    %}
+                        {% render 'testimonial-card', block: block %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        </ul>
+        {% unless section.settings.appearance == 'grid' %}
+            {% render 'slider__buttons', count: data.size %}
+        {% endunless %}
+    </{{ tag_name }}>
+    {%- if section.settings.enable_theme_appearance %}
+        <div class="color-animation-wrapper">
+            {% render 'svg-color-animation' %}
+        </div>
+    {% endif -%}
+    {% for block in section.blocks %}
+        {% case block.type %}
+            {% when 'button' %}
+                {% render 'testimonials__block-button', block: block %}
+            {% when 'form' %}
+                {% render 'testimonials__block-form', block: block %}
+        {% endcase %}
+    {% endfor %}
+    {% render 'testimonials__symbols' %}
+</div>
+
+{% if section.settings.enable_theme_appearance %}
+    {{ 'component-theme-appearance.css' | asset_url | stylesheet_tag }}
+{% endif %}
+{{ 'section-testimonials.css' | asset_url | stylesheet_tag }}
+<noscript>{{ 'section-testimonials.css' | asset_url | stylesheet_tag }}</noscript>
+
+{% schema %}
+{
+  "name": "t:sections.testimonials.name",
+  "tag": "section",
+  "class": "spaced-section section-testimonials",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.faq-section.settings.full_width.label",
+      "default": false
+    },
+    {
+      "type": "page",
+      "id": "page",
+      "label": "t:sections.testimonials.settings.page.label",
+      "info": "t:sections.testimonials.settings.page.info"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "fallback_data",
+      "label": "t:sections.testimonials.settings.fallback_data.label",
+      "info": "t:sections.testimonials.settings.fallback_data.info"
+    },
+    {
+      "type": "range",
+      "id": "per_page",
+      "min": 3,
+      "max": 15,
+      "step": 1,
+      "label": "t:sections.testimonials.settings.per_page.label",
+      "default": 3
+    },
+    {
+      "type": "checkbox",
+      "id": "show_all",
+      "label": "t:sections.testimonials.settings.show_all.label",
+      "info": "t:sections.testimonials.settings.show_all.info",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "appearance",
+      "options": [
+        {
+          "value": "slider",
+          "label": "t:sections.featured-collection.settings.products_appearance.options.slider"
+        },
+        {
+          "value": "grid",
+          "label": "t:sections.featured-collection.settings.products_appearance.options.grid"
+        },
+        {
+          "value": "mixed",
+          "label": "t:sections.featured-collection.settings.products_appearance.options.mixed"
+        }
+      ],
+      "default": "slider",
+      "label": "t:sections.testimonials.settings.appearance.label",
+      "info": "t:sections.testimonials.settings.appearance.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "layout_design",
+      "label": "t:sections.newsletter.settings.layout_design.label",
+      "default": false
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "background-1",
+          "label": "t:sections.testimonials.settings.color_scheme.options.background_1.label"
+        },
+        {
+          "value": "background-1-darker",
+          "label": "t:sections.testimonials.settings.color_scheme.options.background_1_darker.label"
+        },
+        {
+          "value": "custom_scheme",
+          "label": "t:sections.testimonials.settings.color_scheme.options.custom_scheme.label"
+        }
+      ],
+      "default": "background-1-darker",
+      "label": "t:sections.all.colors.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.testimonials.settings.header.card"
+    },
+    {
+      "type": "select",
+      "id": "card_design",
+      "options": [
+        {
+          "value": "grid",
+          "label": "t:sections.testimonials.settings.card_design.options.grid.label"
+        },
+        {
+          "value": "list",
+          "label": "t:sections.testimonials.settings.card_design.options.list.label"
+        }
+      ],
+      "label": "t:sections.testimonials.settings.card_design.label",
+      "default": "grid"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_photo",
+      "label": "t:sections.testimonials.settings.show_photo.label",
+      "info": "t:sections.testimonials.settings.show_photo.info",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "t:sections.testimonials.settings.show_date.label",
+      "info": "t:sections.testimonials.settings.show_date.info",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "t:sections.testimonials.settings.show_rating.label",
+      "info": "t:sections.testimonials.settings.show_rating.info",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_info",
+      "label": "t:sections.testimonials.settings.show_product_info.label",
+      "info": "t:sections.testimonials.settings.show_product_info.info",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_title",
+      "label": "t:sections.testimonials.settings.show_product_title.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_theme_appearance",
+      "label": "t:sections.all.theme_appearance.enable_theme_appearance.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_noise_effect",
+      "label": "t:sections.all.settings.enable_noise_effect.label",
+      "default": false
+    },
+    // {
+    //   "type": "checkbox",
+    //   "id": "animation_on_reveal",
+    //   "label": "t:sections.all.settings.animation_on_reveal.label",
+    //   "default": true
+    // },
+    {
+      "type": "header",
+      "content": "t:sections.testimonials.settings.header_1.content"
+    },
+    {
+      "type": "color",
+      "id": "product_title_color",
+      "label": "t:sections.testimonials.settings.product_title_color.label",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "product_title_color_background",
+      "label": "t:sections.testimonials.settings.product_title_color_background.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "section_title_color",
+      "label": "t:sections.testimonials.settings.section_title_color.label",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "section_background",
+      "label": "t:sections.testimonials.settings.section_background.label",
+      "info": "t:sections.testimonials.settings.section_background.info"
+    },
+    {
+      "type": "color_background",
+      "id": "section_background_gradient",
+      "label": "t:sections.testimonials.settings.section_background_gradient.label",
+      "info": "t:sections.testimonials.settings.section_background.info"
+    },
+    {
+      "type": "color",
+      "id": "section_foreground",
+      "label": "t:sections.testimonials.settings.section_foreground.label",
+      "info": "t:sections.testimonials.settings.section_background.info"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "t:sections.image-banner.blocks.heading.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "default": "Customer Reviews",
+          "label": "t:sections.image-banner.blocks.heading.settings.heading.label"
+        },
+        {
+          "type": "select",
+          "id": "level",
+          "label": "t:sections.image-banner.blocks.heading.settings.level.label",
+          "options": [
+            {
+              "value": "h1",
+              "label": "t:sections.image-banner.blocks.heading.settings.level.options.h1.label"
+            },
+            {
+              "value": "h2",
+              "label": "t:sections.image-banner.blocks.heading.settings.level.options.h2.label"
+            },
+            {
+              "value": "h3",
+              "label": "t:sections.image-banner.blocks.heading.settings.level.options.h3.label"
+            }
+          ],
+          "default": "h2"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "sub_title",
+          "label": "t:sections.testimonials.blocks.heading.settings.sub_title.label",
+          "default": "Hear from our happy customers"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "name": "t:sections.rich-text.blocks.button.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "default": "Button label",
+          "label": "t:sections.testimonials.blocks.button.settings.label.label"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.testimonials.blocks.button.settings.link.label"
+        },
+        {
+          "type": "select",
+          "id": "style",
+          "label": "t:sections.testimonials.blocks.button.settings.style.label",
+          "options": [
+            {
+              "value": "primary",
+              "label": "t:sections.testimonials.blocks.button.settings.style.options.primary"
+            },
+            {
+              "value": "secondary",
+              "label": "t:sections.testimonials.blocks.button.settings.style.options.secondary"
+            },
+            {
+              "value": "tertiary",
+              "label": "t:sections.testimonials.blocks.button.settings.style.options.tertiary"
+            }
+          ]
+        },
+        {
+          "type": "select",
+          "id": "action_btn_width",
+          "label": "t:sections.all.settings.action_btn_width.label",
+          "options": [
+            {
+              "value": "extend",
+              "label": "t:sections.all.settings.action_btn_width.options.extend"
+            },
+            {
+              "value": "shrink",
+              "label": "t:sections.all.settings.action_btn_width.options.shrink"
+            }
+          ],
+          "default": "extend"
+        }
+      ]
+    },
+    {
+      "type": "form",
+      "name": "t:sections.testimonials.blocks.form.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "heading",
+          "label": "t:sections.testimonials.blocks.form.settings.heading.label",
+          "default": "New testimonial"
+        },
+        {
+          "type": "select",
+          "id": "field_location",
+          "label": "t:sections.testimonials.blocks.form.settings.field_location.label",
+          "options": [
+            {
+              "value": "hidden",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.hidden"
+            },
+            {
+              "value": "optional",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.optional"
+            },
+            {
+              "value": "required",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.required"
+            }
+          ],
+          "default": "hidden"
+        },
+        {
+          "type": "select",
+          "id": "field_photo",
+          "label": "t:sections.testimonials.blocks.form.settings.field_photo.label",
+          "options": [
+            {
+              "value": "hidden",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.hidden"
+            },
+            {
+              "value": "optional",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.optional"
+            },
+            {
+              "value": "required",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.required"
+            }
+          ],
+          "default": "hidden"
+        },
+        {
+          "type": "select",
+          "id": "field_email",
+          "label": "t:sections.testimonials.blocks.form.settings.field_email.label",
+          "options": [
+            {
+              "value": "hidden",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.hidden"
+            },
+            {
+              "value": "optional",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.optional"
+            },
+            {
+              "value": "required",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.required"
+            }
+          ],
+          "default": "required"
+        },
+        {
+          "type": "select",
+          "id": "field_order",
+          "label": "t:sections.testimonials.blocks.form.settings.field_order.label",
+          "info": "t:sections.testimonials.blocks.form.settings.field_order.info",
+          "options": [
+            {
+              "value": "hidden",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.hidden"
+            },
+            {
+              "value": "optional",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.optional"
+            },
+            {
+              "value": "required",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.required"
+            }
+          ],
+          "default": "hidden"
+        },
+        {
+          "type": "select",
+          "id": "field_rating",
+          "label": "t:sections.testimonials.blocks.form.settings.field_rating.label",
+          "options": [
+            {
+              "value": "hidden",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.hidden"
+            },
+            {
+              "value": "optional",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.optional"
+            },
+            {
+              "value": "required",
+              "label": "t:sections.testimonials.blocks.form.settings._status.options.required"
+            }
+          ],
+          "default": "required"
+        }
+      ]
+    },
+    {
+      "type": "testimonial",
+      "name": "t:sections.testimonials.blocks.testimonial.name",
+      "limit": 15,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "customer_image",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.customer_image.label"
+        },
+        {
+          "type": "range",
+          "id": "rating",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.rating.label",
+          "min": 0,
+          "max": 5,
+          "step": 1,
+          "default": 5
+        },
+        {
+          "type": "text",
+          "id": "author_name",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.author_name.label",
+          "default": "Customer"
+        },
+        {
+          "type": "inline_richtext",
+          "id": "testimonial_title",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.testimonial_title.label",
+        },
+        {
+          "type": "textarea",
+          "id": "testimonial",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.testimonial.label",
+          "default": "Give real customer feedback about store experience, and share thoughts about the product, or service."
+        },
+        {
+          "type": "text",
+          "id": "date",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.date.label",
+          "default": "Sept, 2022"
+        },
+        {
+          "type": "text",
+          "id": "location",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.location.label",
+          "default": "City, Country"
+        },
+        {
+          "type": "image_picker",
+          "id": "product_image",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.product_image.label"
+        },
+        {
+          "type": "text",
+          "id": "product_title",
+          "label": "t:sections.testimonials.blocks.testimonial.settings.product_title.label",
+          "default": "Product title"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.testimonials.name",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        },
+        {
+          "type": "testimonial"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

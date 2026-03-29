@@ -1,0 +1,29 @@
+{%- comment -%}
+    Render tags for blog article.
+
+    Accepts:
+     -  article {Object}
+     -  limit   {Number}
+{%- endcomment -%}
+
+<ul class="article_tags tags">
+    {%- for tag in article.tags limit: limit -%}
+        {%- liquid
+            assign tag_sanitized = tag | downcase | remove: ' ' | remove: '/' | remove: ',' | remove: '.'
+        -%}
+        <li
+            class="item tag"
+            style="--tag-background: var(--tag-{{ tag_sanitized }}__background); --tag-foreground: var(--tag-{{ tag_sanitized }}__foreground);"
+        >
+            {{- tag -}}
+        </li>
+    {%- endfor -%}
+    {%- if article.tags.size > limit and limit > 0 %}
+        <li
+            class="item tag"
+            style="--tag-background: var(--tag-{{ tag_sanitized }}__background); --tag-foreground: var(--tag-{{ tag_sanitized }}__foreground);"
+        >
+            {{ 'blogs.article.more_tags' | t }}
+        </li>
+    {% endif -%}
+</ul>

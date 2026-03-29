@@ -1,0 +1,24 @@
+{%- comment -%}
+    Render text element using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+
+{%- assign text = block.settings.text | strip -%}
+{%- unless text == blank -%}
+    <text-expandable
+        class="product__info-block product__info-block--text product__info-block--text-{{ block.settings.text_style }} rte reveal-item"
+        style="order: {{ blockOrder }};{% if block.settings.is_collapsed %}--line-clamp:{{ block.settings.initial_lines }}{% endif %}"
+        data-button-text-expand="{{ 'text_expandable.button.expand' | t }}"
+        data-button-text-narrow="{{ 'text_expandable.button.collapse' | t }}"
+        data-expanded="{% if block.settings.is_collapsed %}false{% else %}true{% endif %}"
+        {{ block.shopify_attributes }}
+    >
+        {{- text -}}
+    </text-expandable>
+    {% render 'initialize-deferred-scripts', init_text_expandable: block.settings.is_collapsed %}
+{%- endunless -%}

@@ -1,0 +1,24 @@
+<ul id="CurrenciesList" role="list" class="disclosure__list list-unstyled">
+    {%- for currency in shop.enabled_currencies -%}
+        <li class="disclosure__item" tabindex="-1">
+            <a
+                class="link link--text disclosure__link{% if currency == cart.currency %} disclosure__link--active{% endif %} focus-inset"
+                href="#"
+                {% if currency == cart.currency %}
+                    aria-current="true"
+                {% endif %}
+                data-value="{{ currency.iso_code }}"
+            >
+                <span class="localization-form__currency-name">{{ currency.name }}</span>
+                <span class="localization-form__currency">
+                    {%- if currency.iso_code == currency.symbol %}
+                        {{ currency.iso_code }}
+                    {% else %}
+                        {{ currency.iso_code }}
+                        {{ currency.symbol }}
+                    {% endif -%}
+                </span>
+            </a>
+        </li>
+    {%- endfor -%}
+</ul>

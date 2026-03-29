@@ -1,0 +1,34 @@
+{%- comment -%}
+    Rendered at vide-presentation-card.liquid
+
+    Accepts:
+    - block:   {String}
+    - product: {Object}
+{%- endcomment -%}
+
+<div class="card-product-single">
+    {% if product.featured_image %}
+        {% render 'render-image',
+            image: product.featured_image,
+            widths: imageWidth,
+            sizes: imageSizes,
+            css_class: ''
+        -%}
+    {%- endif %}
+    <div>
+        <p class="product-title">{{ product.title }}</p>
+        {% render 'helper__decorate-product-price', product: product, showPriceLabel: settings.price_label %}
+    </div>
+    <a
+        href="{{ product.url }}"
+        class="button button--primary button--small product__view-details animate-arrow"
+        style="order: 99"
+    >
+        {{ 'products.product.view_full_details' | t }}
+        {%- if settings.current_theme_icons == 'enduro' %}
+            {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+        {% else %}
+            {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+        {% endif -%}
+    </a>
+</div>

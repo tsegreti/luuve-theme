@@ -1,0 +1,112 @@
+{%- comment -%}
+    Critical styles for featured blog section.
+
+    Accepts:
+     -  posts_limit {Number}
+{%- endcomment -%}
+
+{% style %}
+    .featured-blog .heading {
+        padding: 0 .5rem;
+    }
+    {% if settings.current_presets == 'oldmoney' %}
+    .featured-blog .heading > .title {
+        font-family: 'Cardo';
+        font-size: 46px;
+        font-weight: 700;
+    }
+
+    .article-card__info {
+        padding: 0 1.25rem .75rem;
+    }{% endif %}
+
+    .featured-blog .blog__posts {
+        display: flex;
+        padding: 1rem 0;
+    }
+
+    .featured-blog .blog__post {
+        padding: 0 .25rem;
+    }
+
+    .featured-blog .article-card__title {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .featured-blog .article-card__info .date__wrapper {
+        display: flex;
+        align-items: end;
+        padding-bottom: 0.5rem;
+    }
+
+    .article-card__header .date__wrapper .icon {
+        color: var(--color-foreground-50);
+        margin-right: 0.5rem;
+    }
+
+    .article-card ._link > svg {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    .featured-blog .article-content {
+        align-items: center;
+    }
+
+    .featured-blog .article-card__published-at {
+        padding-top: .5rem;
+    }{% if posts_limit == 1 %}
+    .featured-blog .slideshow {
+        overflow-x: unset;
+    }
+    {% endif %}
+
+    {% if posts_limit > 1 %}
+
+    @media (min-width: 768px), print {
+        #shopify-section-{{ section.id }} .featured-blog .blog__post {
+            padding: 0 .5rem;
+            width: 50%;
+        }{% if posts_limit == 2%}
+
+        #shopify-section-{{ section.id }} .featured-blog .slider-buttons {
+            display: none;
+        }
+        {% endif %}
+    }{% endif %}{% if posts_limit > 2 %}
+
+    @media (min-width: 990px), print {
+        .featured-blog .blog__posts {
+            margin: 0 -0.75rem;
+            padding: 2rem 3px;
+        }
+        {% if settings.current_presets == 'oldmoney' %}
+        .featured-blog .heading > .title {
+            font-size: 64px;
+        }{% endif %}
+
+        #shopify-section-{{ section.id }} .featured-blog .blog__post {
+            padding: 0 .75rem;
+            width: 33.3333%;
+        }
+    }{% endif %}{% if posts_limit > 3 %}
+
+        @media (min-width: 990px), print {
+        #shopify-section-{{ section.id }} .featured-blog .blog__post {
+            width: 25%;
+        }
+    }{% endif %}
+
+    body[data-current-preset="oldmoney"] .featured-blog .subtitle {
+        font-size: 16px;
+    }
+
+    @media (min-width: 768px), print {
+        body[data-current-preset="oldmoney"] .featured-blog .subtitle {
+            font-size: 22px;
+        }
+    }
+{% endstyle %}

@@ -1,0 +1,76 @@
+{%- liquid
+    assign body_font_bold = settings.type_body_font | font_modify: 'weight', 'bold'
+    assign body_font_semibold = settings.type_body_font | font_modify: 'weight', '+200'
+    assign body_font_medium = settings.type_body_font | font_modify: 'weight', '+100'
+    assign body_font_italic = settings.type_body_font | font_modify: 'style', 'italic'
+    assign body_font_bold_italic = body_font_bold | font_modify: 'style', 'italic'
+%}
+
+<style>
+    {{ settings.type_body_font | font_face: font_display: 'swap' }}
+    {{ body_font_bold | font_face: font_display: 'swap' }}
+    {{ body_font_semibold | font_face: font_display: 'swap' }}
+    {{ body_font_medium | font_face: font_display: 'swap' }}
+    {{ body_font_italic | font_face: font_display: 'swap' }}
+    {{ body_font_bold_italic | font_face: font_display: 'swap' }}
+    {{ settings.type_header_font | font_face: font_display: 'swap' }}
+    :root {
+      --font-body-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+      --font-body-style: {{ settings.type_body_font.style }};
+      --font-body-weight: {{ settings.type_body_font.weight }};
+
+      --font-body-family-secondary: {{ settings.type_body_font_secondary.family }}, {{ settings.type_body_font_secondary.fallback_families }};
+      --font-body-family-secondary-style: {{ settings.type_body_font_secondary.style }};
+      --font-body-family-secondary-weight: {{ settings.type_body_font_secondary.weight }};
+
+      --font-heading-family: {{ settings.type_header_font.family }}, {{ settings.type_header_font.fallback_families }};
+      --font-heading-style: {{ settings.type_header_font.style }};
+      --font-heading-weight: {{ settings.type_header_font.weight }};
+      --font-heading-size: {{ settings.font_heading_size }};
+      --font-heading-size-mobile: {{ settings.font_heading_size_mobile }};
+
+      --font-navigation-family: {{ settings.type_navigation_font.family }}, {{ settings.type_navigation_font.fallback_families }};
+      --font-navigation-style: {{ settings.type_navigation_font.style }};
+      --font-navigation-weight: {{ settings.type_navigation_font.weight }};
+
+      --color-base-text: {{ settings.colors_text }};
+      --color-base-text-rgb: {{ settings.colors_text.red }}, {{ settings.colors_text.green }}, {{ settings.colors_text.blue }};
+      --color-base-background-1: {{ settings.colors_background_1 }};
+      --color-base-background-1-rgb: {{ settings.colors_background_1.red }}, {{ settings.colors_background_1.green }}, {{ settings.colors_background_1.blue }};
+      --color-base-background-2: {{ settings.colors_background_2 }};
+      --color-base-background-2-rgb: {{ settings.colors_background_2.red }}, {{ settings.colors_background_2.green }}, {{ settings.colors_background_2.blue }};
+      --color-base-link: {{ settings.colors_link }};
+      --color-base-link-rgb: {{ settings.colors_link.red }}, {{ settings.colors_link.green }}, {{ settings.colors_link.blue }};
+      --color-base-accent-1: {{ settings.colors_accent_1 }};
+      --color-base-accent-1-rgb: {{ settings.colors_accent_1.red }}, {{ settings.colors_accent_1.green }}, {{ settings.colors_accent_1.blue }};
+      --color-base-accent-1-inverse: {{ settings.colors_accent_1_inverse }};
+      --color-base-accent-1-inverse-rgb: {{ settings.colors_accent_1_inverse.red }}, {{ settings.colors_accent_1_inverse.green }}, {{ settings.colors_accent_1_inverse.blue }};
+
+      --color-price-final: {{ settings.colors_final_price }};
+
+      --header-top--background-color: {{ settings.colors_header_top_background_gradient | default: settings.colors_header_top_background }};
+      --header--text-color: {{ settings.colors_header_text }};
+      --header-overlap--text-color: {{ settings.header_overlap_text_color }};
+      --header--text-color-rgb: {{ settings.colors_header_text.red }}, {{ settings.colors_header_text.green }}, {{ settings.colors_header_text.blue }};
+      --header--background-color: {{ settings.colors_header_background_gradient | default: settings.colors_header_background }};
+      --header--icons-color: {{ settings.colors_header_icons }};
+
+      --grid-item__background-color: {{ settings.colors_grid_item_background }};
+    }
+
+    html {
+      box-sizing: border-box;
+      height: 100%;
+    }
+
+    .shopify-section .dynamic-page-width {
+      max-width: {{ settings.type_layout_max_width | append: 'px' }};
+      margin: 0 auto;
+      padding-left: .75rem;
+      padding-right: .75rem;
+    }
+
+    .shopify-section .full--width {
+      max-width: 100%;
+    }
+</style>

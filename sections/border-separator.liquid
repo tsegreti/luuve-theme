@@ -1,0 +1,45 @@
+{%- liquid
+    assign sectionId = '#shopify-section-' | append: section.id
+    assign borderHeight = section.settings.border_height | append: 'px'
+    assign borderColor = section.settings.border_color | default: 'var(--color-foreground-10)'
+-%}
+
+{% style %}
+    {{ sectionId }} .section-border-separator {
+        display: flex;
+        width: 100%;
+        border-top: {{ borderHeight }} solid {{ borderColor }};
+    }
+{% endstyle %}
+
+<div class="section-border-separator"></div>
+
+{% schema %}
+{
+  "name": "t:sections.border-separator.name",
+  "tag": "section",
+  "class": "spaced-section border-separator",
+  "settings": [
+        {
+            "type": "range",
+            "id": "border_height",
+            "min": 1,
+            "max": 5,
+            "step": 1,
+            "default": 1,
+            "unit": "px",
+            "label": "t:sections.border-separator.settings.border_height"
+        },
+        {
+            "type": "color",
+            "id": "border_color",
+            "label": "t:sections.border-separator.settings.border_color"
+        }
+    ],
+  "presets": [
+    {
+      "name": "t:sections.border-separator.presets.name"
+    }
+  ]
+}
+{% endschema %}

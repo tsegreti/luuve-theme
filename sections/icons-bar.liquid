@@ -1,0 +1,327 @@
+{%- liquid
+    if section.blocks.size > 1
+        assign enable_slider = true
+    else
+        assign enable_slider = false
+    endif
+
+    case section.settings.text_position
+        when 'top'
+            assign textPosition = 'column-reverse'
+        when 'bottom'
+            assign textPosition = 'column'
+        when 'left'
+            assign textPosition = 'row-reverse'
+        when 'right'
+            assign textPosition = 'row'
+        else
+            assign textPosition = 'theme-appearance'
+    endcase
+-%}
+{%- if section.settings.enable_noise_effect %}
+    {% style %}
+        .icons-bar {
+            --image-noise:  url({{'noise1.svg' |  asset_url }});
+        }
+    {% endstyle %}
+{% endif -%}
+
+{% capture inner_html %}
+    <ul class="dynamic-page-width icons-bar-inner{% if enable_slider %} slider slider--mobile slider--tablet{% endif %}">
+        {% if settings.icons_bar_uniform_content %}
+            {%- unless settings.text_position == "none" -%}
+                {% assign textPosition = settings.text_position %}
+            {%- endunless -%}
+            {%- liquid
+                assign icons_block = ''
+                assign texts_block = ''
+                assign descriptions_block = ''
+
+                unless settings.icon == blank
+                    assign icons_block = icons_block | append: '|' | append: settings.icon
+                endunless
+                unless settings.icon_2 == blank
+                    assign icons_block = icons_block | append: '|' | append: settings.icon_2
+                endunless
+                unless settings.icon_3 == blank
+                    assign icons_block = icons_block | append: '|' | append: settings.icon_3
+                endunless
+                unless settings.icon_4 == blank
+                    assign icons_block = icons_block | append: '|' | append: settings.icon_4
+                endunless
+
+                assign icons_block = icons_block | split: '|'
+
+                unless settings.text == blank
+                    assign texts_block = texts_block | append: '|' | append: settings.text
+                endunless
+                unless settings.text_2 == blank
+                    assign texts_block = texts_block | append: '|' | append: settings.text_2
+                endunless
+                unless settings.text_3 == blank
+                    assign texts_block = texts_block | append: '|' | append: settings.text_3
+                endunless
+                unless settings.text_4 == blank
+                    assign texts_block = texts_block | append: '|' | append: settings.text_4
+                endunless
+
+                assign texts_block = texts_block | split: '|'
+
+                unless settings.text_underneath_icon == blank
+                    assign descriptions_block = descriptions_block | append: '|' | append: settings.text_underneath_icon
+                endunless
+                unless settings.text_underneath_icon_2 == blank
+                    assign descriptions_block = descriptions_block | append: '|' | append: settings.text_underneath_icon_2
+                endunless
+                unless settings.text_underneath_icon_3 == blank
+                    assign descriptions_block = descriptions_block | append: '|' | append: settings.text_underneath_icon_3
+                endunless
+                unless settings.text_underneath_icon_4 == blank
+                    assign descriptions_block = descriptions_block | append: '|' | append: settings.text_underneath_icon_4
+                endunless
+
+                assign descriptions_block = descriptions_block | split: '|'
+
+                assign blocks_size = section.blocks.size | times: 1
+            -%}
+
+            {% for index in (1..blocks_size) %}
+                <li class="icons-bar-item{% if enable_slider %} slider__slide{% endif %} reveal-item">
+                    {% if textPosition == 'theme-appearance' %}<div class="icons-bar__item-wrapper">{% endif %}
+                    {% assign icon = icons_block[index] %}
+                    {% unless icon == blank %}   
+                        <div class="icons-bar-icon">
+                            {% if icon contains 'divine' %}
+                                {% render 'theme-icons' name: icon %}
+                            {% else %}
+                                {% render 'icons-bar__icon' name: icon css_class: 'ionicon' %}
+                            {% endif %}
+                        </div>
+                    {% endunless %}
+
+                    {% assign text = texts_block[index] %}
+                    {% unless text == blank %}
+                        <div class="icons-bar-text">{{ text }}</div>
+                    {% endunless %}
+
+                    {% if textPosition == 'theme-appearance' %}</div>{% endif %}
+                        
+                    {% assign text_underneath_icon = descriptions_block[index] %}
+                    {% unless text_underneath_icon == blank %}
+                        <div class="subtitle-underneath-icon">{{ text_underneath_icon }}</div>
+                    {% endunless %}
+                </li>
+                {% if forloop.last == false and section.settings.separator == true %}
+                    <li class="icons-bar-item-separator"></li>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% content_for 'blocks' %}            
+        {% endif %}
+    </ul>
+{% endcapture %}
+
+{% render 'icons-bar__styles',
+    enable_slider: enable_slider,
+    icon_size: section.settings.icons_width,
+    show_border_bottom: section.settings.border_bottom,
+    show_border_top: section.settings.border_top,
+    show_separator: section.settings.separator,
+    show_shadow: section.settings.shadow,
+    visibility: section.settings.visibility,
+    text_position: textPosition
+%}
+
+{%- render 'icons-bar__wrapper',
+    color_scheme: section.settings.color_scheme,
+    enable_slider: enable_slider,
+    inner_html: inner_html
+-%}
+
+{% schema %}
+{
+    "name": "t:sections.icons_bar.name",
+    "class": "spaced-section section--icons-bar",
+    "tag": "section",
+    "settings": [
+        {
+            "type": "select",
+            "id": "color_scheme",
+            "options": [
+                {
+                    "value": "accent-1",
+                    "label": "t:sections.all.colors.accent_1.label"
+                },
+                {
+                    "value": "accent-2",
+                    "label": "t:sections.all.colors.accent_2.label"
+                },
+                {
+                    "value": "background-1",
+                    "label": "t:sections.all.colors.background_1.label"
+                },
+                {
+                    "value": "background-2",
+                    "label": "t:sections.all.colors.background_2.label"
+                },
+                {
+                    "value": "inverse",
+                    "label": "t:sections.all.colors.inverse.label"
+                }
+            ],
+            "default": "background-1",
+            "label": "t:sections.all.colors.label"
+        },
+        {
+            "type": "select",
+            "id": "visibility",
+            "options": [
+                {
+                    "value": "all",
+                    "label": "t:sections.icons_bar.settings.visibility.options.all.label"
+                },
+                {
+                    "value": "desktop",
+                    "label": "t:sections.icons_bar.settings.visibility.options.desktop.label"
+                },
+                {
+                    "value": "mobile",
+                    "label": "t:sections.icons_bar.settings.visibility.options.mobile.label"
+                }
+            ],
+            "default": "all",
+            "label": "t:sections.icons_bar.settings.visibility.label",
+            "info": "t:sections.icons_bar.settings.visibility.info"
+        },
+        {
+            "type": "range",
+            "id": "icons_width",
+            "label": "t:sections.icons_bar.settings.icons_width.label",
+            "min": 20,
+            "max": 64,
+            "step": 1,
+            "default": 25,
+            "unit": "px"
+        },
+        {
+            "type": "select",
+            "id": "text_position",
+            "options": [
+                {
+                    "value": "top",
+                    "label": "t:sections.icons_bar.settings.text_position.options.top"
+                },
+                {
+                    "value": "bottom",
+                    "label": "t:sections.icons_bar.settings.text_position.options.bottom"
+                },
+                {
+                    "value": "left",
+                    "label": "t:sections.icons_bar.settings.text_position.options.left"
+                },
+                {
+                    "value": "right",
+                    "label": "t:sections.icons_bar.settings.text_position.options.right"
+                },
+                {
+                    "value": "theme_appearance",
+                    "label": "t:sections.icons_bar.settings.text_position.options.theme_appearance"
+                }
+            ],
+            "default": "theme_appearance",
+            "label": "t:sections.icons_bar.settings.text_position.label"
+        },
+        {
+            "type": "select",
+            "id": "text_align",
+            "options": [
+                {
+                    "value": "left",
+                    "label": "t:sections.icons_bar.settings.text_align.options.left"
+                },
+                {
+                    "value": "center",
+                    "label": "t:sections.icons_bar.settings.text_align.options.center"
+                },
+                {
+                    "value": "right",
+                    "label": "t:sections.icons_bar.settings.text_align.options.right"
+                }
+            ],
+            "default": "center",
+            "label": "t:sections.icons_bar.settings.text_align.label"
+        },
+        {
+            "type": "checkbox",
+            "id": "border_top",
+            "label": "t:sections.all.settings.border_top.label",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "border_bottom",
+            "label": "t:sections.all.settings.border_bottom.label",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "shadow",
+            "label": "t:sections.icons_bar.settings.shadow.label",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "separator",
+            "label": "t:sections.icons_bar.settings.separator.label",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_noise_effect",
+            "label": "t:sections.all.settings.enable_noise_effect.label",
+            "info": "t:sections.all.settings.enable_noise_effect.info",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "animation_on_reveal",
+            "label": "t:sections.all.settings.animation_on_reveal.label",
+            "default": true
+        },
+        {
+            "type": "header",
+            "content": "t:sections.our-list-collections.settings.colors.content"
+        },
+        {
+            "type": "color",
+            "id": "title_color",
+            "label": "t:sections.icons_bar.settings.title_color.label",
+            "default": "#000000"
+        },
+        {
+            "type": "color",
+            "id": "text_color",
+            "label": "t:sections.icons_bar.settings.text_color.label",
+            "default": "#000000"
+        }
+    ],
+    "max_blocks": 4,
+    "blocks": [{ "type": "@theme" }],
+    "presets": [
+        {
+            "name": "t:sections.icons_bar.presets.name",
+            "blocks": [
+                {
+                    "type": "icon"
+                },
+                {
+                    "type": "icon"
+                },
+                {
+                    "type": "icon"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

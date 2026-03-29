@@ -1,0 +1,43 @@
+.explore ._outline {
+    box-shadow: inset 0px 0px 3px 0px rgba(0,0,0,0.34);
+    border-radius: 4px;
+}
+
+ .explore .slider-buttons {
+    margin: 0;
+    padding: 0 0 1rem;
+}
+
+ @media(max-width: 475px), print {
+    .explore {
+        padding: 0;
+    }
+
+    .explore [type=radio] + .tab-title + .grid-items {
+        display: none;
+        padding-bottom: 1rem;
+        margin-top: -.15rem;
+    }
+
+    .explore [type=radio] + .tab-title + .grid-items._open {
+        display: block;
+    }
+
+    .explore [type=radio] + .tab-title > label svg {
+        transform: rotate(0);
+    }
+
+    .explore [type=radio] + .tab-title._active > label svg {
+        transform: rotate(-180deg);
+    }
+}
+
+ @media(min-width: 990px), print {
+    .explore .slider-buttons {
+        display: none;
+    }
+
+    .explore .collapsed-inner {
+        display: table;
+    }
+}

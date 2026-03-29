@@ -1,0 +1,73 @@
+{% comment %}
+    Render localization country switcher
+
+    Accepts:
+     - form_id {String}
+{% endcomment %}
+
+{%- assign formIdNoScript = form_id | append: 'NoScript' -%}
+
+{%- if localization.available_countries.size > 1 -%}
+    <div class="localization-currency-wrapper">
+        <noscript>
+            {%- form 'localization', id: formIdNoScript, class: 'localization-form' -%}
+                <div class="localization-form__select select">
+                    <h2 class="visually-hidden" id="{{ formIdNoScript }}">{{ 'localization.country_label' | t }}</h2>
+                    <select class="localization-selector" name="country_code" aria-labelledby="{{ formIdNoScript }}">
+                        {%- for country in localization.available_countries -%}
+                            <option
+                                value="{{ country.iso_code }}"
+                                {%- if country.iso_code == localization.country.iso_code %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ country.name }} ({{ country.currency.iso_code }}
+                                {{ country.currency.symbol }})
+                            </option>
+                        {%- endfor -%}
+                    </select>
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret">
+                        <use href="#icon-caret" />
+                    </svg>
+                </div>
+                <button type="submit">{{ 'localization.update_country' | t }}</button>
+            {%- endform -%}
+        </noscript>
+        <localization-form data-panel-source="switcher__list-countries">
+            {%- form 'localization', id: form_id, class: 'localization-form no-js-hidden' -%}
+                <span class="visually-hidden" id="{{ form_id }}Label">{{ 'localization.country_label' | t }}</span>
+                <div class="disclosure">
+                    {% capture button_inner_html %}
+                    {%- if settings.show_switcher_country_flag %}
+                    <span class="language-icon__wrapper">
+                        {%- render 'flag' country_code: localization.country.iso_code flag_as_img: true -%}
+                    </span>
+                    {% endif -%}
+                    <span class="localization-form__country">
+                        {%- if settings.show_country_iso_code %}
+                        {{ localization.country.iso_code }}
+                        {% else %}
+                        {{ localization.country.name }}
+                        {% endif -%}
+                    </span>
+                    <span class="localization-form__currency">
+                        {%- if localization.country.currency.iso_code == localization.country.currency.symbol %}
+                            {{ localization.country.currency.iso_code }}
+                        {% else %}
+                            {{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }}
+                        {% endif -%}
+                    </span>
+                {% endcapture %}
+                    {%- render 'switcher__disclosure-button', form_id: form_id, inner_html: button_inner_html -%}
+                    <div
+                        class="localization-panel disclosure__list--wrapper loader-when-empty  transition-bezier"
+                        data-search-placeholder="{{ 'localization.search_placeholder' | t }}"
+                        data-localization-size="{{ localization.available_countries.size }}"
+                        hidden
+                    ></div>
+                </div>
+                <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}">
+            {%- endform -%}
+        </localization-form>
+    </div>
+{%- endif -%}

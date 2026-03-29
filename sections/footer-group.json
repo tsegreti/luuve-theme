@@ -1,0 +1,93 @@
+{
+    "name": "t:sections.footer.name",
+    "type": "footer",
+    "sections": {
+        "footer_top": {
+            "type": "footer",
+            "settings": {
+                "custom_layout_width": 1200,
+                "show_logo": false,
+                "logo_width": 180,
+                "use_design_elements": false,
+                "newsletter_in_row": true
+            },
+            "blocks": {
+                "menu-1": {
+                    "type": "menu",
+                    "settings": {
+                        "title": "Quick links"
+                    }
+                },
+                "menu-2": {
+                    "type": "menu",
+                    "settings": {
+                        "title": "Quick links"
+                    }
+                },
+                "menu-3": {
+                    "type": "menu",
+                    "settings": {
+                        "title": "Quick links"
+                    }
+                },
+                "about-us": {
+                    "type": "aboutus",
+                    "settings": {}
+                },
+                "newsletter": {
+                    "type": "newsletter",
+                    "settings": {
+                        "title": "Sign up & save 15%",
+                        "subtext": "",
+                        "show_media": true,
+                        "social_icons_width": 18,
+                        "social_icons_color": "#564839",
+                        "payment_enable": true
+                    }
+                }
+            },
+            "block_order": [
+                "menu-1",
+                "menu-2",
+                "menu-3",
+                "about-us",
+                "newsletter"
+            ]
+        },
+        "border_separator": {
+            "type": "border-separator",
+            "settings": {}
+        },
+        "footer_bottom": {
+            "type": "footer-bottom",
+            "settings": {
+                "custom_layout_width": 1200,
+                "payment_enable": false,
+                "footer_bottom_background": "#faf6f2",
+                "footer_bottom_foreground": "#564839"
+            },
+            "blocks": {
+                "menu": {
+                    "type": "menu",
+                    "settings": {
+                        "title": "Quick links"
+                    }
+                },
+                "copyright": {
+                    "type": "copyright",
+                    "settings": {
+                        "text": "Copyright @2025. Powered by shopify."
+                    }
+                },
+                "logo": {
+                    "type": "logo",
+                    "settings": {
+                        "logo_width": 130
+                    }
+                }
+            },
+            "block_order": ["copyright", "logo", "menu"]
+        }
+    },
+    "order": ["footer_top", "border_separator", "footer_bottom"]
+}

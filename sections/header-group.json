@@ -1,0 +1,31 @@
+{
+    "name": "t:sections.header.name",
+    "type": "header",
+    "sections": {
+        "header_top": {
+            "type": "header-top",
+            "settings": {
+                "show_email": false,
+                "show_social_icons": "left",
+                "color_background": "#564839"
+            },
+            "blocks": {
+                "timer": {
+                    "type": "timer",
+                    "settings": {
+                        "time_separator": "colon",
+                        "show_full_labels": false
+                    }
+                }
+            },
+            "block_order": ["timer"]
+        },
+        "header": {
+            "type": "header",
+            "settings": {
+                "logo_width": 130
+            }
+        }
+    },
+    "order": ["header_top", "header"]
+}

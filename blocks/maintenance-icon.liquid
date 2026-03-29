@@ -1,0 +1,46 @@
+{%- liquid
+    assign icon_width = block.settings.icon_picker.width
+    assign inline_styles = 'width: Wpx' | replace: 'W', icon_width
+    assign iconWidth_2x = icon_width | times: 2
+    assign icon_sizes = icon_width | append: 'px'
+    assign icon_widths = icon_width | append: ', ' | append: iconWidth_2x
+-%}
+
+<div id="media-{{ block.id }}" class="maintenance--icon" {{ block.shopify_attributes }}>
+    {%- if block.settings.icon_picker != blank %}
+        {{
+            block.settings.icon_picker
+            | image_url: width: icon_width
+            | image_tag: loading: 'lazy', sizes: icon_sizes, widths: icon_widths, style: inline_styles
+        }}
+    {% else %}
+        {% render 'theme-icons', name: block.settings.icon %}
+    {% endif -%}
+</div>
+{% schema %}
+{
+  "name": "t:sections.newsletter.blocks.icon.name",
+  "settings": [
+    {
+      "type": "select",
+      "id": "icon",
+      "label": "t:sections.newsletter.blocks.icon.settings.icon.label",
+      "options": [
+        { "value": "maintenance", "label": "Maintenance"},
+        { "value": "bell", "label": "Bell"}
+      ]
+    },
+    {
+      "type": "image_picker",
+      "id": "icon_picker",
+      "label": "t:sections.newsletter.blocks.icon.settings.icon_picker.label"
+    }
+  ],
+  "presets": [
+        {
+            "name": "t:sections.newsletter.blocks.icon.name",
+            "category": "t:sections.all.categories.maintenance"
+        }
+  ]
+}
+{% endschema %}

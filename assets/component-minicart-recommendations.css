@@ -1,0 +1,75 @@
+:is(.cart-sidebar__complementary-products) product-recommendations .title-wrapper {
+		  	display: inline-block;
+		  	font-size: 1.25rem;
+		  	font-weight: 600;
+		  	max-width: calc(100% - 10rem);
+		  	overflow-wrap: break-word;
+		  	margin-bottom: 1rem;
+		}
+
+		  	:is(.cart-sidebar__complementary-products) product-recommendations .title-wrapper .title::before {
+		  		content: none;
+		  	}
+		:is(.cart-sidebar__complementary-products) product-recommendations .grid-item {
+			padding: 0 !important;					
+		}
+		:is(.cart-sidebar__complementary-products) product-recommendations .grid-item :is(quick-view, .grid-item__swatch-wrapper) {
+			 	display: none !important;
+			}
+		:is(.cart-sidebar__complementary-products) product-recommendations .grid-item::before {
+				content: none !important;
+			}
+		:is(.cart-sidebar__complementary-products) product-recommendations .grid-item .item-actions-wrapper > button span {display: none;}
+		:is(.cart-sidebar__complementary-products) product-recommendations .grid-item .item-actions-wrapper > button {
+				min-width: unset;
+				width: -moz-fit-content !important;
+				width: fit-content !important;
+}
+		:is(.cart-sidebar__complementary-products) product-recommendations squama-item > .item-link {
+				display: flex !important;
+				--columns-gap: .75rem !important;
+				--grid-item__paddings: .25rem !important;
+				background: transparent !important;
+			}
+		:is(.cart-sidebar__complementary-products) product-recommendations squama-item > .item-link:before {
+					background: transparent !important;
+				}
+		:is(.cart-sidebar__complementary-products) product-recommendations squama-item > .item-link .price--final{
+					font-size: .875rem !important;
+				}
+		:is(.cart-sidebar__complementary-products) product-recommendations squama-item > .item-link .badge,
+				:is(.cart-sidebar__complementary-products) product-recommendations squama-item > .item-link .price--compare {display: none !important;}
+		:is(.cart-sidebar__complementary-products) product-recommendations squama-item .item-image {
+				max-width: 105px;
+			}
+		:is(.cart-sidebar__complementary-products) product-recommendations squama-item .item-actions-wrapper > button {
+				margin-top: 0.5rem !important;
+			}
+		:is(.cart-sidebar__complementary-products) product-recommendations .slider-buttons {
+			position: initial !important;
+			margin-bottom: 1rem !important;
+		}
+		:is(.cart-sidebar__complementary-products) product-recommendations .slider-buttons .slider__button {
+				padding: .5rem .75rem;
+				background: transparent !important;
+			}
+		:is(.cart-sidebar__complementary-products) product-recommendations .slider-buttons .slider__button > svg {
+					width: 2.5rem;
+					height: 1rem;
+				}
+	:is(.cart-sidebar__complementary-products) product-block-recommendations .item-details-wrapper > div {
+		display: none;
+	}
+
+body[data-current-preset="enduro"] :is(.cart-sidebar__complementary-products) product-recommendations .slider-buttons .slider__button {
+					min-width: 2.25rem !important;
+					min-height: 2.25rem !important;					
+				}
+
+@media (hover: hover) {
+			:is(.cart-sidebar__complementary-products) product-recommendations squama-item:hover, 
+			:is(.cart-sidebar__complementary-products) product-recommendations squama-item[data-focused] {
+				transform: none;
+				--item__box-shadow: 0;
+			}
+}

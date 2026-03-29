@@ -1,0 +1,42 @@
+{%- comment -%}
+    Accepts:
+     - product        {Object}
+     - showPriceLabel {Boolean}
+{%- endcomment -%}
+
+{%- liquid
+    assign isOnSale = false
+    if product.compare_at_price > product.price
+        assign isOnSale = true
+    endif
+-%}
+
+<div class="item-price{% if showPriceLabel %} item-price--with-label{% else %} item-price--no-label{% endif %}">
+    {%- if isOnSale -%}
+        <div class="on-sale">
+            <span class="label{% unless showPriceLabel %} visually-hidden{% endunless %}">
+                {{- 'products.product.price.sale_price' | t -}}
+            </span>
+            {% render 'render-price',
+                price: product.price,
+                variants: product.price_varies,
+                css_class: 'price regular-price price--final'
+            %}
+        </div>
+    {%- endif -%}
+    <div class="regular{% if isOnSale %} price--compare{% endif %}{% unless settings.price_compare %} price-compare__hidden{% endunless %}">
+        <span class="label{% unless showPriceLabel %} visually-hidden{% endunless %}">
+            {{- 'products.product.price.regular_price' | t -}}
+        </span>
+        {% if isOnSale %}
+            {% render 'render-price', price: product.compare_at_price, css_class: 'price old-price' %}
+        {% else %}
+            {% render 'render-price',
+                price: product.price,
+                variants: product.price_varies,
+                css_class: 'price regular-price price--final'
+            %}
+        {% endif %}
+    </div>
+    {% render 'render-price-unit', variant: product.selected_or_first_available_variant %}
+</div>

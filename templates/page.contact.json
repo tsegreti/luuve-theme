@@ -1,0 +1,112 @@
+{
+    "sections": {
+        "breadcrumbs": {
+            "type": "breadcrumbs",
+            "settings": {
+                "border_top": false,
+                "border_bottom": false,
+                "use_background_transparent": false
+            }
+        },
+        "main": {
+            "type": "main-page",
+            "settings": {
+                "show_title": true,
+                "layout_max_width": 1200,
+                "animation_on_reveal": true
+            }
+        },
+        "form": {
+            "type": "contact-form",
+            "blocks": {
+                "location-map": {
+                    "type": "location-map",
+                    "static": true,
+                    "settings": {
+                        "api_key": "",
+                        "position_latitude": "40.7807",
+                        "position_longitude": "-73.9804",
+                        "street_address": "2109 Broadway",
+                        "postcode": "12109",
+                        "city": "New York",
+                        "region_id": "NY",
+                        "country_id": "United States",
+                        "phone": "+01 122 334 566",
+                        "email": "contact@fashionslick.com"
+                    },
+                    "blocks": {}
+                },
+                "contact-us": {
+                    "type": "contact-us",
+                    "static": true,
+                    "settings": {
+                        "title": "Our Address",
+                        "subtitle": "",
+                        "image": "",
+                        "image_height": "small",
+                        "company_info_background": "#ffffff",
+                        "company_info_title": "Our Address",
+                        "company_info_address": "<p>FifthAve Street 31</p><p>New York, USA</p>",
+                        "contact_info_background": "#ffffff",
+                        "contact_info": "Contact Info",
+                        "show_social_icons": true
+                    },
+                    "blocks": {}
+                }
+            },
+            "settings": {
+                "contact_form_title": "<h2>Get in touch</h2>",
+                "animation_on_reveal": true
+            }
+        },
+        "icons_bar": {
+            "type": "icons-bar",
+            "blocks": {
+                "icon-bar-1": {
+                    "type": "icon",
+                    "settings": {
+                        "icon": "divine-shipping",
+                        "text": "<h6>Free Delivery</h6>",
+                        "text_underneath_icon": "<p><strong>Enjoy free shipping on all orders</strong> — fast, secure, and always on us. No minimum required.</p>"
+                    },
+                    "blocks": {}
+                },
+                "icon-bar-2": {
+                    "type": "icon",
+                    "settings": {
+                        "icon": "divine-returns",
+                        "text": "<h6>30-days Return</h6>",
+                        "text_underneath_icon": "<p><strong>Shop with confidence</strong> — you have 30 days to return or exchange your item, no questions asked.</p>"
+                    },
+                    "blocks": {}
+                },
+                "icon-bar-3": {
+                    "type": "icon",
+                    "settings": {
+                        "icon": "divine-lock",
+                        "text": "<h6>Secure Payments</h6>",
+                        "text_underneath_icon": "<p><strong>Your data is safe with us</strong> — all transactions are encrypted and processed through trusted, secure payment providers.</p>"
+                    },
+                    "blocks": {}
+                }
+            },
+            "block_order": ["icon-bar-1", "icon-bar-2", "icon-bar-3"],
+            "settings": {
+                "color_scheme": "background-1",
+                "visibility": "all",
+                "icons_width": 25,
+                "text_position": "theme_appearance",
+                "text_align": "center",
+                "border_top": false,
+                "border_bottom": false,
+                "shadow": false,
+                "separator": false,
+                "enable_noise_effect": false,
+                "animation_on_reveal": true,
+                "title_color": "#000000",
+                "text_color": "#000000"
+            }
+        }
+    },
+    "order": ["breadcrumbs", "main", "form", "icons_bar"]
+}

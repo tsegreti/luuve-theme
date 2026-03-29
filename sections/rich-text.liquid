@@ -1,0 +1,145 @@
+{{ 'section-rich-text.css' | asset_url | stylesheet_tag }}
+<noscript>{{ 'section-rich-text.css' | asset_url | stylesheet_tag }}</noscript>
+{% style %}
+    {%- if template == 'index' -%}
+        {%- if section.settings.full_width == false -%}
+        #shopify-section-{{ section.id }} .rich-text {
+          max-width: 48rem;
+        }
+
+        #shopify-section-{{ section.id }} .rich-text__blocks {
+          width: 100%;
+        }{%- endif -%}
+
+        #shopify-section-{{ section.id }} .rich-text p {
+          font-size: 15px;
+          line-height: 160%;{% if section.settings.color_scheme == 'background-1' %}
+          color: #5b6577;{% endif %}
+        }
+    {%- endif -%}
+        .rich-text {
+          width: 100%;
+          text-align: center;
+          padding-top: 5rem;
+          padding-bottom: 5rem;
+        }
+        .rich-text__blocks {
+          margin: 0 auto;
+        }
+        /* Blocks */
+        .rich-text__blocks > * {
+          margin-top: 0;
+          margin-bottom: 0;
+        }
+        .rich-text__blocks > * + * {
+          margin-top: 1rem;
+          margin-bottom: 1rem;
+        }
+        .rich-text__blocks > * + a {
+          margin-top: 0.5rem;
+          margin-bottom: 0.5rem;
+        }
+
+        .rich-text__blocks  :is(.multicolumn-list__item) {
+            list-style: none;
+        }
+
+        @media (min-width: 600px), print {
+          .rich-text__blocks {
+            position: relative;
+          }
+
+          .rich-text__blocks ._triangle._left {
+            left: -6rem;
+            top: -1rem;
+          }
+
+          .rich-text__blocks ._triangle._right {
+            bottom: -1rem;
+            right: -6rem;
+            -moz-transform: scale(-1, -1);
+            -o-transform: scale(-1, -1);
+            -webkit-transform: scale(-1, -1);
+            transform: scale(-1,-1);
+          }
+        }
+{% endstyle %}
+
+{%- liquid
+    assign __class__ = 'rich-text rich-text--full-width'
+    unless request.design_mode
+        if section.settings.animation_on_reveal
+            assign __class__ = __class__ | append: ' reveal-slide-in'
+        endif
+    endunless
+    assign __class__ = __class__ | append: ' color-' | append: section.settings.color_scheme
+
+    if section.settings.enable_grayscale_effect
+        assign __class__ = __class__ | append: ' with--grayscale-effect'
+    endif
+-%}
+
+<div class="{{ __class__ }}">
+    <div class="rich-text__blocks{% if section.settings.decorate %} rich-text__blocks-decorated{% endif%}">
+        {% content_for 'blocks' %}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.rich-text.name",
+  "tag": "section",
+  "class": "spaced-section spaced-section--full-width",
+  "settings": [
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "inverse",
+          "label": "t:sections.all.colors.inverse.label"
+        }
+      ],
+      "default": "background-2",
+      "label": "t:sections.all.colors.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grayscale_effect",
+      "label": "t:sections.all.settings.enable_grayscale_effect.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": true
+    }
+  ],
+  "blocks": [{ "type": "@theme" }],
+  "presets": [
+    {
+      "name": "t:sections.rich-text.presets.name",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "description"
+        },
+        {
+          "type": "button"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

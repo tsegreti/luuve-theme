@@ -1,0 +1,56 @@
+{%- liquid
+    assign __class__ = 'location-map full--width'
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+
+    if section.settings.enable_grayscale_effect
+        assign __class__ = __class__ | append: ' with--grayscale-effect'
+    endif
+-%}
+
+{%- capture map %}
+  {%- content_for 'block', type: 'location-map', id: 'location-map' -%}
+{% endcapture -%}
+
+<div class="{{ __class__ }}">
+    {%- unless section.settings.heading == blank %}
+        <h2 class="title reveal-item">{{ section.settings.heading }}</h2>
+    {% endunless -%}
+
+    {{- map -}}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.map.name",
+  "tag": "section",
+  "class": "spaced-section",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "heading",
+      "label": "t:sections.map.settings.heading.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grayscale_effect",
+      "label": "t:sections.all.settings.enable_grayscale_effect.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": false
+    }
+  ],
+  "max_blocks": 1,
+  "blocks": [{ "type": "@theme" }],
+  "presets": [
+    {
+      "name": "t:sections.map.name"
+    }
+  ]
+}
+{% endschema %}

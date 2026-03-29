@@ -1,0 +1,301 @@
+{%- liquid
+    assign __class__ = 'video-presentation'
+    if section.settings.full_width
+        assign __class__ = 'full--width'
+    else
+        assign __class__ = 'dynamic-page-width'
+    endif
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+
+    assign titlePosition = settings.section_heading_position
+-%}
+
+{% style %}
+    #shopify-section-{{ section.id }}.video-presentation {
+        background-color: {{ section.settings.section_bg_color }};        
+    }
+    
+    #shopify-section-{{ section.id }} .heading.position_{{ titlePosition }} {
+        align-items: {{ titlePosition }};
+    }
+    
+    .video-presentation-cards-list {
+        display: flex;{% unless section.settings.swipe_on_mobile%}
+        gap: 1rem;{% endunless %}
+        flex-wrap:wrap;
+        {% unless section.settings.title == blank and section.settings.description == blank %}
+        margin-top: 2rem;{% endunless %}
+        padding-top: 1rem;
+        padding-bottom: 1rem; 
+    }
+    
+    @media screen and (max-width: 767px) {
+        {% if section.settings.full_width%}
+        .video-presentation-cards-list .slider__slide {
+            padding: 0.5rem;
+        }{% endif %}
+    }
+   
+    #shopify-section-{{ section.id }} .presentation-card .card-product .product-show-button svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        stroke: {{ section.settings.product_show_icon_color }};
+    }    
+    
+    .presentation-card .card-video {
+        width: 100%;
+        height: 400px;
+        overflow: hidden;
+        border-radius: {{ section.settings.card_border_radius }}px;
+    }
+    
+    .presentation-card .card-product {
+        position: relative;
+        display:flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.5rem;
+        flex-grow: 1;
+        padding: 0.5rem;
+        border: 1px solid var(--color-foreground-4);
+        border-radius: {{ section.settings.card_border_radius }}px;
+        width:100%;
+    }
+    
+    .card-product-details {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        color: var(--color-background);
+        padding: 2.5rem 0.5rem 1rem;
+        overflow: inherit;
+        transform: translateY(100%);
+        transition: all 0.4s ease-in-out;
+        z-index: 10;
+    }
+    
+    #shopify-section-{{ section.id }} .card-product-details {
+        background: {{ section.settings.dropdown_bg_color }};        
+    }
+    
+    .card-product-details.active {
+        transform: translateY(0);
+    }
+    
+    #shopify-section-{{ section.id }} .product-title {
+        color: {{ section.settings.product_title_color }};
+    }
+
+    @media screen and (min-width: 768px) {
+        .video-presentation-cards-list {
+            justify-content: center;
+            gap: 1rem;{% if section.settings.full_width%}
+            padding-right: 0.5rem;
+            padding-left: 0.5rem;{% endif %}
+        }
+    }
+
+    @media screen and (min-width: 1024px){
+        #shopify-section-{{ section.id }} .presentation-card {
+            width: calc((100% - 4rem) / {{ section.blocks.size }});
+        }
+    }
+{% endstyle %}
+
+<div class="{{__class__}}">
+    <div class="heading position_{{ titlePosition }}">
+        {% unless section.settings.title == blank %}
+            <span class="title reveal-item {{section.settings.heading_size}}">
+                {{ section.settings.title }}
+            </span>
+        {% endunless %}
+        {% unless section.settings.description == blank %}
+            <p class="h5 subtitle reveal-item">{{ section.settings.description }}</p>
+        {% endunless %}
+    </div>
+    {% if section.settings.swipe_on_mobile %}
+        <slider-component data-loop="false" class="slideshow">
+    {% else %}
+        <div>
+    {% endif %}
+        <ul class="video-presentation-cards-list{% if section.settings.swipe_on_mobile %} slider slider--tablet{% endif %}" 
+            id="video-presentation-{{ section.id }}"
+            role="list"
+            data-item-size="{{ section.blocks.size }}"
+        >
+            {% content_for 'blocks' %}
+        </ul>           
+    {%- if section.settings.swipe_on_mobile %}
+        {%- if section.blocks.size > 1 -%}
+            {% render 'slider__buttons', count: section.blocks.size %}
+        {% endif %}
+        </slider-component>
+    {% else %}
+        </div>
+    {% endif -%}
+</div>
+
+{{ 'video-presentation.css' | asset_url | stylesheet_tag }}
+<noscript>{{ 'video-presentation.css' | asset_url | stylesheet_tag }}</noscript>
+
+<script type="text/javascript" defer="defer">
+    function toggleCardDetails(el , product = null) {
+        // open card
+        if (el && typeof el === "string" && el.indexOf('_') > 0) {
+            const card = document.getElementById(`details-${el}`);
+            card && card.classList.add("active");
+        }
+        // close card    
+        if (el && el instanceof Element && el.classList.contains('modal__close-button')) {
+            const card = el.closest('.active');
+            card && card.classList.remove("active");
+        }
+        
+        if (product) {
+            const cardList = el.closest('.product-card-list');
+            cardList.querySelectorAll('.card-product-details').forEach(card => {
+                if(card.dataset.productId == product)
+                    card.classList.add('active');
+                else card.classList.remove('active');                
+            });
+            
+            const activeElement = el.closest('.active')?.dataset?.productId;                
+            if (activeElement) {
+                el.closest('.active').classList.remove('active');
+            }
+        }
+    }
+</script>
+
+{% schema %}
+{
+    "name": "t:sections.video-presentation.name",
+    "tag": "section",
+    "class": "spaced-section video-presentation",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "full_width",
+            "default": false,
+            "label": "t:sections.image-banner.settings.full_width.label"
+        },     
+        {
+            "type": "text",
+            "id": "title",
+            "label": "t:sections.video-presentation.settings.title.label",
+            "default": "Video Presentation"
+        },
+        {
+            "type": "select",
+            "id": "heading_size",
+            "options": [
+                {
+                    "value": "h1",
+                    "label": "t:sections.featured-product.settings.heading_size.options.h1"
+                },
+                {
+                    "value": "h2",
+                    "label": "t:sections.featured-product.settings.heading_size.options.h2"
+                },
+                {
+                    "value": "h3",
+                    "label": "t:sections.featured-product.settings.heading_size.options.h3"
+                }
+            ],
+            "default": "h2",
+            "label": "t:sections.featured-product.settings.heading_size.label"
+        },
+        {
+            "type": "inline_richtext",
+            "id": "description",
+            "label": "t:sections.video-presentation.settings.description.label",
+            "default": "Provide additional description here"
+        },
+        {
+            "type": "checkbox",
+            "id": "swipe_on_mobile",
+            "label": "t:sections.multicolumn.settings.swipe_on_mobile.label"
+        },
+        {
+            "type": "checkbox",
+            "id": "animation_on_reveal",
+            "label": "t:sections.all.settings.animation_on_reveal.label",
+            "default": false
+        },
+        {
+            "type": "range",
+            "min": 0,
+            "max": 20,
+            "step": 2,
+            "default": 0,
+            "id": "card_border_radius",
+            "label": "t:sections.video-presentation.settings.card_border_radius.label"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.video-presentation.settings.header_3.content"
+        },
+        {
+            "type": "color",
+            "id": "section_bg_color",
+            "label": "t:sections.video-presentation.settings.section_bg_color.label"
+        },
+        {
+            "type": "color",
+            "id": "dropdown_bg_color",
+            "label": "t:sections.video-presentation.settings.dropdown_bg_color.label",
+            "default": "#fff"
+        },
+        {
+            "type": "color",
+            "id": "product_title_color",
+            "label": "t:sections.video-presentation.settings.product_title_color.label",
+            "default": "#000"
+        },
+        {
+            "type": "color",
+            "id": "product_show_icon_color",
+            "label": "t:sections.video-presentation.settings.product_show_icon_color.label",
+            "default": "#7f7f7f"
+        }
+    ],
+    "max_blocks": 5,
+    "blocks": [
+        {
+            "type": "@theme"
+        },
+        {
+            "type": "@app"
+        },
+        {
+            "type": "video-presentation-card"
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.video-presentation.name",
+            "blocks": [
+                {
+                    "type": "video-presentation-card"
+                },
+                {
+                    "type": "video-presentation-card"
+                },
+                {
+                    "type": "video-presentation-card"
+                },
+                {
+                    "type": "video-presentation-card"
+                },
+                {
+                    "type": "video-presentation-card"
+                }
+            ]
+        }
+    ]
+}    
+{% endschema %}

@@ -1,0 +1,449 @@
+{{ 'component-faqs.css' | asset_url | stylesheet_tag }}
+<noscript>
+    {{ 'component-faqs.css' | asset_url | stylesheet_tag }}
+</noscript>
+
+{%- liquid
+    assign image_position = section.settings.image_position
+    assign questions_limit = section.settings.questions_limit
+
+    assign blocks_faq = section.blocks | where: 'type', 'faq' | first
+    assign block_image = section.blocks | where: 'type', 'image' | first
+    assign image = block_image.settings.image_picker
+    if block_image
+        assign questions_limit = questions_limit | plus: 1
+    endif
+    assign is_preload = block_image.settings.is_preload
+
+    case block_image.settings.image_height
+        when 'adapt_to_image'
+            assign padding_bottom = 100 | divided_by: image.aspect_ratio
+            assign padding_bottom = padding_bottom | append: '%'
+        when 'small'
+            assign padding_bottom = '26rem'
+        when 'medium'
+            assign padding_bottom = '33rem'
+        when 'large'
+            assign padding_bottom = '44rem'
+    endcase
+
+    assign __class__ = 'faqs-section'
+    if section.settings.full_width
+        assign __class__ = __class__ | append: ' full--width'
+    else
+        assign __class__ = __class__ | append: ' dynamic-page-width'
+    endif
+    assign __class__ = __class__ | append: ' image-position-'
+    assign __class__ = __class__ | append: image_position
+
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+
+    if section.settings.enable_grayscale_effect
+        assign __class__ = __class__ | append: ' with--grayscale-effect'
+    endif
+-%}
+
+{% style %}
+    {%- if section.settings.enable_reveal_animation %}
+    :where(#shopify-section-{{ section.id }} :is(.heading, .faq-content)) {
+        opacity: 0;
+    }{%- endif %}
+
+    #shopify-section-{{ section.id }} .faqs-section {
+        display: flex;
+        flex-direction: column;{% if section.settings.image_position == "right" %}
+        flex-direction: column-reverse;{% endif %}
+        width: 100%;
+        padding: 0;{% unless section.settings.full_width %}
+        border-radius: 4px;{% endunless %};
+    }
+
+    #shopify-section-{{ section.id }} .faq-media,
+    #shopify-section-{{ section.id }} .faqs-content {
+        width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .faq-media {
+        padding-bottom: {{ padding_bottom }};
+        margin-bottom: auto;
+    }
+
+    #shopify-section-{{ section.id }} .faq-media > img {
+        object-position: center;
+    }
+
+    #shopify-section-{{ section.id }} .faqs-content {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        padding: 1rem;
+        background-color: {{ section.settings.background_color }};
+        align-self: {{ section.settings.text_position}};
+    }
+
+    #shopify-section-{{ section.id }} .faq-content--inner {
+        padding: 0 1.5rem;
+    }
+
+    #shopify-section-{{ section.id }} .faq-content--inner > * {
+        padding-bottom: 1rem;
+    }
+
+    #shopify-section-{{ section.id }} .faqs-content faqs-accordion {
+        padding: 0;
+    }
+
+    #shopify-section-{{ section.id }} .faqs-content faqs-accordion,
+    #shopify-section-{{ section.id }} .faq-media {
+        --faq-accordion__background: transparent;
+    }
+
+    #shopify-section-{{ section.id }} .faqs-content faqs-accordion summary {
+        padding-right: 4rem;
+    }
+
+    #shopify-section-{{ section.id }} .faqs-content faqs-accordion .faq-title:after {
+        position: absolute;
+        right: 0rem;
+    }
+
+    #shopify-section-{{ section.id }} .faqs-content.title-position-center h2 {
+        text-align: center;
+    }
+
+    #shopify-section-{{ section.id }} .faqs-content.title-position-right h2 {
+        text-align: right;
+    }
+
+    {% if block_image.settings.enabled_inner_paddings %}
+    #shopify-section-{{ section.id }} .faq-media img {
+        padding: 2rem;
+    }
+    {% endif %}
+    @media(min-width: 768px), print {
+        #shopify-section-{{ section.id }} .faqs-section.image-position-left {
+            flex-direction: row;
+        }
+
+        #shopify-section-{{ section.id }} .faqs-section.image-position-right {
+            flex-direction: row-reverse;
+        }
+        {% unless block_image == null %}
+        #shopify-section-{{ section.id }} .faqs-section .faq-media,
+        #shopify-section-{{ section.id }} .faqs-section .faqs-content {
+            width: calc(50% - 2px);
+        }{% endunless %}
+
+        #shopify-section-{{ section.id }} .faqs-content {
+            padding: 2rem;
+        }{% if section.settings.mozaic %}
+           #shopify-section-{{ section.id }} .faqs-content {
+            align-self: unset;
+           }
+
+          #shopify-section-{{ section.id }} .faqs-section.image-position-left .faq-media,
+          #shopify-section-{{ section.id }} .faqs-section.image-position-right .faqs-content {
+            margin-top: 30px;
+            margin-bottom: -30px;
+          }{% endif %}
+    }
+{% endstyle %}
+
+<div class="{{ __class__ }}">
+    {%- unless block_image == null -%}
+        <div class="faq-media media transition--animation reveal-item">
+            {%- if image != blank -%}
+                {% render 'render-image',
+                    css_class: '',
+                    image: image,
+                    sizes: '(max-width: 767px) calc(100vw - 2rem), (max-width: 1279px) calc(100vw - 6rem), 1176px',
+                    widths: '360,425,495,560,660,900,1024,1920,#iw#',
+                    is_preload: is_preload
+                %}
+            {%- else -%}
+                {{ 'image' | placeholder_svg_tag: 'page-placeholder' }}
+            {%- endif -%}
+        </div>
+    {%- endunless -%}
+
+    <div class="faqs-content title-position-{{ section.settings.title_position }}{% if section.settings.animation_on_reveal %} reveal-slide-in{% endif -%}">
+        {%- unless section.settings.heading == blank -%}
+            <div class="heading">
+                <h2 class="title reveal-item" style="color: {{ section.settings.heading_color }}">
+                    {{ section.settings.heading }}
+                </h2>
+            </div>
+        {%- endunless -%}
+        <faqs-accordion data-open-multiple="{% if section.settings.can_open_multiple %}true{% else %}false{%  endif %}">
+            {% if blocks_faq != null %}
+                {%- for block in section.blocks limit: questions_limit -%}
+                    {% case block.type %}
+                        {% when 'faq' %}
+                            {%- unless block.settings.question == blank -%}
+                                <details class="faq-details">
+                                    <summary
+                                        class="heading faq-title reveal-item"
+                                        style="color:{{ section.settings.question_color }}"
+                                    >
+                                        {{ block.settings.question | escape }}
+                                        <span class="faq-icon faq-icon-plus">
+                                            {%- render 'icons-solid', name: 'plus' -%}
+                                        </span>
+                                        <span class="faq-icon faq-icon-minus">
+                                            {%- render 'icons-solid', name: 'minus' -%}
+                                        </span>
+                                    </summary>
+                                    <div
+                                        class="faq-content faq-content--inner rte"
+                                        style="color:{{ section.settings.answer_color }}"
+                                    >
+                                        {{ block.settings.answer }}
+                                    </div>
+                                </details>
+                            {%- endunless -%}
+                    {%- endcase -%}
+                {% endfor %}
+            {% endif -%}
+        </faqs-accordion>
+    </div>
+</div>
+
+<script type="text/init-deferred">
+    {
+        "faqsAccordion": {
+            "src": "{{ 'faqs-accordion.js' | asset_url }}",
+            "event": "click::faqs-accordion summary"
+        }
+    }
+</script>
+
+{% schema %}
+  {
+  "name": "t:sections.faq-section.name",
+  "tag": "section",
+  "class": "spaced-section",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "t:sections.faq-section.settings.heading.label",
+      "default": "Frequently asked questions"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "t:sections.faq-section.settings.full_width.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "can_open_multiple",
+      "label": "t:sections.faq-section.settings.can_open_multiple.label",
+      "info": "t:sections.faq-section.settings.can_open_multiple.info",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "mozaic",
+      "label": "Show in zigzag shape"
+    },
+    {
+      "type": "select",
+      "id": "text_position",
+      "options": [
+        {
+          "value": "flex-start",
+          "label": "t:sections.all.alignments.top.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.all.alignments.center.label"
+        },
+        {
+          "value": "flex-end",
+          "label": "t:sections.all.alignments.bottom.label"
+        }
+      ],
+      "label": "t:sections.image-with-text.settings.text_position.label",
+      "info": "t:sections.image-with-text.settings.text_position.info",
+      "default": "flex-start"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "label": "t:sections.faq-section.settings.image_position.label",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.faq-section.settings.image_position.options.left"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.faq-section.settings.image_position.options.right"
+        }
+      ],
+      "default": "left",
+      "info": "t:sections.faq-section.settings.image_position.info"
+    },
+    {
+      "type": "select",
+      "id": "title_position",
+      "label": "t:sections.faq-section.settings.title_position.label",
+      "options": [
+          {
+            "value": "left",
+            "label": "t:sections.faq-section.settings.title_position.options.left"
+          },
+          {
+            "value": "center",
+            "label": "t:sections.faq-section.settings.title_position.options.center"
+          },
+          {
+            "value": "right",
+            "label": "t:sections.faq-section.settings.title_position.options.right"
+          }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "questions_limit",
+      "label": "t:sections.faq-section.settings.questions_limit.label",
+      "info": "t:sections.faq-section.settings.questions_limit.info",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grayscale_effect",
+      "label": "t:sections.all.settings.enable_grayscale_effect.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.faq-section.settings.header.content"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "t:sections.faq-section.settings.heading_color.label",
+      "default": "#000"
+    },
+    {
+      "type": "color",
+      "id": "question_color",
+      "label": "t:sections.faq-section.settings.question_color.label",
+      "default": "#000"
+    },
+    {
+      "type": "color",
+      "id": "answer_color",
+      "label": "t:sections.faq-section.settings.answer_color.label",
+      "default": "#000"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "t:sections.faq-section.settings.background_color.label",
+      "default": "#fff"
+    }
+  ],
+  "max_blocks": 50,
+  "blocks": [
+    {
+      "type": "image",
+      "name": "t:sections.faq-section.blocks.image.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image_picker",
+          "label": "t:sections.faq-section.blocks.image.settings.image_picker.label"
+        },
+        {
+          "type": "select",
+          "id": "image_height",
+          "options": [
+            {
+              "value": "adapt_to_image",
+              "label": "t:sections.main-list-collections.settings.image_ratio.adapt_to_image.label"
+            },
+            {
+              "value": "small",
+              "label": "t:sections.image-banner.settings.image_height.options__2.label"
+            },
+            {
+              "value": "medium",
+              "label": "t:sections.image-banner.settings.image_height.options__3.label"
+            },
+            {
+              "value": "large",
+              "label": "t:sections.image-banner.settings.image_height.options__4.label"
+            }
+          ],
+          "default": "medium",
+          "label": "t:sections.image-banner.settings.image_height.label",
+          "info": "t:sections.image-banner.settings.image_height.info"
+        },
+        {
+          "type": "checkbox",
+          "id": "enabled_inner_paddings",
+          "label": "t:sections.faq-section.blocks.image.settings.enabled_inner_paddings.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "is_preload",
+          "label": "t:sections.faq-section.blocks.image.settings.is_preload.label"
+        }
+      ]
+    },
+    {
+      "type": "faq",
+      "name": "t:sections.faq-section.blocks.faq.name",
+      "limit": 49,
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "t:sections.faq-section.blocks.faq.settings.question.label",
+          "default": "Question title?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "t:sections.faq-section.blocks.faq.settings.answer.label",
+          "default": "<p>Provide some answer to the question.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [{
+      "name": "t:sections.faq-section.name",
+      "blocks": [
+        {
+        "type": "image"
+        },
+        {
+        "type": "faq"
+        },
+        {
+        "type": "faq"
+        },
+        {
+        "type": "faq"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

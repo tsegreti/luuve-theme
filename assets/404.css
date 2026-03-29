@@ -1,0 +1,28 @@
+.template-404 {
+  min-height: 35rem;
+  margin: 6rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+@media screen and (max-width: 485px) {
+  .template-404 .title {
+    font-size: 48px;
+  }
+}
+
+.template-404 .title,
+.template-404 .subtitle {
+  font-weight: 500;
+}
+
+.template-404 .subtitle {
+  font-size: 8rem;
+  line-height: .5;
+}
+
+.template-404 > :not(h1) {
+  margin: 1.5rem 0;
+}

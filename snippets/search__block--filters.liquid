@@ -1,0 +1,127 @@
+{%- comment -%}
+    Render search result filters using block settings
+
+    Accepts:
+     - block:             {Object}
+     - blockOrder:        {Number}
+     - hidden_inputs_html {String} (Optional)
+{%- endcomment -%}
+
+{%- liquid
+    assign type = 'accordion'
+    assign move_to = ''
+    assign position = block.settings.position | split: '-' | first
+    if position == 'main'
+        assign type = 'buttons'
+        assign move_to = block.settings.position | split: '-' | last
+    endif
+    assign state = block.settings.position | split: '-' | last
+    if state == 'open'
+        assign opened = true
+    else
+        assign opened = false
+    endif
+
+    capture active_facets_count
+        render 'facets__get_active_count', filters: search.filters
+    endcapture
+    assign active_facets_count = active_facets_count | strip | plus: 0
+-%}
+
+{% if search.filters.size > 0 %}
+    <div
+        id="main-search-filters"
+        class="search__block search__block--filters collection__block collection-filters"
+        style="order: {{ blockOrder }}"
+        data-id="{{ section.id }}"
+        data-facets-position="{{ block.settings.position }}"
+        {{ block.shopify_attributes }}
+    >
+        {{ 'component-facets.css' | asset_url | stylesheet_tag }}
+
+        {% unless move_to == 'products_toolbar' %}
+            {% render 'facets__desktop',
+                filters: search.filters,
+                desktop_facets_type: type,
+                desktop_facets_open: opened,
+                is_render_theme_swatches: block.settings.show_swatch_colors,
+                form_after_open_html: hidden_inputs_html
+            %}
+
+            {% render 'facets__mobile',
+                filters: search.filters,
+                is_render_theme_swatches: block.settings.show_swatch_colors,
+                form_after_open_html: hidden_inputs_html
+            %}
+        {% endunless %}
+
+        <fetcher-component
+            id="CollectionFiltersMobileActive"
+            class="active-facets active-facets-mobile"
+            data-loader-target="main-collection-products__wrapper"
+            data-section="{{ section.id }}"
+            data-updatable="true"
+        >
+            {%- if active_facets_count > 0 %}
+                <p class="active-facets__heading">
+                    {{ 'sections.collection_template.filter_by_label' | t }}
+                </p>
+                {% render 'facets__active', filters: search.filters %}
+                {% render 'facets__button--clear-all', collection: search %}
+            {% endif -%}
+        </fetcher-component>
+
+        {% if move_to == 'products_toolbar' or request.design_mode %}
+            {% style %}
+                [data-facets-position="main-products_toolbar"] .facets.desktop-only,
+                [data-facets-position="main-products_toolbar"] .mobile-facets__wrapper,
+                [data-facets-position="main-products_toolbar"]:has(.active-facets:empty) {
+                    display: none;
+                }
+
+                .collection-toolbar-top {
+                    min-height: 3rem;
+                }
+
+                .collection-toolbar-top .mobile-facets__wrapper > details > summary {
+                    padding: .5rem .75rem .5rem .5rem;
+                    min-width: auto;
+                }
+            {% endstyle %}
+            <template id="filters-in-toolbar--next-button">
+                <button name="next" class="button" aria-label="{{ 'accessibility.next_slide' | t }}" hidden>
+                    <svg
+                        aria-hidden="true"
+                        focusable="false"
+                        role="presentation"
+                        class="icon icon-caret"
+                        height="16"
+                        width="16"
+                    >
+                        <use href="#icon-caret"></use>
+                    </svg>
+                </button>
+            </template>
+            <template id="filters-in-toolbar--prev-button">
+                <button name="prev" class="button" aria-label="{{ 'accessibility.previous_slide' | t }}" hidden>
+                    <svg
+                        aria-hidden="true"
+                        focusable="false"
+                        role="presentation"
+                        class="icon icon-caret"
+                        height="16"
+                        width="16"
+                    >
+                        <use href="#icon-caret"></use>
+                    </svg>
+                </button>
+            </template>
+            <link
+                rel="preload"
+                href="{{ 'component-collection-filters.css' | asset_url }}"
+                as="style"
+                onload="this.onload=null;this.rel='stylesheet'"
+            >
+        {% endif %}
+    </div>
+{% endif %}

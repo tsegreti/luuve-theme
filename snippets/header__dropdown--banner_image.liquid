@@ -1,0 +1,89 @@
+{% comment %}
+    Render header dropdown content - Banner Image
+
+    Accepts:
+      - block:              {Object}
+      - blockOrder:         {Numb}
+      - parent_item_index:  {Numb}
+{% endcomment %}
+{%- liquid
+    assign image = block.settings.item_image
+    assign imageLink = block.settings.image_link
+    assign imageTitle = block.settings.image_title
+    assign selectedParentIndex = block.settings.item_menu_index
+    assign is_preload = block.settings.is_preload
+    assign title_color = block.settings.heading_color
+    assign banner_description = block.settings.text
+    assign banner_description_font = block.settings.text_font_size
+    assign banner_description_color = block.settings.text_color
+
+    assign banner_class = ''
+    if section.settings.animation_on_reveal
+        assign banner_class = banner_class | append: 'reveal-slide-in'
+    endif
+
+    assign btn_class = 'banner__buttons reveal-item'
+
+    if block.settings.action_btn_width == 'extend'
+        assign btn_class = btn_class | append: ' _extend'
+    endif
+    assign media_condition = '(max-width: 989px)'
+-%}
+{%- unless block.settings.show_block_on_mobile %}
+    <style media="{{ media_condition }}">
+        .item--with-image[hidden-on-mobile] {
+            display: none;
+        }
+    </style>
+{% endunless -%}
+
+{%- if image != blank and parent_item_index == selectedParentIndex -%}
+    <div
+        class="{{ banner_class}} col-3 item--with-image"
+        data-block-index="{{ blockOrder }}"
+        {% unless block.settings.show_block_on_mobile %}
+            hidden-on-mobile
+        {% endunless %}
+        {{ block.shopify_attributes }}
+    >
+        <div
+            class="media"
+            style="padding-bottom: {% if image != blank %}{{ 1 | divided_by: image.aspect_ratio | times: 100 }}{% else %}100{% endif %}%"
+        >
+            {%- unless imageLink == blank -%}<a href="{{ imageLink }}" class="link_to">{%- endunless -%}
+            {% render 'render-image', image: image, widths: image.width, is_preload: is_preload %}
+            {%- unless imageLink == blank -%}</a>{%- endunless -%}
+            <div class="banner__main_content">
+                <div class="banner__info">
+                    {%- unless imageTitle == blank -%}
+                        <{{ block.settings.level }} class="reveal-item image--link" style="color:{{title_color}};">
+                            {{- imageTitle | escape -}}
+                        </{{ block.settings.level }}>
+                    {%- endunless -%}
+                    {%- unless banner_description == blank -%}
+                        <div
+                            class="reveal-item"
+                            style="font-size:{{ banner_description_font }}px; color:{{ banner_description_color }}; text-align:center;"
+                        >
+                            {{ banner_description | escape }}
+                        </div>
+                    {%- endunless -%}
+                    {%- unless block.settings.button_label == blank -%}
+                        <div class="{{ btn_class }}">
+                            <a
+                                href="{{ block.settings.button_link }}"
+                                class="button animate-arrow{% if block.settings.button_style_secondary %} button--secondary{% else %} button--primary{% endif %}"
+                                {% if block.settings.button_link == blank %}
+                                    aria-disabled="true"
+                                {% endif %}
+                            >
+                                {{ block.settings.button_label | escape }}
+                                {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+                            </a>
+                        </div>
+                    {%- endunless -%}
+                </div>
+            </div>
+        </div>
+    </div>
+{%- endif -%}

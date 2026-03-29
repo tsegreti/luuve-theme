@@ -1,0 +1,296 @@
+{{ 'component-article-tags.css' | asset_url | stylesheet_tag }}
+{{ 'section-main-blog.css' | asset_url | stylesheet_tag }}
+{{ 'component-article-card.css' | asset_url | stylesheet_tag }}
+
+{%- liquid
+    assign limit = section.settings.limit_per_page
+
+    if section.settings.tags_limit > 0
+        assign tags_position = 'on_image'
+    else
+        assign tags_position = ''
+    endif
+
+    assign loader_target = 'articles-' | append: section.id
+
+    assign __class__ = 'main-blog dynamic-page-width'
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+
+    if section.settings.enable_grayscale_effect
+        assign __class__ = __class__ | append: ' with--grayscale-effect'
+    endif
+-%}
+
+{% style %}
+    {% if settings.current_presets == "oldmoney" %}
+    #shopify-section-{{ section.id }} .main-blog .article-card .article-card__image {
+        border-radius: 4px;
+    }
+
+    #shopify-section-{{ section.id }} .main-blog .article-card__info  {
+        padding: 0 1.4rem;
+    }{% elsif settings.current_presets == "enduro" %}
+      #shopify-section-{{ section.id }} .main-blog .article-card .article-card__image {
+        border-radius: 0;
+    }
+      #shopify-section-{{ section.id }} .main-blog .article-card__info  {
+        padding: 0 2rem 2rem;
+    }{% endif %}
+{% endstyle %}
+
+{%- paginate blog.articles by limit -%}
+    <div class="{{ __class__ }}">
+        <div class="header-container">
+            {%- if section.settings.show_filter_articles and blog.all_tags.size > 0 -%}
+                {% render 'blog__filters', blog: blog, loader_target: loader_target %}
+            {% endif -%}
+        </div>
+        <ul id="articles-{{ section.id }}" class="blog-articles" data-blog="articles" data-updatable="true">
+            {%- for article in blog.articles -%}
+                {%- liquid
+                    assign lead_article = null
+                    assign article_info_class = ''
+                    assign article_tags_position = tags_position
+
+                    if paginate.current_page == 1 and forloop.index0 == 0 and current_tags == null
+                        assign lead_article = section.blocks | where: 'type', 'lead' | first
+
+                        unless lead_article == null
+                            assign article_info_position = lead_article.settings.info_position
+                            assign article_info_class = ' scrollbar article-card__info-' | append: lead_article.settings.info_position
+                            assign article_info_class = article_info_class | append: ' color-' | append: lead_article.settings.info_color_scheme
+
+                            unless article_tags_position == blank
+                                assign article_tags_position = 'before_title'
+                            endunless
+                        endunless
+                    endif
+
+                    if lead_article
+                        assign excerpt_limit = 30
+                        assign show_author = false
+                        assign show_date = true
+                        assign show_image = true
+                        assign show_link = true
+                        assign tags_limit = 0
+                        assign show_title = true
+                    else
+                        assign excerpt_limit = section.settings.excerpt_limit
+                        assign show_author = section.settings.show_author
+                        assign show_date = section.settings.show_date
+                        assign show_image = section.settings.show_image
+                        assign show_link = section.settings.show_link
+                        assign tags_limit = section.settings.tags_limit
+                        assign show_title = section.settings.show_title
+                    endif
+                -%}
+
+                <li
+                    class="blog-articles__article article{% unless lead_article == nil %} article--newest info-position__{{ article_info_position }}{% endunless %} reveal-item"
+                    data-article-tag="{{ article.tags | join:',' }}"
+                    {% unless lead_article == null %}
+                        {{- lead_article.shopify_attributes -}}
+                    {% endunless %}
+                >
+                    {%- render 'article-card',
+                        article: article,
+                        excerpt_limit: excerpt_limit,
+                        info_class: article_info_class,
+                        show_author: show_author,
+                        show_comments: section.settings.show_comments,
+                        show_date: show_date,
+                        show_image: show_image,
+                        show_link: show_link,
+                        tags_position: article_tags_position,
+                        tags_limit: tags_limit,
+                        show_title: show_title
+                    -%}
+                </li>
+            {%- endfor -%}
+        </ul>
+
+        <div class="footer-container">
+            {% capture pagination_html -%}
+        {% render 'pagination'
+          paginate: paginate
+          tag_name: 'fetcher-component'
+        %}
+      {%- endcapture -%}
+
+            {{
+                pagination_html
+                | replace_first: '<fetcher-component',
+                    '<fetcher-component id="blog-pagination-#section#" data-loader-target="#loader_target#" data-section="#section#" data-updatable="true"'
+                | replace_first: '#loader_target#', loader_target
+                | replace: '#section#', section.id
+            }}
+        </div>
+    </div>
+{%- endpaginate -%}
+
+{% render 'initialize-deferred-scripts', init_fetcher: true %}
+
+{% schema %}
+{
+  "name": "t:sections.main-blog.name",
+  "tag": "section",
+  "class": "spaced-section page-main-blog",
+  "settings": [
+    {
+      "type": "range",
+      "id": "limit_per_page",
+      "min": 3,
+      "max": 12,
+      "step": 1,
+      "default": 6,
+      "label": "t:sections.main-blog.settings.limit_per_page.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_filter_articles",
+      "label": "t:sections.main-blog.settings.show_filter_articles.label",
+      "info": "t:sections.main-blog.settings.show_filter_articles.info",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.main-blog.settings.header.content"
+    },
+    {
+      "type": "paragraph",
+      "content": "t:sections.main-blog.settings.paragraph.content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_image",
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_image.label",
+      "info": "t:sections.main-blog.settings.show_image.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grayscale_effect",
+      "label": "t:sections.all.settings.enable_grayscale_effect.label",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "tags_limit",
+      "min": 0,
+      "max": 6,
+      "step": 1,
+      "default": 6,
+      "unit": "tag",
+      "label": "t:sections.main-blog.settings.tags_limit.label",
+      "info": "t:sections.main-blog.settings.tags_limit.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "t:sections.featured-blog.settings.show_title.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "default": false,
+      "label": "t:sections.main-blog.settings.show_date.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "default": false,
+      "label": "t:sections.main-blog.settings.show_author.label"
+    },
+    {
+      "type": "range",
+      "id": "excerpt_limit",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "default": 30,
+      "unit": "wrd",
+      "label": "t:sections.main-blog.settings.excerpt_limit.label",
+      "info": "t:sections.main-blog.settings.excerpt_limit.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_link",
+      "default": true,
+      "label": "t:sections.main-blog.settings.show_link.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_comments",
+      "default": false,
+      "label": "t:sections.main-blog.settings.show_comments.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+  "type": "lead",
+  "name": "t:sections.main-blog.blocks.lead.name",
+  "limit": 1,
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.main-blog.blocks.lead.settings.paragraph.content"
+    },
+    {
+      "type": "select",
+      "id": "info_color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "t:sections.all.colors.accent_1.label"
+        },
+        {
+          "value": "accent-2",
+          "label": "t:sections.all.colors.accent_2.label"
+        },
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "inverse",
+          "label": "t:sections.all.colors.inverse.label"
+        }
+      ],
+      "default": "background-2",
+      "label": "t:sections.main-blog.blocks.lead.settings.info_color_scheme.label"
+    },
+    {
+      "type": "select",
+      "id": "info_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.main-blog.blocks.lead.settings.info_position.options.left.label"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.main-blog.blocks.lead.settings.info_position.options.right.label"
+        }
+      ],
+      "default": "right",
+      "label": "t:sections.main-blog.blocks.lead.settings.info_position.label"
+    }
+  ]
+}
+
+  ]
+}
+{% endschema %}

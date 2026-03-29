@@ -1,0 +1,278 @@
+{{ 'newsletter.css' | asset_url | stylesheet_tag }}
+<noscript>{{ 'newsletter.css' | asset_url | stylesheet_tag }}</noscript>
+
+{%- liquid
+    # newsletter image
+    assign padding_bottom = '75%'
+    if section.settings.image != blank
+        capture padding_bottom
+            render 'helper__media-padding-bottom', image: section.settings.newsletter_image, image_ratio: 'native'
+        endcapture
+    endif
+
+    case section.settings.image_height
+        when 'small'
+            assign padding_bottom = '14rem'
+            assign padding_bottom_md = '26rem'
+        when 'medium'
+            assign padding_bottom = '20rem'
+            assign padding_bottom_md = '34rem'
+        when 'large'
+            assign padding_bottom = '28rem'
+            assign padding_bottom_md = '44rem'
+    endcase
+    # end newsletter image
+
+    assign emailForm = section.blocks | where: 'type', 'email_form' | first
+    assign buttonStyle = emailForm.settings.button_style_secondary
+    assign block_images = section.blocks | where: 'type', 'image'
+    assign newsletter_height = 0
+    assign newsletter_ratio = 0
+    for block in block_images
+        if block.settings.is_background
+            assign h = block.settings.image.height | default: 236
+            assign r = block.settings.image.aspect_ratio
+            if h > newsletter_height
+                assign newsletter_height = h
+                assign newsletter_ratio = r
+            endif
+        endif
+    endfor
+
+    assign section_class = 'newsletter'
+    if section.settings.full_width
+        assign section_class = section_class | append: ' full--width'
+        unless section.settings.use_newsletter_image
+            assign section_class = section_class | append: ' color-' | append: section.settings.color_scheme
+        endunless
+    else
+        assign section_class = section_class | append: ' newsletter--narrow dynamic-page-width'
+    endif
+
+    if section.settings.use_newsletter_image
+        assign section_class = section_class | append: ' newsletter-with-image ' | append: section.settings.image_position
+    endif
+
+    if section.settings.animation_on_reveal
+        assign section_class = section_class | append: ' reveal-slide-in'
+    endif
+
+    if section.settings.enable_grayscale_effect and section.settings.use_newsletter_image
+        assign section_class = section_class | append: ' with--grayscale-effect'
+    endif
+-%}
+
+{%- if template == 'password' %}
+    {% style %}
+        #shopify-section-{{ section.id }} {
+          margin: 2rem 0 3rem;
+        }
+        .newsletter__wrapper {
+          padding: 2rem 0;
+        }
+        .newsletter__wrapper :is(.heading),
+        .newsletter__wrapper :is(.description) {
+          max-width: 42rem;
+          margin: 0 auto;
+          text-align: {{ section.settings.email_position }};
+        }
+        {% if settings.current_presets == 'enduro' %}
+            .newsletter-form__field-wrapper [type="email"] {
+                padding-left: 3rem;
+            }{% endif %}
+    {% endstyle %}
+{% else %}
+    {% render 'newsletter__styles', newsletter_height: newsletter_height %}
+{% endif -%}
+
+<div class="{{ section_class }}">
+    {%- unless template == 'password' %}
+        {%- if section.settings.use_newsletter_image %}
+            <div class="image-media reveal-item">
+                <div class="media" style="padding-bottom: {{ padding_bottom }};">
+                    {%- if section.settings.newsletter_image != blank -%}
+                        {% render 'render-image',
+                            image: section.settings.newsletter_image,
+                            sizes: '100vw',
+                            widths: '698,966,1176,#iw#'
+                        %}
+                    {%- else -%}
+                        {{ 'collection-6' | placeholder_svg_tag: 'placeholder' }}
+                    {%- endif -%}
+                </div>
+            </div>
+        {% endif -%}
+    {% endunless -%}
+    <div class="newsletter__wrapper color-{{ section.settings.color_scheme }} position__{{ section.settings.email_position }}">
+        {%- content_for 'blocks' -%}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.newsletter.name",
+  "tag": "section",
+  "class": "spaced-section spaced-section-newsletter spaced-section--full-width",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "use_newsletter_image",
+      "label": "t:sections.newsletter.settings.use_newsletter_image.label",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "newsletter_image",
+      "label": "t:sections.newsletter.settings.newsletter_image.label",
+      "info": "t:sections.newsletter.settings.newsletter_image.info"
+    },
+    {
+      "type": "select",
+      "id": "image_position",
+      "options": [
+        {
+          "value": "image_first",
+          "label": "t:sections.newsletter.settings.image_position.options.image_first"
+        },
+        {
+          "value": "newsletter_first",
+          "label": "t:sections.newsletter.settings.image_position.options.newsletter_first"
+        },
+        {
+          "value": "image_cover",
+          "label": "t:sections.newsletter.settings.image_position.options.image_cover"
+        }
+      ],
+      "default": "image_cover",
+      "label": "t:sections.newsletter.settings.image_position.label"
+    },
+    {
+      "type": "select",
+      "id": "image_height",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "t:sections.image-with-text.settings.image_height.options__1.label"
+        },
+        {
+          "value": "small",
+          "label": "t:sections.image-banner.settings.image_height.options__2.label"
+        },
+        {
+          "value": "medium",
+          "label": "t:sections.image-banner.settings.image_height.options__3.label"
+        },
+        {
+          "value": "large",
+          "label": "t:sections.image-banner.settings.image_height.options__4.label"
+        }
+      ],
+      "default": "adapt",
+      "label": "t:sections.image-with-text.settings.image_height.label"
+    },
+    {
+      "type": "select",
+      "id": "email_position",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.newsletter.settings.email_position.options.left"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.newsletter.settings.email_position.options.center"
+        },
+        {
+          "value": "right",
+          "label": "t:sections.newsletter.settings.email_position.options.right"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.newsletter.settings.email_position.label"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "t:sections.all.colors.accent_1.label"
+        },
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "inverse",
+          "label": "t:sections.all.colors.inverse.label"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "layout_design",
+      "label": "t:sections.newsletter.settings.layout_design.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "default": true,
+      "label": "t:sections.newsletter.settings.full_width.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_grayscale_effect",
+      "label": "t:sections.all.settings.enable_grayscale_effect.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": false
+    },
+    {
+      "type": "paragraph",
+      "content": "t:sections.newsletter.settings.paragraph.content"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.image-with-text.settings.header.content"
+    },
+    {
+      "type": "range",
+      "id": "text_block_width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "default": 100,
+      "unit": "%",
+      "label": "t:sections.newsletter.settings.text_block_width.label"
+    }
+  ],
+  "blocks": [{ "type": "@theme" }, { "type": "@app"}],
+  "presets": [
+    {
+      "name": "t:sections.newsletter.presets.name",
+      "blocks": [
+        {
+          "type": "heading"
+        },
+        {
+          "type": "description"
+        },
+        {
+          "type": "form-subscribe"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

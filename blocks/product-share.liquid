@@ -1,0 +1,57 @@
+{%- liquid
+    assign product = section.settings.product | default: product
+    assign block_index = block.settings.block_order
+-%}
+{%- render 'product__info-block--share',
+    block: block,
+    product: product,
+    blockOrder: block_index,
+    sectionId: section.id
+-%}
+{% schema %}
+{
+    "name": "t:sections.main-product.blocks.share.name",
+    "tag": null,
+    "settings": [
+        {
+            "type": "paragraph",
+            "content": "t:sections.main-product.blocks.share.settings.featured_image_info.content"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_facebook",
+            "label": "t:sections.main-product.blocks.share.settings.show_facebook.label",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_twitter",
+            "label": "t:sections.main-product.blocks.share.settings.show_twitter.label",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_pinterest",
+            "label": "t:sections.main-product.blocks.share.settings.show_pinterest.label",
+            "default": true
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.advanced.header.content"
+        },
+        {
+            "type": "number",
+            "id": "block_order",
+            "label": "t:sections.all.advanced.block_order.label",
+            "info": "t:sections.all.advanced.block_order.info",
+            "default": 25
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.main-product.blocks.share.name",
+            "category": "t:sections.all.categories.product-information"
+        }
+    ]
+}
+{% endschema %}

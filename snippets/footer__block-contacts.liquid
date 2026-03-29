@@ -1,0 +1,88 @@
+{% comment %}
+    Render contact block for footer.
+
+    Accepts:
+     - block: {Object}
+{% endcomment %}
+{%- if block.settings.show_media %}
+    {% style %}
+        .footer-contacts__social a svg {
+            --social-icon-width: {{ block.settings.social_icons_width | append: 'px' }};
+            --social-icon-color: {{ block.settings.social_icons_color }};
+        } 
+    {% endstyle %}
+    {% capture socialsHtml %}
+        {% render 'social-icons' %}
+    {% endcapture %}
+{% endif -%}
+{%- liquid
+    assign socialsHtml = socialsHtml | strip
+    assign contacts_logo = section.settings.show_logo    
+    assign logo_image = section.settings.image
+    assign logo_width = section.settings.logo_width
+-%}
+<div class="footer-contacts-container" {{ block.shopify_attributes }}>
+    {%- if contacts_logo -%}
+    <div class="footer-contacts__image reveal-item" {% if logo_image %}style="width:{{ logo_width }}px"{% endif %}>
+        {%- render 'footer__block-logo' -%}
+    </div>
+    {%- endif -%}
+    <div class="footer-contacts__address reveal-item">
+        {%- if block.settings.address != blank %}
+        <div>
+            <div class="address-item _address">
+                <div>
+                {%- if section.settings.use_collapsed_blocks_mobile -%}
+                    <input type="checkbox" id="collapsed--footer-{{ block.id }}" class="visually-hidden">
+                {%- endif -%}
+                    <span class="h5">
+                        {{ 'sections.footer.contacts.address' | t }}
+                        {%- if section.settings.use_collapsed_blocks_mobile -%}
+                            <label for="collapsed--footer-{{ block.id }}">
+                                <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret">
+                                    <use href="#icon-caret" />
+                                </svg>
+                            </label>
+                        {%- endif -%}
+                    </span>
+                    {{- block.settings.address -}}
+
+                    {%- if block.settings.show_email -%}
+                    <div class="address-item email">
+                        <a href ="mailto:{{ settings.contact_email }}" title="{{ 'header_top.contact_email.title' | t }}">
+                            {{- settings.contact_email -}}
+                        </a>
+                    </div>
+                    {%- endif -%}
+                    {%- if block.settings.show_phone -%}
+                    <div class="address-item phone">
+                        <p>{{- settings.contact_phone -}}</p>
+                    </div>
+                    {%- endif -%}
+                </div>
+
+            </div>
+        </div>
+        {% endif -%}
+        {%- if section.settings.use_collapsed_blocks_mobile %}
+            <div class="wrapper-collapsed-content-media" {% if logo_image %}style="width:{{ logo_width }}px"{% endif %}>
+            {%- if contacts_logo -%}
+                {%- render 'footer__block-logo' -%}
+            {%- endif -%}
+        {% endif -%}
+
+        {%- if socialsHtml != blank -%}
+        <div class="footer-contacts__social">
+            {%- if settings.current_presets == 'enduro' %}
+            <p>{{ 'sections.footer.social_label' | t }}</p>
+            {% endif -%}
+            <div>
+            {{ socialsHtml }}
+            </div>
+        </div>
+        {%- endif -%}
+        {%- if section.settings.use_collapsed_blocks_mobile %}
+            </div>
+        {% endif -%}
+    </div>
+</div>

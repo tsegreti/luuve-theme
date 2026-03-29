@@ -1,0 +1,21 @@
+.section-header-transition {
+    transition-property: top;
+    transition-duration: 500ms;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sticky-animation {
+    position: sticky;
+    top: -100%;
+    z-index: 50;
+}
+
+.section-header-sticky {
+    position: sticky;
+    top: -1px;
+    z-index: 51;
+}
+
+body.overflow_hidden .sticky-animation {
+    top: 0px;
+}

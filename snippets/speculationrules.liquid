@@ -1,0 +1,25 @@
+<script type="text/javascript">
+    if (HTMLScriptElement.supports && HTMLScriptElement.supports('speculationrules')) {
+      const specScript = document.createElement('script');
+      specScript.type = 'speculationrules';
+      specRules = {
+        "prerender": [{
+          "where": {
+            "or": [
+              { "href_matches": "/*" },
+              { "href_matches": "/collections" },
+              { "href_matches": "/products" },
+              { "href_matches": "/blogs" },
+              { "href_matches": "/pages" },
+              { "href_matches": "/search" },
+              { "not": { "href_matches": "/logout" }}
+            ]
+          }
+        }]
+      };
+      specScript.textContent = JSON.stringify(specRules);
+
+      const scriptTag = document.getElementsByTagName('script')[0];
+      scriptTag.parentElement.insertBefore(specScript, scriptTag);
+    }
+</script>

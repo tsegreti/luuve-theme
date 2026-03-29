@@ -1,0 +1,104 @@
+{%- comment -%}
+    Render product "Add to cart" and other buy buttons block based on block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+
+<div
+    class="product__info-block product__info-block--buy_buttons reveal-item"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {%- if product != blank -%}
+        <product-form class="product-form">
+            <div class="message-wrapper" role="alert" hidden>
+                {% render 'message-error' %}
+            </div>
+
+            {%- assign productFormId = 'product-form-' | append: sectionId -%}
+            {% form 'product',
+                product,
+                id: productFormId,
+                class: 'form',
+                novalidate: 'novalidate',
+                data-type: 'add-to-cart-form'
+            %}
+                <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+                {%- if block.settings.gift_card_show_recipient_form and product.gift_card? -%}
+                    {%- render 'gift-card__recipient-form', product: product, form: form, section: sectionId -%}
+                {%- endif -%}
+
+                <div class="product-form__buttons">
+                    <button
+                        type="submit"
+                        name="add"
+                        class="product-form__submit button button--primary"
+                        {% if product.selected_or_first_available_variant.available %}
+                            data-to-cart-available="true"
+                        {% endif %}
+                        {% unless product.selected_or_first_available_variant.available %}
+                            disabled
+                        {% endunless %}
+                    >
+                        {% comment %}
+                            <svg class="transition-bezier" aria-hidden="true" focusable="false" role="presentation" width="16" height="16">
+                                <use href="#icon-cart"></use>
+                            </svg>
+                        {% endcomment %}
+                        {%- if product.selected_or_first_available_variant.available -%}
+                            <span class="text">{{ 'products.product.add_to_cart' | t }}</span>
+                        {%- else -%}
+                            <span class="text">{{ 'products.product.sold_out' | t }}</span>
+                        {%- endif -%}
+                        {%- if settings.current_presets == 'enduro' %}
+                            {%- liquid
+                                assign cart_icon_name = '#icon-cart'
+                                if settings.current_theme_icons == 'enduro'
+                                    assign cart_icon_name = '#enduro-icon-cart'
+                                endif
+                            -%}
+                            <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                width="20"
+                                height="20"
+                                class="icon-cart"
+                            >
+                                <use href="{{ cart_icon_name }}" />
+                            </svg>
+                        {% else %}
+                            <!--
+                                <svg aria-hidden="true" focusable="false" role="presentation" width="20" height="20" class="icon-cart">
+                                    <use href="#icon-cart" />
+                                </svg>
+                            -->
+                        {% endif -%}
+                    </button>
+                    {%- if block.settings.show_dynamic_checkout -%}
+                        {{ form | payment_button }}
+                    {%- endif -%}
+                </div>
+            {% endform %}
+        </product-form>
+
+    {%- else -%}
+        <div class="product-form">
+            <div class="product-form__buttons">
+                <button
+                    type="submit"
+                    name="add"
+                    class="product-form__submit button button--primary"
+                    disabled
+                >
+                    {{ 'products.product.sold_out' | t }}
+                </button>
+            </div>
+        </div>
+    {%- endif -%}
+</div>

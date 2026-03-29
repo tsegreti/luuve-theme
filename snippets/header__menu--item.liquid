@@ -1,0 +1,51 @@
+{% comment -%}
+    Render top-level menu item.
+    (small menu)
+
+    Accepts:
+
+     -  link  {Object}
+     -  index {Number}
+{% endcomment -%}
+
+{% if link.links == blank %}
+    <a
+        href="{{ link.url }}"
+        class="header__menu-item header__menu-item-top header__menu-item-{{ index }} list-menu__item focus-inset"
+        {% if link.current %}
+            aria-current="page"
+        {% endif %}
+        data-type="{{ link.type }}"
+    >
+        <span>{{ link.title | escape }}</span>
+    </a>
+{% else %}
+    <details-disclosure>
+        <details>
+            <summary class="header__menu-item header__menu-item-top header__menu-item-{{ index }} small list-menu__item focus-inset">
+                <a
+                    href="{{ link.url }}"
+                    class="menu-item-top list-menu__item focus-inset"
+                    {% if link.current %}
+                        aria-current="page"
+                    {% endif %}
+                >
+                    <span>{{ link.title | escape }}</span>
+                </a>
+            </summary>
+
+            <div class="dropdown-inner small">
+                <ul
+                    class="header__submenu list-menu list-menu--disclosure motion-reduce"
+                    role="list"
+                    data-links-size="{{ link.links.size }}"
+                >
+                    {% render 'header__menu--dropdown',
+                        links: link.links,
+                        activate_dropdown: section.settings.activate_top_level_menu
+                    %}
+                </ul>
+            </div>
+        </details>
+    </details-disclosure>
+{% endif %}

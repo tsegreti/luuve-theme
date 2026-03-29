@@ -1,0 +1,62 @@
+{%- comment -%}
+    Render product option as swatch.
+
+    Accepst:
+     -  option_name          {String}
+     -  option_values        {Array}
+     -  option_selected      {String} (Optional)
+     -  control_id           {String} (Optional)
+     -  product_handle       {String}
+     -  form                 {String} (Optional)
+     -  hide_initially_after {Number} (Optional)
+{%- endcomment -%}
+
+{%- liquid
+    assign option_name_sanitized = option_name | downcase | remove: ' ' | remove: '/' | remove: ',' | remove: '.'
+    if control_id == null or control_id == blank
+        assign control_id = 'radio__' | append: section.id
+    endif
+-%}
+
+<div class="swatch-attribute-options swatch-{{ option_name | downcase }}">
+    {% for value in option_values %}
+        {%- capture option_background %}
+            {% render 'swatch-options__option-background'
+                product: product
+                option_name: option_name_sanitized
+                value: value
+                product_handle: product_handle
+            %}
+        {% endcapture -%}
+        <input
+            type="radio"
+            id="{{ control_id }}-{{ option_name_sanitized }}-{{ forloop.index0 }}"
+            class="swatch-option sr-only{% if forloop.index > hide_initially_after %} swatch-option__hidden{% endif %}"
+            name="options[{{ option_name | escape }}]"
+            value="{{ value | escape }}"
+            {% if form != null and form != blank %}
+                form="{{ form }}"
+            {% endif %}
+            {% if option_selected == value %}
+                checked
+            {% endif %}
+            data-product-url="{{ value.product_url }}"
+            data-option-value-id="{{ value.id }}"
+            aria-label="{{ value | escape }}"
+        >
+        <label
+            class="transition-bezier{% if forloop.index > hide_initially_after %} swatch-label__hidden{% endif %}"
+            style="--swatch-option-background: {{ option_background | strip }}"
+            for="{{ control_id }}-{{ option_name_sanitized }}-{{ forloop.index0 }}"
+            title="{{ value | escape }}"
+        >
+            <span class="tooltip__inner">{{ value | escape }}</span>
+        </label>
+    {%- endfor -%}
+    {%- if option_values.size > hide_initially_after -%}
+        <span class="swatch-option_more">
+            {% assign values_left = option_values.size | minus: hide_initially_after %}
+            {{ 'products.product.swatch_option_more' | t: qty: values_left }}
+        </span>
+    {%- endif -%}
+</div>

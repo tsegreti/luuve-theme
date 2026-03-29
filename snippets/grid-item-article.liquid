@@ -1,0 +1,58 @@
+{% comment %}
+    Renders an item for articles grid.
+
+    Accepts:
+    - article            {Object} Article Liquid object
+    - image_ratio        {String}
+    - image_sizes_config {String}
+    - show_article_date  {Boolean} Default: false (optional)
+    - show_author        {Boolean} Default: false (optional)
+    - show_description   {Boolean}
+{% endcomment %}
+
+<li
+    class="grid-item item-article reveal-item"
+    data-article-id="{{ article.id }}"
+    style="--image-width: {{ image_sizes_config | default: 240 | split: '|' | first }}px"
+>
+    <squama-item>
+        <a href="{{ article.url }}" class="item-link">
+            <div class="item-image">
+                <!-- badges_html -->
+                {%- assign featuredImage = article.image -%}
+                <div
+                    class="media"
+                    style="padding-bottom: {% render 'helper__media-padding-bottom' image: featuredImage image_ratio: image_ratio %};"
+                >
+                    {% if featuredImage %}
+                        {% render 'grid-item--item-image',
+                            image: featuredImage,
+                            image_ratio: image_ratio,
+                            image_sizes_config: image_sizes_config
+                        %}
+                    {% else %}
+                        <div>{{ 'blogs.article.blog' | t }}</div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="item-details-wrapper">
+                {%- if show_author -%}
+                    <p class="item-vendor item-author">
+                        <span>{{ article.author }}</span>
+                    </p>
+                {%- endif -%}
+                <p class="item-title">{{ article.title | escape }}</p>
+                {% if show_article_date %}
+                    <p class="item-date">
+                        {{ article.published_at | time_tag: format: 'month_year' }}
+                    </p>
+                {% endif %}
+                {%- if show_description -%}
+                    <div class="item-description rte">
+                        {{- article.excerpt_or_content | strip_html | truncatewords: 36 -}}
+                    </div>
+                {%- endif -%}
+            </div>
+        </a>
+    </squama-item>
+</li>

@@ -1,0 +1,48 @@
+{%- comment -%}
+    Render slider buttons with slider counter.
+
+    Accepts:
+    -  count:           {Number}
+    -  left_icon_name:  {String / Null}
+    -  right_icon_name: {String / Null}
+{%- endcomment -%}
+{%- liquid
+    assign count = count | plus: 0
+    assign left_icon_name = left_icon_name | default: 'long-arrow-left'
+    assign right_icon_name = right_icon_name | default: 'long-arrow-right'
+-%}
+
+<div class="slider-buttons no-js-hidden" hidden>
+    <button
+        type="button"
+        class="slider__button slider-button--prev button--tertiary"
+        name="previous"
+        aria-label="{{ 'accessibility.previous_slide' | t }}"
+    >
+        {%- if settings.current_theme_icons == 'enduro' %}
+            {%- render 'icons-solid-enduro', name: 'arrow-left', css_class: 'icon icon-arrow' -%}
+        {% else %}
+            {%- render 'icons-solid', name: left_icon_name, css_class: 'icon icon-arrow' -%}
+        {% endif -%}
+    </button>
+    {% if count > 0 %}
+        <div class="slider-counter caption">
+            <span class="slider-counter--current">1</span>
+            <span aria-hidden="true"> / </span>
+            <span class="visually-hidden">{{ 'accessibility.of' | t }}</span>
+            <span class="slider-counter--total">{{ count }}</span>
+        </div>
+    {% endif %}
+    <button
+        type="button"
+        class="slider__button slider-button--next button--tertiary"
+        name="next"
+        aria-label="{{ 'accessibility.next_slide' | t }}"
+    >
+        {%- if settings.current_theme_icons == 'enduro' %}
+            {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+        {% else %}
+            {% render 'icons-solid', name: right_icon_name, css_class: 'icon icon-arrow' %}
+        {% endif -%}
+    </button>
+</div>

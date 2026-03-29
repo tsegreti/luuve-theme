@@ -1,0 +1,31 @@
+{% comment %}
+    Render SKU & STOCK status
+
+    Accepts:
+     - show_sku:  {Bool}
+     - show_stock: {Bool}
+{% endcomment %}
+
+{%- if show_sku -%}
+    <div class="sku{% if target.available %} available{% else %} unavailable{% endif %}">
+        {%- if target.sku != blank -%}
+            <div class="sku">
+                <span class="label">{{ 'products.product.sku' | t }}:</span>
+                <span class="value">{{ target.sku }}</span>
+            </div>
+        {% endif %}
+    </div>
+{%- endif -%}
+
+{%- comment -%} STOCK {%- endcomment -%}
+{%- if show_stock -%}
+    <div class="stock{% if target.available %} available{% else %} unavailable{% endif %}">
+        <span>
+            {%- if target.available -%}
+                {{ 'products.product.stock.in' | t }}
+            {%- else -%}
+                {{ 'products.product.stock.out' | t }}
+            {%- endif -%}
+        </span>
+    </div>
+{%- endif -%}

@@ -1,0 +1,126 @@
+{%- unless block.settings.description == blank -%}
+    {%- liquid
+        assign description = block.settings.description
+        assign words = description | split: ' '
+        assign total_words = words.size
+        assign percent_index = total_words | times: 70 | divided_by: 100
+
+        assign description_normal = ''
+        assign description_light = ''
+
+        for word in words
+            if forloop.index0 < percent_index
+                assign description_normal = description_normal | append: word | append: ' '
+            else
+                assign description_light = description_light | append: word | append: ' '
+            endif
+        endfor
+
+        assign description_output = ''
+
+        if block.settings.boldness_light
+            assign description_light = '<span class="boldness-light">' | append: description_light | append: '</span>'
+        endif
+        assign description_output = description_normal | append: description_light
+    -%}
+    <div
+        class="description rte {% if section.settings.enable_text_color_animation %}text-color-animation{% endif %}"
+        {{ block.shopify_attributes }}
+    >
+        {{- description_output -}}
+    </div>
+    {% style %}
+        #shopify-block-{{ block.id }} :is(.description) {
+          color:{{ block.settings.description_foreground }};
+          padding-bottom: 24px;
+        }
+        #shopify-block-{{ block.id }} .description p {
+          font-size: 16px;
+        }
+        {% if block.settings.boldness %}
+        #shopify-block-{{ block.id }} .description p {
+          font-weight: bold;
+        }
+        {% endif %}
+        #shopify-block-{{ block.id }} .description p :is(.boldness-light) {
+          {% if settings.current_presets == 'enduro' %}
+          color: var(--color-base-accent-1);{% else %}
+          opacity: .5;{% endif %}
+        }
+        @media screen and (min-width: 767px) {
+          #shopify-block-{{ block.id }} .description p {
+            font-size: 24px;
+          }
+        }
+        @media screen and (min-width: 990px) {
+          #shopify-block-{{ block.id }} .description p {
+            font-size: {{ block.settings.description_font_size }}px;
+          }
+
+          #shopify-block-{{ block.id }} :is(.description) {
+            margin-top: {{ block.settings.description_margin_top }}px;
+          }
+        }
+    {% endstyle %}
+{%- endunless -%}
+
+{% schema %}
+{
+  "name": "t:sections.all.blocks.description.name",
+  "class": "reveal-item",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "description",
+      "default": "<p>Share information about your brand with your customers. Describe a product, make announcements, or welcome customers to your store.</p>",
+      "label": "t:sections.all.blocks.description.settings.description.label"
+    },
+    {
+      "type": "color",
+      "id": "description_foreground",
+      "default": "#000000",
+      "label": "t:sections.all.blocks.description.settings.description_foreground.label"
+    },
+    {
+      "type": "range",
+      "id": "description_font_size",
+      "label": "t:sections.all.blocks.description.settings.font-size.label",
+      "info": "t:sections.all.blocks.description.settings.font-size.info",
+      "min": 16,
+      "max": 46,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "description_margin_top",
+      "label": "t:sections.all.blocks.description.settings.description_margin_top.label",
+      "info": "t:sections.all.blocks.description.settings.description_margin_top.info",
+      "min": 0,
+      "max": 120,
+      "step": 12,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "boldness",
+      "label": "t:sections.all.blocks.description.settings.boldness.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "boldness_light",
+      "label": "t:sections.all.blocks.description.settings.boldness_light.label",
+      "default": false
+    }
+  ],
+  "presets": [
+	 	{
+	   	"name": "t:sections.all.blocks.description.name",
+      "category": "t:sections.all.categories.basic"
+	  }
+  ]
+}
+{% endschema %}

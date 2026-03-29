@@ -1,0 +1,82 @@
+{%- comment -%}
+    Render price filter
+
+    Accepts:
+     - filter: {Object}
+     - index:  {Number}
+{%- endcomment -%}
+
+{%- liquid
+    capture decSeparatore
+        render 'helper__currency-decimals-separator'
+    endcapture
+
+    assign minValue = filter.min_value.value | money_without_currency
+    assign maxValue = filter.max_value.value | money_without_currency
+    assign rangeMax = filter.range_max | money_without_currency
+
+    if decSeparatore == ','
+        assign minValue = minValue | replace: '.', '' | replace: ',', '.'
+        assign maxValue = maxValue | replace: '.', '' | replace: ',', '.'
+        assign rangeMax = rangeMax | replace: '.', '' | replace: ',', '.'
+    else
+        assign minValue = minValue | replace: ',', ''
+        assign maxValue = maxValue | replace: ',', ''
+        assign rangeMax = rangeMax | replace: ',', ''
+    endif
+
+    assign currencyAt = 'end'
+    assign moneyValue = 1 | money | split: cart.currency.symbol | first | strip
+    if moneyValue == blank
+        assign currencyAt = 'begin'
+    endif
+-%}
+
+<price-range class="facets__price" data-currency-at="{{ currencyAt }}">
+    <range-slider
+        name="price"
+        min="0"
+        max="{{ rangeMax | plus: 0 | ceil }}"
+        value="{{ minValue | default: 0 }}-{{ maxValue | default: rangeMax | plus: 0 | ceil }}"
+        step="1"
+        data-scope="{{ type_facets | default: "_desktop"}}"
+    ></range-slider>
+    <div class="field">
+        <label
+            class="field__label"
+            for="Filter-{{ filter.label | escape }}-From-{% if type_facets == 'mobile' %}{{ index }}{% else %}{{ collection_title }}{% endif %}"
+        >
+            {{ 'sections.collection_template.from' | t }}
+            <span class="field__currency">{{ cart.currency.symbol }}</span>
+        </label>
+        <input
+            class="field__input"
+            name="{{ filter.min_value.param_name }}"
+            id="Filter-{{ filter.label | escape }}-From-{% if type_facets == 'mobile' %}{{ index }}{% else %}{{ collection_title }}{% endif %}"
+            value="{{ minValue }}"
+            type="number"
+            placeholder="0"
+            min="0"
+            max="{{ rangeMax | plus: 0 | ceil }}"
+        >
+    </div>
+    <div class="field">
+        <label
+            class="field__label"
+            for="Filter-{{ filter.label | escape }}-To-{% if type_facets == 'mobile' %}{{ index}}{% else %}{{ collection_title }}{% endif %}"
+        >
+            {{ 'sections.collection_template.to' | t }}
+            <span class="field__currency">{{ cart.currency.symbol }}</span>
+        </label>
+        <input
+            class="field__input"
+            name="{{ filter.max_value.param_name }}"
+            id="Filter-{{ filter.label | escape }}-To-{% if type_facets == 'mobile' %}{{ index}}{% else %}{{ collection_title }}{% endif %}"
+            value="{{ maxValue }}"
+            type="number"
+            placeholder="{{ rangeMax }}"
+            min="0"
+            max="{{ rangeMax | plus: 0 | ceil }}"
+        >
+    </div>
+</price-range>

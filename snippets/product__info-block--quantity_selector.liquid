@@ -1,0 +1,48 @@
+{%- comment -%}
+    Render product quantity input using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+
+<div
+    class="product__info-block product__info-block--quantity reveal-item"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    <div class="product-form__input product-form__quantity">
+        <label class="form__label" for="Quantity-{{ product.id }}" title="{{ 'products.product.quantity.label' | t }}">
+            {%- if settings.current_presets == 'enduro' %}
+                {{ 'products.product.quantity.short_label' | t }}
+            {% else %}
+                {{ 'products.product.quantity.label' | t }}
+            {% endif -%}
+        </label>
+        <quantity-input class="quantity">
+            <button class="button quantity__button button--small no-js-hidden" name="minus" type="button">
+                <span class="visually-hidden">
+                    {{- 'products.product.quantity.decrease' | t: product: product.title | escape -}}
+                </span>
+                {% render 'icons-solid', name: 'minus' %}
+            </button>
+            <input
+                class="quantity__input"
+                type="number"
+                name="quantity"
+                id="Quantity-{{ product.id }}"
+                min="1"
+                value="1"
+                form="product-form-{{ sectionId }}"
+            >
+            <button class="button quantity__button button--small no-js-hidden" name="plus" type="button">
+                <span class="visually-hidden">
+                    {{- 'products.product.quantity.increase' | t: product: product.title | escape -}}
+                </span>
+                {% render 'icons-solid', name: 'plus' %}
+            </button>
+        </quantity-input>
+    </div>
+</div>

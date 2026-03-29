@@ -1,0 +1,73 @@
+.predictive-search__popular-products {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    width: 100%;
+    background: var(--color-background);    
+    box-shadow: var(--color-foreground-20) 0 25px 50px -12px;
+    z-index: 1;
+    padding: 4rem 0 1rem;
+    overflow: clip;
+}
+
+    .predictive-search__popular-products ul {
+        display: flex;
+        flex-wrap: wrap;        
+        gap: .5rem;
+        padding: .5rem 1rem;
+    }
+
+    .predictive-search__popular-products ul > li:not(.trand-collection) > a {
+                align-items: start;
+                display: grid;
+                gap: 1rem;
+                grid-template-columns: 74px auto;
+                align-items: center;
+            }
+
+    .predictive-search__popular-products ul.predictive-search__tranding-collection {            
+            gap: 1.5rem .5rem;
+        }
+
+    .predictive-search__popular-products ul.predictive-search__tranding-collection > li > a {
+                    padding: .5rem .75rem;
+                    border: 1px solid;
+                    border-radius: 2rem;
+                    border-color: var(--color-foreground-10);
+                    font-weight: 500;
+                    color: var(--color-foreground-70);
+                }
+
+    .predictive-search__popular-products ul.predictive-search__tranding-collection > li:hover > a, .predictive-search__popular-products ul.predictive-search__tranding-collection > li:focus > a {
+                        border-color: var(--color-foreground-30);
+                        color: initial;
+                    }
+
+    .predictive-search__popular-products .item-price--with-label .label {
+        height: 0;
+        overflow: clip;
+        position: absolute;
+        width: 0;
+        opacity: 0;
+    }
+
+    .predictive-search__popular-products .predictive-search__results-list__heading {
+        color: var(--color-foreground-50);
+        font-size: 1rem;
+        font-weight: 600;
+        margin: 0;
+        padding: 1rem 1.5rem 0.5rem;
+    }
+
+@media all and (min-width: 767px) {
+        .predictive-search__popular-products ul > li:not(.trand-collection) {
+            width: 32%;
+        }
+}
+
+@media (hover: hover) {
+    .predictive-search__popular-products ul > li:not(.trand-collection):hover {
+        background: var(--color-foreground-3);
+    }
+}

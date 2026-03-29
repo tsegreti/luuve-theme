@@ -1,0 +1,21 @@
+{%- comment -%}
+    Render share product url using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - product:    {Object}
+{%- endcomment -%}
+
+<div
+    class="product__info-block product__info-block--share reveal-item"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {% render 'share',
+        object_to_share: product,
+        share_on_facebook: block.settings.show_facebook,
+        share_on_pinterest: block.settings.show_pinterest,
+        share_on_twitter: block.settings.show_twitter
+    %}
+</div>

@@ -1,0 +1,50 @@
+{%- liquid
+    assign product = section.settings.product | default: product
+    assign block_index = block.settings.block_order
+-%}
+{%- render 'product__info-block--description',
+    block: block,
+    product: product,
+    blockOrder: block_index,
+    sectionId: section.id
+-%}
+{% schema %}
+{
+    "name": "t:sections.main-product.blocks.description.name",
+    "tag": null,
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "is_collapsed",
+            "default": true,
+            "label": "t:sections.main-product.blocks.all.settings.is_collapsed.label"
+        },
+        {
+            "type": "range",
+            "id": "initial_lines",
+            "min": 1,
+            "max": 20,
+            "step": 1,
+            "default": 3,
+            "label": "t:sections.main-product.blocks.all.settings.initial_lines.label"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.advanced.header.content"
+        },
+        {
+            "type": "number",
+            "id": "block_order",
+            "label": "t:sections.all.advanced.block_order.label",
+            "info": "t:sections.all.advanced.block_order.info",
+            "default": 5
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.main-product.blocks.description.name",
+            "category": "t:sections.all.categories.product-information"
+        }
+    ]
+}
+{% endschema %}

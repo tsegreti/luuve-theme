@@ -1,0 +1,27 @@
+<ul id="CountryList" role="list" class="disclosure__list list-unstyled">
+    {%- for country in localization.available_countries -%}
+        <li class="disclosure__item" tabindex="-1">
+            <a
+                class="link link--text disclosure__link{% if country.iso_code == localization.country.iso_code %} disclosure__link--active{% endif %} focus-inset"
+                href="#"
+                {% if country.iso_code == localization.country.iso_code %}
+                    aria-current="true"
+                {% endif %}
+                data-value="{{ country.iso_code }}"
+            >
+                <span class="language-icon__wrapper">
+                    {%- render 'flag', country_code: country.iso_code -%}
+                </span>
+                <span class="localization-form__country">{{ country.name }}</span>
+                <span class="localization-form__currency">
+                    {%- if country.currency.iso_code == country.currency.symbol %}
+                        {{ country.currency.iso_code }}
+                    {% else %}
+                        {{ country.currency.iso_code }}
+                        {{ country.currency.symbol }}
+                    {% endif -%}
+                </span>
+            </a>
+        </li>
+    {%- endfor -%}
+</ul>

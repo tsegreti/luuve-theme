@@ -1,0 +1,57 @@
+{%- comment -%}
+    Render Upload image (file) block
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+
+<div
+    class="product__info-block product__info-block--upload-image reveal-item"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    <label for="file-upload-{{ block.id }}" class="form__label font-semibold">
+        {{ block.settings.heading }}
+    </label>
+    <div class="field">
+        <input
+            id="file-upload-{{ block.id }}"
+            type="file"
+            form="product-form-{{ section.id }}"
+            name="properties[{{ 'products.product.image_upload.label' | t }}]"
+            accept="image/*"
+            class="file-input"
+            hidden
+        >
+        <div>
+            <a href="#/" class="button button--primary" id="file-upload-button">
+                <span>{{ block.settings.button_label }}</span>
+            </a>
+            <p class="mt-2 file-upload__name">{{ 'products.product.uploads.no_file_chosen' | t }}</p>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    (() => {
+      const uploadBtn = document.getElementById('file-upload-button');
+      const uploadInput = document.getElementById('file-upload-{{ block.id }}');
+      if (!uploadBtn) return;
+
+      uploadBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        uploadInput?.click();
+      });
+      // update file name text
+      uploadInput.addEventListener('change', (e) => {
+        const input = e.target;
+        const file = input.files[0];
+        if (file) {
+          const fileName = document.querySelector('.file-upload__name');
+          fileName.textContent = file.name;
+        }
+      });
+    })()
+</script>

@@ -1,0 +1,18 @@
+{%- comment -%}
+    Render Custom Liquid block
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+{%- endcomment -%}
+
+<div
+    class="product__info-block product__info-block--custom_liquid reveal-item"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {%- unless block.settings.heading == blank -%}
+        <span class="heading">{{ block.settings.heading }}</span>
+    {%- endunless -%}
+    {{- block.settings.custom_liquid -}}
+</div>

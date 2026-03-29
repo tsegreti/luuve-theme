@@ -1,0 +1,319 @@
+{%- liquid
+    assign __class__ = 'footer-bottom'
+
+    if section.settings.full_width
+        assign __class__ = __class__ | append: ' full--width'
+    else
+        assign __class__ = __class__ | append: ' custom--width'
+    endif
+
+    if section.settings.show_policy == false
+        assign __class__ = __class__ | append: ' no-policy'
+    else
+        assign __class__ = __class__ | append: ' with--policy'
+    endif
+
+    if settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+
+    assign is_block_logo = section.blocks | where: 'type', 'logo' | first
+    unless is_block_logo == null
+        assign __class__ = __class__ | append: ' footer-bottom__with-logo'
+    endunless
+
+    if section.settings.payment_enable
+        assign __class__ = __class__ | append: ' with--payment-icons'
+    endif
+
+    if section.settings.enable_noise_effect
+        assign __class__ = __class__ | append: ' with--noise-effect'
+    endif
+-%}
+{% style %}
+    :where(.footer-bottom-section){
+        --footer-bottom-background: {{ section.settings.footer_bottom_background_gradient | default: section.settings.footer_bottom_background }};
+        --footer-bottom-foreground: {{ section.settings.footer_bottom_foreground }};
+    }
+    {%- if section.settings.enable_noise_effect %}
+    .footer-bottom-section {
+        position: relative;
+        --image-noise:  url({{'noise1.svg' |  asset_url }});
+    }
+    .footer-bottom > div {
+        position: relative;
+        z-index: 1;
+    }
+    {% endif -%}
+    .footer-bottom.custom--width {
+        max-width: {{ section.settings.custom_layout_width }}px;
+        margin: 0 auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    @media (min-width: 990px) {
+        .footer-bottom.footer-bottom__with-logo.no-policy {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+        {% if shop.features.follow_on_shop? and section.settings.follow_on_shop %}
+        .footer-bottom.footer-bottom__with-logo:is(.with--policy) {
+            grid-template-areas:'copyright logo links'
+                                'policies policies policies'
+                                'follow_on_shop follow_on_shop follow_on_shop';
+        }
+        .footer-bottom.footer-bottom__with-logo:is(.with--payment-icons) {
+            grid-template-areas:'copyright logo links'
+                                'policies policies policies'
+                                'payment payment payment'
+                                'follow_on_shop follow_on_shop follow_on_shop';
+        }{% else %}
+        .footer-bottom.footer-bottom__with-logo:is(.with--policy) {
+            grid-template-areas:'copyright logo links'
+                                'policies policies policies';
+        }
+        .footer-bottom.footer-bottom__with-logo:is(.with--payment-icons) {
+            grid-template-areas:'copyright logo links'
+                                'policies policies policies'
+                                'payment payment payment';
+        }
+        {% endif %}
+    }
+{% endstyle %}
+<div class="{{ __class__ }}">
+    {%- if shop.features.follow_on_shop? and section.settings.follow_on_shop -%}
+        <div class="footer__follow-on-shop">
+            {% # theme-check-disable %}
+            {{ shop | login_button: action: 'follow' }}
+            {% # theme-check-enable %}
+        </div>
+    {%- endif -%}
+
+    {%- for block in section.blocks -%}
+        {%- case block.type -%}
+            {% when 'copyright' %}
+                <div class="_copyright reveal-item" style="order: {{ forloop.index }}" {{ block.shopify_attributes }}>
+                    <p class="copyright__content">{{ block.settings.text | escape }}</p>
+                </div>
+            {% when 'menu' %}
+                <div class="_menu reveal-item" style="order: {{ forloop.index }}" {{ block.shopify_attributes }}>
+                    <ul>
+                        {% for link in linklists[block.settings.menu].links %}
+                            <li>
+                                <a href="{{ link.url }}">{{ link.title }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% when 'logo' %}
+                {%- assign logo_image = block.settings.image -%}
+                {%- assign logo_width = block.settings.logo_width -%}
+                {% style %}
+                    {% if forloop.index == 2 %}
+                     :is(.footer-bottom--logo) {
+                        margin: 0 auto;
+                    }{% else %}
+                    @media(max-width:989px) {
+                        :is(.footer-bottom--logo) {
+                            margin: 0 auto;
+                        }
+                    }{% endif %}
+                {% endstyle %}
+                <div
+                    class="footer-bottom--logo reveal-item"
+                    style="order: {{ forloop.index }};"
+                    {{ block.shopify_attributes }}
+                >
+                    <span style="display:block;{% if logo_image %}width:{{ logo_width }}px;{% endif %}">
+                        {%- render 'footer__block-logo', logo: logo_image, logo_width: logo_width -%}
+                    </span>
+                </div>
+        {%- endcase -%}
+    {%- endfor -%}
+    {%- if section.settings.show_policy -%}
+        <div class="_policies reveal-item">
+            <ul class="policies list-unstyled">
+                {%- for policy in shop.policies -%}
+                    {%- if policy != blank -%}
+                        <li>
+                            {%- if forloop.index > 1 -%}
+                                <span class="separator"></span>
+                            {%- endif -%}
+                            <small>
+                                <a href="{{ policy.url }}">{{ policy.title }}</a>
+                            </small>
+                        </li>
+                    {%- endif -%}
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif -%}
+    {%- if section.settings.payment_enable -%}
+        {%- render 'footer-payment-icons',
+            icons_saturate: section.settings.payment_icons_saturate,
+            custom_icon: section.settings.custom_payment_icon,
+            icon_width: section.settings.control_icon_width
+        -%}
+    {%- endif -%}
+</div>
+
+{% schema %}
+{
+    "name": "t:sections.footer_bottom.name",
+    "class": "footer-bottom-section",
+    "max_blocks": 3,
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "full_width",
+            "default": false,
+            "label": "t:sections.footer.settings.full_width.label"
+        },
+        {
+            "type": "range",
+            "id": "custom_layout_width",
+            "label": "t:sections.footer.settings.custom_layout_width.label",
+            "unit": "px",
+            "min": 980,
+            "max": 1440,
+            "step": 20,
+            "default": 1440
+        },
+        {
+            "type": "checkbox",
+            "id": "payment_enable",
+            "default": true,
+            "label": "t:sections.footer.settings.payment_enable.label"
+        },
+        {
+            "type": "range",
+            "id": "payment_icons_saturate",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "default": 100,
+            "unit": "%",
+            "label": "t:sections.footer.settings.payment_icons_saturate.label"
+        },
+        {
+            "type": "text",
+            "id": "custom_payment_icon",
+            "label": "t:sections.footer.settings.custom_payment_icon.label",
+            "info": "t:sections.footer.settings.custom_payment_icon.info"
+        },
+        {
+            "type": "range",
+            "id": "control_icon_width",
+            "min": 30,
+            "max": 120,
+            "step": 10,
+            "default": 60,
+            "unit": "px",
+            "label": "t:sections.footer.settings.control_icon_width.label"
+        },
+        {
+            "type": "checkbox",
+            "id": "follow_on_shop",
+            "label": "t:sections.footer.settings.follow_on_shop.label",
+            "info": "t:sections.footer.settings.follow_on_shop.info",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "show_policy",
+            "label": "t:sections.footer.settings.show_policy.label",
+            "info": "t:sections.footer.settings.show_policy.info",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "enable_noise_effect",
+            "label": "t:sections.all.settings.enable_noise_effect.label",
+            "info": "t:sections.all.settings.enable_noise_effect.info",
+            "default": false
+        },
+        {
+            "type": "header",
+            "content": "t:sections.image-with-text.settings.header.content"
+        },
+        {
+            "type": "color",
+            "id": "footer_bottom_foreground",
+            "label": "t:sections.footer.settings.footer_bottom_foreground.label",
+            "default": "#969696"
+        },
+        {
+            "type": "color",
+            "id": "footer_bottom_background",
+            "label": "t:sections.footer.settings.footer_bottom_background.label",
+            "default": "#000000"
+        },
+        {
+            "type": "color_background",
+            "id": "footer_bottom_background_gradient",
+            "label": "t:sections.footer.settings.footer_bottom_background_gradient.label"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "menu",
+            "name": "t:sections.footer_bottom.blocks.menu.name",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "t:sections.footer_bottom.blocks.menu.settings.title.label"
+                },
+                {
+                    "type": "link_list",
+                    "id": "menu",
+                    "default": "footer",
+                    "label": "t:sections.footer_bottom.blocks.menu.settings.menu.label"
+                }
+            ]
+        },
+        {
+            "type": "copyright",
+            "name": "t:sections.footer_bottom.blocks.copyright.name",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "text",
+                    "label": "t:sections.footer_bottom.blocks.copyright.settings.text.label"
+                }
+            ]
+        },
+        {
+            "type": "logo",
+            "name": "t:sections.footer_bottom.blocks.logo.name",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "t:sections.footer.settings.image.label"
+                },
+                {
+                    "type": "range",
+                    "id": "logo_width",
+                    "min": 50,
+                    "max": 200,
+                    "step": 10,
+                    "default": 50,
+                    "unit": "t:sections.footer.settings.logo_width.unit",
+                    "label": "t:sections.footer.settings.logo_width.label"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+          "name": "t:sections.footer_bottom.presets.name"
+        }
+    ],
+    "enabled_on": {
+        "groups": ["footer"]
+    }
+}
+{% endschema %}

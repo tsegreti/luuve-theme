@@ -1,0 +1,333 @@
+{% comment %}
+    Render collection filters
+
+    Accepts:
+    - filters:              {Array}
+    - form_after_open_html: {String}  (optional)
+    - is_render_swatches    {Boolean} (optional)
+{% endcomment %}
+
+{%- liquid
+    assign form_after_open_html = form_after_open_html | default: ''
+
+    capture active_facets_count
+        render 'facets__get_active_count', filters: filters
+    endcapture
+    assign active_facets_count = active_facets_count | strip | plus: 0
+    assign possibleOptionName = settings.list_color_option_names | default: 'color,colour'
+-%}
+<menu-drawer class="mobile-facets__wrapper">
+    <details>
+        <summary
+            id="CollectionFiltersMobileToggler"
+            class="button button--tertiary"
+            data-updatable="true"
+        >
+            <div class="mobile-facets__open">
+                <svg xmlns="http://www.w3.org/2000/svg" class="ionicon" viewBox="0 0 512 512">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M368 128h80M64 128h240M368 384h80M64 384h240M208 256h240M64 256h80"/><circle cx="336" cy="128" r="32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="176" cy="256" r="32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/><circle cx="336" cy="384" r="32" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="32"/>
+                </svg>
+                <span>{{ 'sections.collection_template.filter_button' | t }}</span>
+                {%- if active_facets_count > 0 -%}
+                    <span class="count-bubble text-sm color-inverse">{{ active_facets_count }}</span>
+                {%- endif -%}
+            </div>
+        </summary>
+        <collection-filters-form
+            id="CollectionFiltersMobile"
+            data-loader-target="main-collection-products__wrapper"
+            data-section="{{ section.id }}"
+        >
+            <form id="CollectionFiltersFormMobile" class="mobile-facets">
+                {{- form_after_open_html -}}
+
+                <div class="mobile-facets__inner">
+                    <div class="mobile-facets__header">
+                        <div class="mobile-facets__header-inner">
+                            <h2 class="mobile-facets__heading">
+                                {{ 'sections.collection_template.filter_and_sort' | t }}
+                            </h2>
+                            <p
+                                id="CollectionFilterMobileCount"
+                                class="mobile-facets__count"
+                                data-updatable="true"
+                            >
+                                {%- if search != null and search.results_count -%}
+                                    {{
+                                        'templates.search.results_with_count'
+                                        | t: terms: search.terms, count: search.results_count
+                                    }}
+                                {%- elsif collection.products_count == collection.all_products_count -%}
+                                    {{
+                                        'sections.collection_template.product_count_simple'
+                                        | t: count: collection.products_count
+                                    }}
+                                {%- else -%}
+                                    {{
+                                        'sections.collection_template.product_count'
+                                        | t:
+                                            product_count: collection.products_count,
+                                            count: collection.all_products_count
+                                    }}
+                                {%- endif -%}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="mobile-facets__main">
+                        {%- for filter in filters -%}
+                            {% case filter.type %}
+                                {% when 'boolean', 'list' %}
+                                    <details
+                                        class="mobile-facets__details js-filter"
+                                        data-index="mobile-{{ forloop.index }}"
+                                    >
+                                        <summary
+                                            id="CollectionFilterMobileLabel-{{ filter.label | escape }}"
+                                            class="mobile-facets__summary"
+                                            data-updatable="true"
+                                        >
+                                            <span>{{ filter.label | escape }}</span>
+                                            <span class="count-bubble text-sm color-inverse">
+                                                {%- if filter.active_values.size > 0 -%}
+                                                    {{ filter.active_values.size }}
+                                                {%- endif -%}
+                                            </span>
+                                            <span class="mobile-facets__arrow no-js-hidden">
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    height="16"
+                                                    width="16"
+                                                >
+                                                    <use href="#icon-caret" />
+                                                </svg>
+                                            </span>
+                                            <noscript>
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    class="icon icon-caret"
+                                                    height="16"
+                                                    width="16"
+                                                >
+                                                    <use href="#icon-caret" />
+                                                </svg>
+                                            </noscript>
+                                        </summary>
+                                        <div class="mobile-facets__submenu">
+                                            <button
+                                                class="mobile-facets__close-button button--small"
+                                                aria-expanded="true"
+                                                type="button"
+                                            >
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    class="icon icon-caret"
+                                                    height="16"
+                                                    width="16"
+                                                >
+                                                    <use href="#icon-caret" />
+                                                </svg>
+                                                {{ filter.label | escape }}
+                                            </button>
+                                            {%- liquid
+                                                assign is_swatches = false
+                                                assign filter_name = filter.label | downcase
+                                                if is_render_theme_swatches and possibleOptionName contains filter_name
+                                                    assign is_swatches = true
+                                                endif
+                                                if 'swatch|image' contains filter.presentation
+                                                    assign is_swatches = true
+                                                endif
+                                            -%}
+                                            <ul
+                                                id="CollectionFilterMobileOptions-{{ filter.label | escape }}"
+                                                class="mobile-facets__list list-unstyled{% if is_swatches %} facets__swatches{% endif %}"
+                                                data-updatable="true"
+                                                role="list"
+                                            >
+                                                {%- for value in filter.values -%}
+                                                    <li class="mobile-facets__item list-menu__item">
+                                                        {% if is_swatches %}
+                                                            {%- render 'facets__facet--swatch',
+                                                                filter: filter,
+                                                                value: value,
+                                                                index: forloop.index,
+                                                                is_mobile: true
+                                                            -%}
+                                                        {% else %}
+                                                            <label
+                                                                for="Filter-{{ filter.label | escape }}-mobile-{{ forloop.index }}"
+                                                                class="facet-checkbox mobile-facets__label{% if value.count == 0 and value.active == false %} mobile-facets__label--disabled{% endif %}"
+                                                            >
+                                                                <input
+                                                                    class="mobile-facets__checkbox"
+                                                                    type="checkbox"
+                                                                    name="{{ value.param_name }}"
+                                                                    value="{{ value.value }}"
+                                                                    id="Filter-{{ filter.label | escape }}-mobile-{{ forloop.index }}"
+                                                                    {% if value.active %}
+                                                                        checked
+                                                                    {% endif %}
+                                                                    {% if value.count == 0 and value.active == false %}
+                                                                        disabled
+                                                                    {% endif %}
+                                                                >
+
+                                                                <span class="mobile-facets__highlight"></span>
+
+                                                                {% render 'icons-outline',
+                                                                    name: 'check',
+                                                                    css_class: 'icon icon-checkmark'
+                                                                %}
+
+                                                                {{ value.label | escape }}
+                                                                <span class="count">{{ value.count }}</span>
+                                                            </label>
+                                                        {% endif %}
+                                                    </li>
+                                                {%- endfor -%}
+                                            </ul>
+
+                                            <div class="no-js-hidden mobile-facets__footer">
+                                                <button
+                                                    type="button"
+                                                    class="no-js-hidden button button--primary min-w-0"
+                                                    onclick="this.closest('.mobile-facets__wrapper').querySelector('summary').click()"
+                                                >
+                                                    {{ 'sections.collection_template.apply' | t }}
+                                                </button>
+                                                <noscript
+                                                    ><button class="button button--primary">
+                                                        {{ 'sections.collection_template.apply' | t }}
+                                                    </button></noscript
+                                                >
+                                            </div>
+                                        </div>
+                                    </details>
+                                {% when 'price_range' %}
+                                    {%- assign max_price_amount = filter.range_max | money | escape -%}
+                                    <details
+                                        class="mobile-facets__details js-filter"
+                                        data-index="mobile-{{ forloop.index }}"
+                                    >
+                                        <summary
+                                            id="CollectionFilterMobileLabel-{{ filter.label | escape }}"
+                                            class="mobile-facets__summary"
+                                            data-updatable="true"
+                                        >
+                                            <span>{{ filter.label | escape }}</span>
+                                            <span
+                                                class="count-bubble text-sm color-inverse{% if filter.min_value.value or filter.max_value.value %} count-bubble--dot{% endif %}"
+                                            ></span>
+                                            <span class="mobile-facets__arrow no-js-hidden">
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    height="16"
+                                                    width="16"
+                                                >
+                                                    <use href="#icon-caret" />
+                                                </svg>
+                                            </span>
+                                            <noscript>
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    class="icon icon-caret"
+                                                    height="16"
+                                                    width="16"
+                                                >
+                                                    <use href="#icon-caret" />
+                                                </svg>
+                                            </noscript>
+                                        </summary>
+                                        <div class="mobile-facets__submenu">
+                                            <button
+                                                class="mobile-facets__close-button button--small"
+                                                aria-expanded="true"
+                                                type="button"
+                                            >
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    class="icon icon-caret"
+                                                    height="16"
+                                                    width="16"
+                                                >
+                                                    <use href="#icon-caret" />
+                                                </svg>
+                                                {{ filter.label | escape }}
+                                            </button>
+
+                                            <div
+                                                id="CollectionFilterMobileOptions-{{ filter.label | escape }}"
+                                                data-updatable="true"
+                                            >
+                                                <p class="mobile-facets__info">
+                                                    {{
+                                                        'sections.collection_template.max_price'
+                                                        | t: price: max_price_amount
+                                                    }}
+                                                </p>
+                                                {% render 'facets__facet--price-range',
+                                                    filter: filter,
+                                                    index: forloop.index,
+                                                    type_facets: '_mobile'
+                                                %}
+                                            </div>
+                                            <div class="no-js-hidden mobile-facets__footer">
+                                                <button
+                                                    type="button"
+                                                    class="no-js-hidden button button--primary min-w-0"
+                                                    onclick="this.closest('.mobile-facets__wrapper').querySelector('summary').click()"
+                                                >
+                                                    {{ 'sections.collection_template.apply' | t }}
+                                                </button>
+                                                <noscript
+                                                    ><button class="button button--primary">
+                                                        {{ 'sections.collection_template.apply' | t }}
+                                                    </button></noscript
+                                                >
+                                            </div>
+                                        </div>
+                                    </details>
+                            {% endcase %}
+                        {%- endfor -%}
+
+                        <div class="mobile-facets__footer">
+                            {% render 'facets__button--clear-all' %}
+                            <button
+                                type="button"
+                                class="no-js-hidden button button--primary button--small"
+                                onclick="this.closest('.mobile-facets__wrapper').querySelector('summary').click()"
+                            >
+                                {{ 'sections.collection_template.apply' | t }}
+                            </button>
+                            <noscript>
+                                <button class="button button--primary button--small">
+                                    {{ 'sections.collection_template.apply' | t }}
+                                </button>
+                            </noscript>
+                        </div>
+                    </div>
+
+                    {% if collection.current_vendor or collection.current_type %}
+                        <input
+                            type="hidden"
+                            name="q"
+                            value="{{ collection.current_vendor }}{{ collection.current_type }}"
+                        >
+                    {% endif %}
+                </div>
+            </form>
+        </collection-filters-form>
+    </details>
+</menu-drawer>

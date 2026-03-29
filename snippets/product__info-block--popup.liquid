@@ -1,0 +1,35 @@
+{%- comment -%}
+    Render popup using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - sectionId:  {String}
+     - product:    {Object}
+{%- endcomment -%}
+{%- liquid
+    assign __popup_class__ = 'product__info-block product__info-block--popup reveal-item'
+    assign __popup_class__ = __popup_class__ | append: ' product__info-block--popup-'
+    assign __popup_class__ = __popup_class__ | append: block.settings.popup_style
+-%}
+<div class="{{ __popup_class__ }}" style="order: {{ blockOrder }}" {{ block.shopify_attributes }}>
+    <modal-opener
+        class="product-popup-modal__opener no-js-hidden"
+        data-modal="#PopupModal-{{ block.id }}"
+        {{ block.shopify_attributes }}
+    >
+        <button
+            id="ProductPopup-{{ block.id }}"
+            class="product-popup-modal__button button--secondary min-w-0"
+            type="button"
+            aria-haspopup="dialog"
+        >
+            {% assign css_class = 'icon-accordion color-foreground-' | append: settings.accent_icons %}
+            {% render 'icon-accordion', name: block.settings['popup-icon'], css_class: css_class %}
+            <span class="accordion__title">{{- block.settings.link_label | default: block.settings.page.title -}}</span>
+        </button>
+    </modal-opener>
+    <a href="{{ block.settings.page.url }}" class="product-popup-modal__button no-js">
+        {{- block.settings.link_label -}}
+    </a>
+</div>

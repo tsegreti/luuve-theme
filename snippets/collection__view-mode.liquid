@@ -1,0 +1,81 @@
+{% comment %}
+    Render collection view mode switcher.
+
+    Accepts:
+     - collection   {Object}
+     - current_mode {String}
+{% endcomment %}
+
+{%- liquid
+    capture dec_separatore
+        render 'helper__currency-decimals-separator'
+    endcapture
+
+    assign filters = ''
+    for filter in collection.filters
+        case filter.type
+            when 'boolean', 'list'
+                for value in filter.values
+                    if value.active
+                        assign filters = filters | append: '&'
+                        assign filters = filters | append: value.param_name
+                        assign filters = filters | append: '='
+                        assign filters = filters | append: value.value
+                    endif
+                endfor
+            when 'price_range'
+                assign keys = 'min_value|max_value' | split: '|'
+                for key in keys
+                    if filter[key].value != null
+                        assign value = filter[key].value | money_without_currency
+                        if dec_separatore == ','
+                            assign value = value | replace: '.', '' | replace: ',', '.', '.'
+                        else
+                            assign value = value | replace: ',', ''
+                        endif
+
+                        assign filters = filters | append: '&'
+                        assign filters = filters | append: filter[key].param_name
+                        assign filters = filters | append: '='
+                        assign filters = filters | append: value
+                    endif
+                endfor
+        endcase
+    endfor
+
+    assign search_terms = ''
+    if collection.performed
+        assign search_terms = search.terms | escape | prepend: 'q='
+        assign search_terms = search_terms | append: '&type=product&options[prefix]=last&'
+    endif
+-%}
+
+<collection-modes
+    id="CollectionViewModeSwitcher"
+    data-loader-target="main-collection-products__wrapper"
+    class="modes"
+    data-label="View"
+    data-updatable="true"
+>
+    {%- if current_mode == 'grid' -%}
+        <span class="mode mode-grid active">{% render 'theme-icons', name: 'view-grid' %}</span>
+        <a
+            href="{{ collection.url }}?{{ search_terms }}view=mode-list{{ filters }}"
+            class="mode mode-list"
+            title="View mode list"
+        >
+            {% render 'theme-icons', name: 'view-list' %}
+        </a>
+    {%- else -%}
+        <a
+            href="{{ collection.url }}?{{ search_terms }}view=mode-grid{{ filters }}"
+            class="mode mode-grid"
+            title="View mode grid"
+        >
+            {% render 'theme-icons', name: 'view-grid' %}
+        </a>
+        <span class="mode mode-list active">{% render 'theme-icons', name: 'view-list' %}</span>
+    {%- endif -%}
+
+    {% render 'initialize-deferred-scripts', init_fetcher: true, init_collection_mode: true %}
+</collection-modes>

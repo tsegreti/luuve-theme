@@ -1,0 +1,220 @@
+{{ 'component-faqs.css' | asset_url | stylesheet_tag }}
+
+{% style %}
+    /* hide main Page title */
+    ._page_faqs {
+        display: none;
+    }
+
+    .faqs-page {
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+
+    .faqs-page .content_wrapper {
+        --faq-accordion__background: {{ section.settings.cover_background_gradient | default: section.settings.cover_background }};
+        width: 100%;
+        margin-top: 4rem;
+        background: var(--faq-accordion__background);
+        padding: 2rem;
+    }
+
+    .faqs-page .content_wrapper > .heading > .title {
+        font-size: 2rem;
+    }
+
+    .faqs-page .empty_message {
+        font-weight: bold;
+        padding: 1.5rem 0;
+    }
+
+    .faq-content--inner {
+        text-align: initial;
+    }
+
+    ._line_separator {
+        display: block !important;
+    }
+
+    ._line_separator::after {
+        content: '';
+        position: absolute;
+        border: 1px solid #E0E0E0;
+        left: 0;
+        right: 0;
+        margin-top: 2rem;
+    }
+
+    @media(min-width: 990px), print {
+        .faqs-page .content_wrapper {
+            display: flex;
+            justify-content: space-between;
+            padding: 2rem 4rem 2rem 2rem;
+        }
+        faqs-accordion {
+            width: 70%;
+        }
+    }
+{% endstyle %}
+
+<div class="dynamic-page-width faqs-page{% if section.settings.animation_on_reveal %} reveal-slide-in{% endif -%}">
+    <div class="heading">
+        {%- if section.settings.title -%}
+            <h1 class="title reveal-item">
+                {{ section.settings.title }}
+            </h1>
+        {%- endif -%}
+        {%- if section.settings.subtitle -%}
+            <p class="subtitle reveal-item">{{ section.settings.subtitle }}</p>
+        {%- endif -%}
+    </div>
+    {%- if section.settings.show_search_field -%}
+        <input
+            type="text"
+            id="faqs_search"
+            onkeyup="filterFaqsByName()"
+            placeholder="{{ 'templates.faqs_page.input_search' | t }}"
+            title="{{ 'templates.faqs_page.input_title' | t }}"
+        >
+        <p class="empty_message" hidden>{{ 'templates.faqs_page.input_empty_result' | t }}</p>
+    {%- endif -%}
+    {% # Render Custom Liquid metafields FAQs value %}
+    {%- for block in section.blocks -%}
+        <div class="content_wrapper">
+            {%- if block.settings.heading != blank -%}
+                <div class="heading">
+                    <h2 class="title h3">{{ block.settings.heading }}</h2>
+                </div>
+            {%- endif -%}
+
+            {%- liquid
+                assign faqs = block.settings.custom_liquid
+                assign first_two = faqs | slice: 0, 2
+                assign last_two = faqs | slice: -2, 2
+                assign number_of_chars_to_return = faqs | size | minus: 4
+                if first_two == '{"' and last_two == '"}'
+                    assign faqs = faqs | slice: 2, number_of_chars_to_return | split: '", "'
+                else
+                    assign faqs = ''
+                endif
+            -%}
+            {%- if faqs != null and faqs != blank -%}
+                <faqs-accordion>
+                    {%- for faq in faqs -%}
+                        {% assign item = faq | split: '"=>"' %}
+                        <details class="reveal-item">
+                            <summary class="heading faq-title">
+                                {{ item | first }}
+                                <span class="faq-icon faq-icon-plus">{%- render 'icons-solid', name: 'plus' -%}</span>
+                                <span class="faq-icon faq-icon-minus">{%- render 'icons-solid', name: 'minus' -%}</span>
+                            </summary>
+                            <div class="faq-content">
+                                <div class="faq-content--inner">
+                                    {{ item | last }}
+                                </div>
+                            </div>
+                        </details>
+                    {%- endfor -%}
+                </faqs-accordion>
+            {%- endif -%}
+        </div>
+        {%- if section.blocks.size > 1 -%}
+            {% unless forloop.last %}
+                <div class="_line_separator"></div>
+            {% endunless %}
+        {%- endif -%}
+    {%- endfor -%}
+</div>
+
+{% render 'initialize-deferred-scripts', init_faqs_accordion: true %}
+
+{% schema %}
+{
+    "name": "t:sections.faqs-page.name",
+    "tag": "section",
+    "class": "spaced-section",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "show_search_field",
+            "label": "t:sections.faqs-page.settings.show_search_field.label",
+            "info": "t:sections.faqs-page.settings.show_search_field.info",
+            "default": false
+        },
+        {
+            "type": "color",
+            "id":"cover_background",
+            "label": "t:sections.faqs-page.settings.cover_background.label",
+            "default": "#F5F5F5"
+        },
+        {
+            "type": "color",
+            "id":"cover_background_gradient",
+            "label": "t:sections.faqs-page.settings.cover_background.label"
+        },
+        {
+            "type": "checkbox",
+            "id": "animation_on_reveal",
+            "label": "t:sections.all.settings.animation_on_reveal.label",
+            "default": true
+        }
+    ],
+    "max_blocks": 3,
+    "blocks": [
+        {
+          "type": "faq_accordion",
+          "name": "t:sections.faqs-page.blocks.faq_accordion.name",
+          "settings": [
+                {
+                    "type": "inline_richtext",
+                    "id": "heading",
+                    "label": "t:sections.faqs-page.blocks.faq_accordion.settings.heading.label",
+                    "default": "General Question"
+                },
+                {
+                    "type": "liquid",
+                    "id": "custom_liquid",
+                    "label": "t:sections.faqs-page.blocks.faq_accordion.settings.custom_liquid.label",
+                    "info": "t:sections.faqs-page.blocks.faq_accordion.settings.custom_liquid.info"
+                }
+            ]
+        }
+    ],
+    "presets": [
+    {
+      "name": "t:sections.faqs-page.name",
+      "blocks": [
+        {
+          "type": "faq_accordion"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{%- if faqs != null and faqs != blank -%}
+    <script type="text/javascript" defer="defer">
+        function filterFaqsByName() {
+            var input = document.getElementById("faqs_search"),
+                inputValue = input.value.toUpperCase(),
+                faqsTitles = document.querySelectorAll("faqs-accordion .faq-title"),
+                visibleFaqs = 0;
+
+            if (!faqsTitles.length) return;
+
+            faqsTitles.forEach(title => {
+                const text = (title.textContent || title.innerText).toUpperCase();
+
+                if (text.indexOf(inputValue) === -1) {
+                    title.closest('details').style.display = 'none';
+                } else {
+                    title.closest('details').style.display = '';
+                    visibleFaqs++;
+                }
+            });
+
+            document.querySelector('.empty_message').hidden = (visibleFaqs > 0);
+        }
+    </script>
+{%- endif -%}

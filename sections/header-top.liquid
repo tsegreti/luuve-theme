@@ -1,0 +1,161 @@
+{%- liquid
+    assign section_id = section.id | prepend: '#shopify-section-'
+    if localization.available_languages.size > 1 and settings.show_switcher_language and settings.switcher_language_position == 'topbar'
+        assign show_lang_switcher = true
+    else
+        assign show_lang_switcher = false
+    endif
+
+    if localization.available_countries.size > 1 and settings.show_switcher_country and settings.switcher_country_position == 'topbar'
+        assign show_country_switcher = true
+    else
+        assign show_country_switcher = false
+    endif
+
+    if section.settings.full_width
+        assign __class__ = __class__ | append: ' full--width'
+    else
+        assign __class__ = __class__ | append: ' custom--width'
+    endif
+-%}
+
+{%- render 'topbar__styles', section_id: section_id -%}
+
+{%- if show_lang_switcher or show_country_switcher %}
+    {%- render 'header__styles-localization-form' -%}
+{% endif -%}
+
+{% capture socialsHtml %}
+    {% render 'social-icons' %}
+{% endcapture %}
+{%- liquid
+    assign socialsHtml = socialsHtml | strip
+-%}
+
+<div id="header-top-inner" class="{{ __class__ }}">
+    {% if section.settings.show_phone or section.settings.show_email -%}
+        <p class="contacts">
+            {%- if section.settings.show_email -%}
+                <a href="mailto:{{ settings.contact_email }}" title="{{ 'header_top.contact_email.title' | t }}">
+                    {{- settings.contact_email -}}
+                </a>
+            {%- endif -%}
+            {%- if section.settings.show_phone -%}
+                <a href="phoneto:{{ settings.contact_phone }}" title="{{ 'header_top.contact_phone.title' | t }}">
+                    {{- settings.contact_phone -}}
+                </a>
+            {%- endif -%}
+        </p>
+    {%- endif %}
+    {%- if section.settings.show_social_icons == 'left' %}
+        <div class="social_icons--wrapper">{{- socialsHtml -}}</div>
+    {% endif -%}
+    <div class="header-top__message">
+        {{- section.settings.message -}}
+        {%- content_for 'blocks' -%}
+    </div>
+
+    <div class="switcher-wrapper">
+        {%- if section.settings.show_social_icons == 'right' %}
+            <div class="social_icons--wrapper">{{- socialsHtml -}}</div>
+        {% endif -%}
+
+        {%- if show_lang_switcher -%}
+            {%- render 'switcher-language', form_id: 'LanguageForm' -%}
+        {%- endif -%}
+
+        {%- if show_country_switcher -%}
+            {%- render 'switcher-country', form_id: 'CountryForm' -%}
+        {%- endif -%}
+    </div>
+</div>
+
+{% schema %}
+{
+    "name": "t:sections.header_top.name",
+    "class": "header-top",
+    "settings": [
+        {
+            "type": "checkbox",
+            "id": "full_width",
+            "default": false,
+            "label": "t:sections.header_top.settings.full_width.label"
+        },
+        {
+            "type": "range",
+            "id": "custom_layout_width",
+            "label": "t:sections.header.settings.custom_layout_width.label",
+            "unit": "t:sections.header.settings.custom_layout_width.unit",
+            "min": 980,
+            "max": 1440,
+            "step": 20,
+            "default": 1440
+        },
+        {
+            "type": "color",
+            "id": "color_text",
+            "label": "t:sections.header_top.settings.color_text.label",
+            "default": "#ffffff"
+        },
+        {
+            "type": "color_background",
+            "id": "color_background",
+            "label": "t:sections.header_top.settings.color_background.label",
+            "default": "#000000"
+        },
+        {
+            "type": "select",
+            "id": "show_social_icons",
+            "label": "t:sections.header_top.settings.show_social_icons.label",
+            "options": [
+                {
+                    "value": "none",
+                    "label": "t:sections.header_top.settings.show_social_icons.options.none"
+                },
+                {
+                    "value": "left",
+                    "label": "t:sections.header_top.settings.show_social_icons.options.left"
+                },
+                {
+                    "value": "right",
+                    "label": "t:sections.header_top.settings.show_social_icons.options.right"
+                }
+            ],
+            "default": "right"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_email",
+            "label": "t:sections.header_top.settings.show_email.label",
+            "default": false
+        },
+        {
+            "type": "checkbox",
+            "id": "show_phone",
+            "label": "t:sections.header_top.settings.show_phone.label",
+            "default": false
+        },
+        {
+            "type": "richtext",
+            "id": "message",
+            "label": "t:sections.header_top.settings.message.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "add_border_bottom",
+          "default": false,
+          "label": "t:sections.header_top.settings.add_border_bottom.label"
+        }
+    ],
+    "max_blocks": 3,
+    "blocks": [{ "type": "@theme"},{"type": "@app"}, { "type": "timer"}],
+    "presets": [
+        {
+          "name": "t:sections.header_top.presets.name"
+        }
+    ],
+    "enabled_on": {
+        "groups": ["header"]
+    }
+}
+{% endschema %}

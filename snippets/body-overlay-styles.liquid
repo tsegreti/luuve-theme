@@ -1,0 +1,37 @@
+{% comment %}
+    Render body overlay styles on demand for:
+        - search field open
+        - minicart open
+{% endcomment %}
+
+{% style %}
+    .header-menu__overlay-element.active,
+    body[data-cart-status="open"] {
+        overflow: hidden;
+    }
+    {% if settings.minicart_type == 'drawer' %}
+    body[data-cart-status="open"]::after,
+    {% endif %}
+    .header-menu__overlay-element.active,
+    body.search-in-focus::after {
+        content: '';
+        position: fixed;
+        display: block;
+        background: rgba(0,0,0,{{ settings.overlay_transparenty }});{% if settings.enable_overlay_blur %}
+        backdrop-filter: blur({{ settings.overlay_blur | times: 10 | append: 'px' }});{% endif %}
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+    }
+
+    .header-menu__overlay-element.active,
+    body.search-in-focus::after {
+        z-index: 20;
+    }
+    {% if settings.minicart_type == 'drawer' %}
+    body[data-cart-status="open"]::after {
+        z-index: 50;
+    }
+    {% endif %}
+{% endstyle %}

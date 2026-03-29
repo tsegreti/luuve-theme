@@ -1,0 +1,59 @@
+{% if customer %}
+    <details class="header__icon--account--wrapper" data-advanced="true">
+        <summary
+            class="button header__icon header__icon--account"
+            title="{{ 'customer.account_fallback' | t }}"
+        >
+            {%- if settings.current_theme_icons == 'enduro' %}
+                <svg aria-hidden="true" focusable="false" role="presentation" width="19" height="19" class="icon-user">
+                    <use href="#enduro-icon-user" />
+                </svg>
+            {% else %}
+                <svg aria-hidden="true" focusable="false" role="presentation" width="20" height="20" class="icon-user">
+                    <use href="#icon-user" />
+                </svg>
+            {% endif -%}
+            <span class="account-label">
+                {{ customer.first_name }}
+            </span>
+            <svg aria-hidden="true" focusable="false" role="presentation" width="12" height="12" class="icon-x" hidden>
+                <use href="#icon-x" />
+            </svg>
+        </summary>
+        <div class="disclosure__list--wrapper panel transition-bezier">
+            <ul role="list" class="disclosure__list">
+                <li class="disclosure__item" tabindex="-1">
+                    <a class="disclosure__link link--text" href="{{ routes.account_url }}" rel="nofollow">
+                        {{ customer.first_name }}
+                        {{ customer.last_name }}
+                    </a>
+                </li>
+                <li class="disclosure__item" tabindex="-1">
+                    <a class="disclosure__link link--text" href="{{ routes.account_logout_url }}">
+                        {{- 'customer.log_out' | t -}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </details>
+{% else %}
+    <a
+        class="button header__icon header__icon--account"
+        href="{{ routes.account_url }}"
+        title="{{ 'customer.account_fallback' | t }}"
+        rel="nofollow"
+    >
+        {%- if settings.current_theme_icons == 'enduro' %}
+            <svg aria-hidden="true" focusable="false" role="presentation" width="19" height="19" class="icon-user">
+                <use href="#enduro-icon-user" />
+            </svg>
+        {% else %}
+            <svg aria-hidden="true" focusable="false" role="presentation" width="20" height="20" class="icon-user">
+                <use href="#icon-user" />
+            </svg>
+        {% endif -%}
+        <span class="account-label">
+            {{ 'customer.account_fallback' | t }}
+        </span>
+    </a>
+{% endif %}

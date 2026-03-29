@@ -1,0 +1,19 @@
+{%- comment -%}
+    Product section scripts.
+
+    Accepts:
+     -  product {Object}
+{%- endcomment -%}
+
+{%- assign first_3d_model = product.media | where: 'media_type', 'model' | first -%}
+{%- if first_3d_model -%}
+    <script type="application/json" id="ProductJSON-{{ product.id }}">
+        {{ product.media | where: 'media_type', 'model' | json }}
+    </script>
+{%- endif -%}
+
+{% render 'initialize-deferred-scripts',
+    init_pickup_availability: true,
+    init_product_model: first_3d_model,
+    init_slider_vertical: true
+%}

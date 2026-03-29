@@ -1,0 +1,232 @@
+{%- liquid
+    assign paddingBottom = 7200 | divided_by: 128.0
+    if block.settings.cover_image
+        assign paddingBottom = 100 | divided_by: block.settings.cover_image.aspect_ratio
+        assign imageWidth = '326,652,978,1182,1340,2364'
+        assign imageSizes = '(max-width: 767px) calc(100vw - 2rem - 2px), (max-width: 1279px) calc(100vw - 6rem - 2px), 1182px'
+    endif
+
+    assign block_index = section.blocks | find_index: 'id', block.id
+
+    assign focus_card_left = false
+    if section.settings.desktop_layout == 'left' and block_index == 0
+        assign focus_card_left = true
+    elsif section.settings.desktop_layout == 'right' and block_index == 2
+        assign focus_card_right = true
+    endif
+-%}
+
+<div
+    id="{{ block.id }}"
+    class="collage-card collage-video{% if focus_card_left %} collage-card--left{% elsif focus_card_right %} collage-card--right{% endif %}"
+    {{ block.shopify_attributes }}
+>
+    <noscript>
+        <a
+            href="{{ block.settings.video_url }}"
+            class="card{% if block.settings.cover_image == blank %} collage-video-placeholder{% endif %}"
+        >
+            <div class="media media--transparent" style="padding-bottom: {{ paddingBottom }}%;">
+                {%- if block.settings.cover_image != blank -%}
+                    {% render 'render-image',
+                        image: block.settings.product.featured_image,
+                        widths: imageWidth,
+                        sizes: imageSizes,
+                        css_class: ''
+                    %}
+                {%- elsif block.settings.video_url.type -%}
+                    <img
+                        src="https://img.youtube.com/vi/{{ block.settings.video_url.id }}/maxresdefault.jpg"
+                        width="107"
+                        height="156"
+                        loading="lazy"
+                    >
+                {%- else -%}
+                    {{ 'collection-2' | placeholder_svg_tag: 'placeholder-svg placeholder collage-card__image' }}
+                {%- endif -%}
+                <span class="deferred-media__poster-button motion-reduce">
+                    {%- render 'icons-ion', name: 'play', css_class: 'icon-play' -%}
+                </span>
+            </div>
+        </a>
+    </noscript>
+    {%- if section.blocks.size == 1 -%}
+        <deferred-media
+            class="deferred-media media no-js-hidden"
+            data-media-id="{{ block.settings.video_url.id }}"
+            {% if paddingBottom %}
+                style="padding-bottom: {{ paddingBottom }}%;"
+            {% endif %}
+        >
+            <button
+                id="Deferred-Poster-Modal-{{ block.settings.video_url.id }}"
+                class="collage-content collage-card__image-wrapper media deferred-media__poster"
+                type="button"
+            >
+                {%- if block.settings.cover_image != blank -%}
+                    {% render 'render-image',
+                        image: block.settings.cover_image,
+                        widths: imageWidth,
+                        sizes: imageSizes,
+                        css_class: ''
+                    %}
+                {%- elsif block.settings.video_url.type -%}
+                    <img
+                        src="https://img.youtube.com/vi/{{ block.settings.video_url.id }}/maxresdefault.jpg"
+                        width="107"
+                        height="156"
+                        loading="lazy"
+                    >
+                {%- else -%}
+                    {{ 'collection-2' | placeholder_svg_tag: 'placeholder-svg placeholder collage-card__image' }}
+                {%- endif -%}
+                <span class="deferred-media__poster-button motion-reduce">
+                    {%- render 'icons-ion', name: 'play', css_class: 'icon-play' -%}
+                </span>
+            </button>
+            <template>
+                {%- if block.settings.video_url.type == 'youtube' -%}
+                    <iframe
+                        src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}?autoplay=1&enablejsapi=1"
+                        class="js-youtube"
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen
+                        title="{{ block.settings.description | escape }}"
+                    ></iframe>
+                {%- else -%}
+                    <iframe
+                        src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}"
+                        class="js-vimeo"
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen
+                        title="{{ block.settings.description | escape }}"
+                    ></iframe>
+                {%- endif -%}
+            </template>
+        </deferred-media>
+    {%- else -%}
+        <modal-opener class="no-js-hidden" data-modal="#PopupModal-{{ block.id }}">
+            <button
+                class="collage-content collage-card__image-wrapper deferred-media__poster button--small"
+                type="button"
+                aria-haspopup="dialog"
+                data-media-id="{{ block.settings.video_url.id }}"
+            >
+                <div
+                    class="deferred-media media{% if block.settings.cover_image == blank %} deferred-media--placeholder{% endif %}"
+                    {% if paddingBottom %}
+                        style="padding-bottom: {{ paddingBottom }}%;"
+                    {% endif %}
+                >
+                    <span class="deferred-media__poster-button motion-reduce">
+                        {%- render 'icons-ion', name: 'play', css_class: 'icon-play' -%}
+                    </span>
+
+                    {%- if block.settings.cover_image != blank -%}
+                        {% render 'render-image',
+                            image: block.settings.cover_image,
+                            widths: imageWidth,
+                            sizes: imageSizes,
+                            css_class: ''
+                        %}
+                    {%- else -%}
+                        <img
+                            src="https://img.youtube.com/vi/{{ block.settings.video_url.id }}/maxresdefault.jpg"
+                            width="107"
+                            height="156"
+                            loading="lazy"
+                        >
+                    {%- else -%}
+                        {{ 'collection-2' | placeholder_svg_tag: 'placeholder-svg placeholder collage-card__image' }}
+                    {%- endif -%}
+                </div>
+            </button>
+        </modal-opener>
+
+        <modal-dialog
+            id="PopupModal-{{ block.id }}"
+            class="collage-video__modal"
+            data-deferred-name="deferredMedia,modalDialog"
+        >
+            <div
+                class="collage-video__modal-content"
+                role="dialog"
+                aria-label="{{ block.settings.description | escape }}"
+                aria-modal="true"
+                tabindex="-1"
+            >
+                <button
+                    id="ModalClose-{{ block.id }}"
+                    type="button"
+                    class="collage-video__modal-toggle modal__close-button"
+                    aria-label="{{ 'accessibility.close' | t }}"
+                >
+                    <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close">
+                        <use href="#icon-close" />
+                    </svg>
+                </button>
+                <deferred-media class="collage-video__modal-video template-popup">
+                    <template>
+                        {%- if block.settings.video_url.type == 'youtube' -%}
+                            <iframe
+                                src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}?autoplay=1&enablejsapi=1"
+                                class="js-youtube"
+                                allow="autoplay; encrypted-media"
+                                allowfullscreen
+                                title="{{ block.settings.description | escape }}"
+                            ></iframe>
+                        {%- else -%}
+                            <iframe
+                                src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}"
+                                class="js-vimeo"
+                                allow="autoplay; encrypted-media"
+                                allowfullscreen
+                                title="{{ block.settings.description | escape }}"
+                            ></iframe>
+                        {%- endif -%}
+                    </template>
+                </deferred-media>
+            </div>
+        </modal-dialog>
+
+        {% render 'initialize-deferred-scripts', init_modal_dialog: true %}
+    {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.collage.blocks.collage-video.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "cover_image",
+      "label": "t:sections.collage.blocks.collage-video.settings.cover_image.label"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "accept": [
+        "youtube",
+        "vimeo"
+      ],
+      "default": "https:\/\/www.youtube.com\/watch?v=_9VUPq3SxOc",
+      "label": "t:sections.collage.blocks.collage-video.settings.video_url.label",
+      "placeholder": "t:sections.collage.blocks.collage-video.settings.video_url.placeholder",
+      "info": "t:sections.collage.blocks.collage-video.settings.video_url.info"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "default": "Describe the video for customers using screen readers",
+      "label": "Video alt text"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collage.blocks.collage-video.name",
+      "category": "t:sections.all.categories.collage"
+    }
+  ]
+}
+{% endschema %}

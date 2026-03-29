@@ -1,0 +1,73 @@
+@media all and (min-width: 990px) {
+  :root {
+    --grayscale-bg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  }
+      :is(.with--grayscale-effect) :is(.media) > :is(img), :is(.with--grayscale-effect) :is(.image--wrapper) > :is(img) {
+        filter: grayscale(100%);
+        transition: all 0.4s ease;
+      }
+      :is(.with--grayscale-effect) :is(.media):after, :is(.with--grayscale-effect) :is(.image--wrapper):after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image: var(--grayscale-bg);
+        opacity: 1;
+        transition: all 0.4s ease;      
+      }        
+        :is(.with--grayscale-effect) :is(.collage-card):hover .media > :is(img), :is(.with--grayscale-effect) :is(.image-media):hover .media > :is(img), :is(.with--grayscale-effect) :is(.image--wrapper) .media > :is(img), :is(.with--grayscale-effect) ul li:hover .media > :is(img) {
+          filter: grayscale(0%) !important;
+        }
+        :is(.with--grayscale-effect) :is(.collage-card):hover .media:after, :is(.with--grayscale-effect) :is(.image-media):hover .media:after, :is(.with--grayscale-effect) :is(.image--wrapper) .media:after, :is(.with--grayscale-effect) ul li:hover .media:after {
+          opacity: 0 !important;
+        }
+    /* banner */
+      :is(.with--grayscale-effect) :is(.banner__media):hover > :is(img) {
+        filter: grayscale(0%) !important;      
+      }
+    /* location map */
+    :is(.with--grayscale-effect) :is(.map__location) {
+      filter: grayscale(100%);
+      transition: all 0.4s ease;
+    }
+
+      :is(.with--grayscale-effect) :is(.map__location):after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image: var(--grayscale-bg);
+        opacity: 1;
+        transition: all 0.4s ease;      
+      }
+
+      :is(.with--grayscale-effect) :is(.map__location):hover {
+        filter: grayscale(0%) !important;
+      }
+        :is(.with--grayscale-effect) :is(.map__location):hover:after {
+          opacity: 0 !important;
+        }
+  /* featured product */      
+      :is(.with--grayscale-effect) .image--wrapper:after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background-image: var(--grayscale-bg);
+        opacity: 1;
+        transition: all 0.4s ease; 
+      }
+        :is(.with--grayscale-effect) li:hover .image--wrapper :is(img) {
+          filter: grayscale(0%) !important;
+        }
+        :is(.with--grayscale-effect) li:hover .image--wrapper:after {
+          opacity: 0 !important;
+        }
+    /*thumbs hover*/        
+        :is(.with--grayscale-effect) a:hover .image--wrapper :is(img) {
+          filter: grayscale(0%) !important;
+        }
+        :is(.with--grayscale-effect) a:hover .image--wrapper:after {
+          opacity: 0 !important;
+        }
+}

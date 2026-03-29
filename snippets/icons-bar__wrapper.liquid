@@ -1,0 +1,57 @@
+{%- comment -%}
+    Render icons bar wrapper.
+
+    Accepts:
+     -  color_scheme  {String}
+     -  enable_slider {Boolean}
+     -  inner_html    {String}
+{%- endcomment -%}
+
+{%- liquid
+    assign __class__ = 'icons-bar'
+    assign __class__ = __class__ | append: ' color-' | append: color_scheme
+
+    unless request.design_mode
+        if section.settings.animation_on_reveal
+            assign __class__ = __class__ | append: ' reveal-slide-in'
+        endif
+    endunless
+
+    if section.settings.enable_noise_effect
+        assign __class__ = __class__ | append: ' with--noise-effect'
+    endif
+-%}
+
+<div class="{{ __class__ }}" id="icons-bar">
+    {% if enable_slider %}
+        <slider-component data-slider-item=".icons-bar-item" data-loop="false">
+            {{ inner_html }}
+            {% if section.blocks.size > 0 %}
+                <div class="slider-buttons no-js-hidden">
+                    <button
+                        type="button"
+                        class="slider-button slider-button--prev button--tertiary"
+                        name="previous"
+                        aria-label="{{ 'accessibility.previous_slide' | t }}"
+                    >
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret">
+                            <use href="#icon-caret" />
+                        </svg>
+                    </button>
+                    <button
+                        type="button"
+                        class="slider-button slider-button--next button--tertiary"
+                        name="next"
+                        aria-label="{{ 'accessibility.next_slide' | t }}"
+                    >
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret">
+                            <use href="#icon-caret" />
+                        </svg>
+                    </button>
+                </div>
+            {% endif %}
+        </slider-component>
+    {% else %}
+        {{ inner_html }}
+    {% endif %}
+</div>

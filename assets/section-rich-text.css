@@ -1,0 +1,27 @@
+.rich-text__blocks {
+  /* 2.5rem margin on left & right */
+  width: calc(100% - 5rem);
+}
+
+.rich-text__blocks * {
+  overflow-wrap: break-word;
+}
+
+.rich-text--full-width .rich-text__blocks {
+  width: calc(100% - 5rem);
+}
+
+@media screen and (min-width: 750px) {
+  .rich-text {
+    width: calc(100% - 10rem);
+  }
+
+  .rich-text__blocks {
+    max-width: 50rem;
+  }
+
+  .rich-text--full-width .rich-text__blocks {
+    /* 7.5rem (5rem + 2.5rem) margin on left & right */
+    width: calc(100% - 15rem);
+  }
+}

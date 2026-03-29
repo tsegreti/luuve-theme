@@ -1,0 +1,144 @@
+{%- unless block.settings.button_label == blank -%}
+    <a
+        {% if block.settings.button_link == null %}
+            aria-disabled="true"
+        {% else %}
+            href="{{ block.settings.button_link }}"
+        {% endif %}
+        class="button main-button animate-arrow _{{ block.settings.button_view }}"
+        {{ block.shopify_attributes }}
+    >
+        <span>{{ block.settings.button_label | escape }}</span>
+        {%- if settings.current_theme_icons == 'enduro' %}
+            {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+        {% else %}
+            {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+        {% endif -%}
+    </a>
+{%- endunless -%}
+
+{%- unless block.settings.button_label_2 == blank -%}
+    <a
+        {% if block.settings.button_link_2 == null %}
+            aria-disabled="true"
+        {% else %}
+            href="{{ block.settings.button_link_2 }}"
+        {% endif %}
+        class="button secondary-button animate-arrow _{{ block.settings.button_view }}"
+        {{ block.shopify_attributes }}
+    >
+        <span>{{ block.settings.button_label_2 | escape }}</span>
+        {%- if settings.current_theme_icons == 'enduro' %}
+            {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+        {% else %}
+            {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+        {% endif -%}
+    </a>
+{%- endunless -%}
+{% style %}
+    #shopify-block-{{ block.id }} .button {
+      position: relative;
+      z-index: 11;
+    }
+    #shopify-block-{{ block.id }} :is(.main-button) {
+      color: {{ block.settings.text_color }};
+      background: {{ block.settings.cover_color }};
+      border-color: {{ block.settings.cover_color }};
+    }
+    #shopify-block-{{ block.id }} :is(.secondary-button) {
+      color: {{ block.settings.text_color_2 }};
+      background: {{ block.settings.cover_color_2 }};
+      border-color: {{ block.settings.cover_color_2 }};
+    }
+    #shopify-block-{{ block.id }} .button._extend {
+      padding: .75rem 2.75rem;
+    }
+    @media(max-width: 500px), print {
+      #shopify-block-{{ block.id }} .button + .button {
+        margin-top: .75rem;
+      }
+    }
+    @media(min-width: 600px), print {
+      .actions-block {
+        display: flex;
+        gap: .75rem;
+        justify-content: center;
+        height: fit-content;
+      }
+    }
+{% endstyle %}
+{% schema %}
+{
+  "name": "t:sections.all.blocks.button.name",
+  "class": "actions-block reveal-item",
+  "settings": [
+    {
+      "type": "text",
+      "id": "button_label",
+      "default": "Discover",
+      "label": "t:sections.all.blocks.button.settings.button_label.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label_2",
+      "label": "t:sections.all.blocks.button.settings.button_label_2.label"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "t:sections.all.blocks.button.settings.button_link.label"
+    },
+    {
+      "type": "url",
+      "id": "button_link_2",
+      "label": "t:sections.all.blocks.button.settings.button_link_2.label"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "t:sections.all.blocks.button.settings.text_color.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color_2",
+      "label": "t:sections.all.blocks.button.settings.text_color_2.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cover_color",
+      "label": "t:sections.all.blocks.button.settings.cover_color.label",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "cover_color_2",
+      "label": "t:sections.all.blocks.button.settings.cover_color_2.label",
+      "default": "#000000"
+    },
+    {
+      "type": "select",
+      "id": "button_view",
+      "label": "t:sections.all.blocks.button.settings.button_view.label",
+      "options": [
+        {
+          "value": "extend",
+          "label": "t:sections.all.blocks.button.settings.button_view.options.extend"
+        },
+        {
+          "value": "shrink",
+          "label": "t:sections.all.blocks.button.settings.button_view.options.shrink"
+        }
+      ],
+      "default": "extend"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.all.blocks.button.name",
+      "category": "t:sections.all.categories.basic"
+    }
+  ]
+}
+{% endschema %}

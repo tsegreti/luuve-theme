@@ -1,0 +1,6 @@
+{%- liquid
+    if settings.favicon != blank
+        assign favicon_url = settings.favicon | image_url: width: 32
+    endif
+-%}
+<link rel="icon" type="image/png" href="{{ favicon_url | default: '#/' }}">

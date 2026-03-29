@@ -1,0 +1,39 @@
+{%- liquid
+    assign product = section.settings.product | default: product
+    assign block_index = block.settings.block_order
+-%}
+{%- render 'product__info-block--quantity_selector',
+    block: block,
+    product: product,
+    blockOrder: block_index,
+    sectionId: section.id
+-%}
+
+{{ 'component-quantity-input.css' | asset_url | stylesheet_tag }}
+<noscript>{{ 'component-quantity-input.css' | asset_url | stylesheet_tag }}</noscript>
+
+{% schema %}
+{
+    "name": "t:sections.main-product.blocks.quantity_selector.name",
+    "tag": null,
+    "settings": [
+        {
+            "type": "header",
+            "content": "t:sections.all.advanced.header.content"
+        },
+        {
+            "type": "number",
+            "id": "block_order",
+            "label": "t:sections.all.advanced.block_order.label",
+            "info": "t:sections.all.advanced.block_order.info",
+            "default": 7
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.main-product.blocks.quantity_selector.name",
+            "category": "t:sections.all.categories.product-information"
+        }
+    ]
+}
+{% endschema %}

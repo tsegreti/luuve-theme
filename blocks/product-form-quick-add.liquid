@@ -1,0 +1,120 @@
+<product-quick-add
+    id="quick-add-sku-{{ section.id }}"
+    class="product-quick-add"
+    style="visibility: hidden;"
+    data-updatable="true"
+>
+    <div class="product-quick-add-container">
+        {%-
+            content_for 'block',
+            type: 'product-media-gallery',
+            id: 'quick-add-product-gallery'
+        -%}
+
+        {%-
+            content_for 'block',
+            type: 'product-title',
+            id: 'quick-add-product-title',
+            heading_tag: 'h3'
+        -%}
+
+        <div class="action">
+            <product-form class="product-form">
+                <div class="message-wrapper" role="alert" hidden>
+                    {% render 'message-error' %}
+                </div>
+                {% assign formId = 'product-form-quick-add-' | append: section.id %}
+                {% form 'product',
+                    product,
+                    id: formId,
+                    class: 'form',
+                    novalidate: 'novalidate',
+                    data-type: 'add-to-cart-form'
+                %}
+                    <input
+                        type="hidden"
+                        name="items[0][id]"
+                        value="{{ product.selected_or_first_available_variant.id }}"
+                        {% unless product.selected_or_first_available_variant.available %}
+                            disabled
+                        {% endunless %}
+                    >
+                    <div class="product-form__buttons">
+                        <button
+                            type="submit"
+                            name="add"
+                            class="product-form__submit button button--primary"
+                            data-to-cart-available="true"
+                        >
+                            <span class="text">{{ 'products.product.add_to_cart' | t }}</span>
+                            {%- if settings.current_theme_icons == 'enduro' %}
+                                <svg
+                                    aria-hidden="true"
+                                    focusable="false"
+                                    role="presentation"
+                                    width="19"
+                                    height="19"
+                                    class="icon-cart"
+                                >
+                                    <use href="#enduro-icon-cart" />
+                                </svg>
+                            {% else %}
+                                <svg
+                                    aria-hidden="true"
+                                    focusable="false"
+                                    role="presentation"
+                                    width="20"
+                                    height="20"
+                                    class="icon-cart"
+                                >
+                                    <use href="#icon-cart" />
+                                </svg>
+                            {% endif -%}
+                        </button>
+                    </div>
+                {% endform %}
+            </product-form>
+        </div>
+    </div>
+</product-quick-add>
+
+{{ 'component-product-quick-add.css' | asset_url | stylesheet_tag }}
+<noscript>{{ 'component-product-quick-add.css' | asset_url | stylesheet_tag }}</noscript>
+
+<script type="text/javascript" defer>
+    (() => {
+        const quickAdd = document.querySelector('.product-quick-add'),
+              scrollTrigger = 1000;
+
+        if (!quickAdd) return
+
+        function toggleQuickAdd() {
+            const isDisabled = !!quickAdd.querySelector('[name="items[0][id]"][disabled]');
+            let scrollTop = window.scrollY,
+                isFotterVisible = window.innerHeight - document.querySelector('.footer-section')?.getBoundingClientRect().top;
+
+            quickAdd.style.visibility = 'initial';
+
+            if (scrollTop > scrollTrigger && isFotterVisible < 0 && !isDisabled)
+                quickAdd.classList.add('visible');
+            else quickAdd.classList.remove('visible');
+        }
+
+        toggleQuickAdd();
+        window.addEventListener('scroll', toggleQuickAdd);
+    })()
+</script>
+
+{% schema %}
+{
+    "name": "t:sections.main-product.blocks.quick-add.name",
+    "tag": null,
+    "settings": [],
+    "presets": [
+        {
+            "name": "t:sections.main-product.blocks.quick-add.name",
+            "category": "t:sections.all.categories.product-information"
+        }
+    ]
+}
+{% endschema %}

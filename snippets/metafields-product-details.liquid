@@ -1,0 +1,45 @@
+{% comment %}
+    metafields Product Details to show some extra
+    product information in the list below the main description
+{% endcomment %}
+
+<style>
+    .product__details:not(.row) {
+        padding-left: 2rem;
+    }
+
+    .product__details > li {
+        list-style: disc;
+    }
+
+    .row .item:not(:first-child) {
+        padding-left: 1.5rem;
+    }
+</style>
+
+{% assign productDetails = product.metafields.my_fields.details.value | split: ', ' %}
+
+{% comment %}
+    Product details in the list
+{% endcomment %}
+
+{% if details_position == 'details_in_list' %}
+    <ul class="product__details list">
+        {% for d in productDetails %}
+            {% if forloop.last == false %}
+                <li class="item">{{ d | escape }};</li>
+            {% else %}
+                <li class="item">{{ d | escape }}.</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
+{% else %}
+    {% comment %}
+        Product details in row
+    {% endcomment %}
+    <div class="product__details row flex">
+        {% for d in productDetails %}
+            <p class="item">{{ d | escape }};</p>
+        {% endfor %}
+    </div>
+{% endif %}

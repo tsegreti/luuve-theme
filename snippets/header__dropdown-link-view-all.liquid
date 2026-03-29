@@ -1,0 +1,21 @@
+{% comment %}
+    Render Link "View All" in the header dropdown content: Product List / Collection list
+
+    Accepts:
+     - link_view_all: {String}
+{% endcomment %}
+
+<div class="link-wrapper">
+    <a
+        class="button view-all animate-arrow button--primary reveal-item"
+        href="{{ link_view_all | default: '#/' }}"
+        aria-label="{{ 'sections.collection_list.view_all' | t }}"
+    >
+        <span class="view-all-title">{{ 'sections.collection_list.view_all' | t }}</span>
+        {%- if settings.current_theme_icons == 'enduro' %}
+            {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+        {% else %}
+            {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+        {% endif -%}
+    </a>
+</div>

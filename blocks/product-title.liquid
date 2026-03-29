@@ -1,0 +1,66 @@
+{%- liquid
+    assign product = section.settings.product | default: product
+    assign block_index = block.settings.block_order
+-%}
+{%- render 'product__info-block--title',
+    block: block,
+    product: product,
+    blockOrder: block_index,
+    sectionId: section.id,
+    heading_tag: heading_tag
+-%}
+{% schema %}
+{
+    "name": "t:sections.main-product.blocks.title.name",
+    "tag": null,
+    "settings": [
+        {
+            "type": "inline_richtext",
+            "id": "text_before",
+            "label": "t:sections.main-product.blocks.title.settings.text_before.label"
+        },
+        {
+            "type": "inline_richtext",
+            "id": "text_after",
+            "label": "t:sections.main-product.blocks.title.settings.text_after.label"
+        },
+        {
+            "type": "checkbox",
+            "id": "show_rating_judgeme",
+            "label": "t:sections.main-product.blocks.title.settings.show_rating_judgeme.label",
+            "info": "t:sections.main-product.blocks.title.settings.show_rating_judgeme.info",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_sku",
+            "label": "t:sections.main-product.blocks.title.settings.show_sku.label",
+            "default": true
+        },
+        {
+            "type": "checkbox",
+            "id": "show_price",
+            "label": "t:sections.main-product.blocks.title.settings.show_price.label",
+            "info": "t:sections.main-product.blocks.title.settings.show_price.info",
+            "default": true
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.advanced.header.content"
+        },
+        {
+            "type": "number",
+            "id": "block_order",
+            "label": "t:sections.all.advanced.block_order.label",
+            "info": "t:sections.all.advanced.block_order.info",
+            "default": 1
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.main-product.blocks.title.name",
+            "category": "t:sections.all.categories.product-information"
+        }
+    ]
+}
+{% endschema %}

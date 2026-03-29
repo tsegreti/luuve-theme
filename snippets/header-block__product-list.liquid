@@ -1,0 +1,27 @@
+{% comment %}
+    Render Product List
+
+    Accepts:
+    - products:             {Object}
+    - limit:                {Number}
+    - image_ratio:          {String}
+    - show_slider_buttons:  {Bool}
+    - ul_id:                {String}
+    - ul_class:             {String}
+{% endcomment %}
+
+<div class="collection-inner">
+    {% render 'grid-items',
+        ul_id: ul_id,
+        ul_class: ul_class,
+        has_side_column: false,
+        items: products,
+        limit: limit,
+        badge_size: false,
+        image_ratio: image_ratio,
+        product_secondary_image: false,
+        product_to_cart_button: false,
+        product_show_vendor: false,
+        row_divider: false
+    %}
+</div>

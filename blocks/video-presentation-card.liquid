@@ -1,0 +1,202 @@
+{%- liquid
+    assign imageWidth = '326,652,978,1182,1340,2364'
+    assign imageSizes = '(max-width: 767px) calc(100vw - 2rem - 2px), (max-width: 1279px) calc(100vw - 6rem - 2px), 1182px'
+
+    assign products = block.settings.source
+
+    assign product_count = 0
+    for product in products
+        assign product_count = product_count | plus: 1
+    endfor
+-%}
+
+<li
+    class="presentation-card reveal-item{% if section.settings.swipe_on_mobile %} slider__slide{% endif %}"
+    id="{{ block.id }}"
+    {{ block.shopify_attributes }}
+>
+    <div class="media card-video">
+        {%- if block.settings.video %}
+            {%- assign is_autoplay = block.settings.autoplay -%}
+            {%- assign video = block.settings.video -%}
+            {%- if is_autoplay %}
+                {{ video | video_tag: autoplay: true, muted: true, loop: true }}
+            {% else %}
+                {{ video | video_tag: autoplay: false, muted: true, loop: true, controls: true -}}
+            {%- endif -%}
+        {% elsif block.settings.video_url %}
+            <div class="">
+                {%- if block.settings.video_url.type == 'youtube' -%}
+                    <iframe
+                        src="https://www.youtube.com/embed/{{ block.settings.video_url.id }}?&autoplay=1&mute=1&showinfo=1&loop=1&playlist={{ block.settings.video_url.id }}&controls=1"
+                    ></iframe>
+                {%- else -%}
+                    <iframe
+                        src="https://player.vimeo.com/video/{{ block.settings.video_url.id }}?title=0&byline=0&portrait=0&autopause=0&playlist={{ block.settings.video_url.id }}&controls=1"
+                        class="js-vimeo"
+                        allowfullscreen
+                        title="{{ block.settings.video_url.id }}"
+                    ></iframe>
+                {%- endif -%}
+            </div>
+        {% else -%}
+            <div class="placeholder-image">
+                {% render 'icon-video-presentation', name: 'placeholder-2' %}
+            </div>
+        {% endif -%}
+    </div>
+
+    {% if products != blank %}
+        {%- assign first_product_rendered = false -%}
+        {%- for product in products limit: 5 %}
+            {% if product != blank and first_product_rendered == false %}
+                {% assign first_product_rendered = true %}
+                <div class="card-product">
+                    {% if product.featured_image %}
+                        {% render 'render-image',
+                            image: product.featured_image,
+                            widths: imageWidth,
+                            sizes: imageSizes,
+                            css_class: ''
+                        -%}
+                    {%- endif %}
+                    <div class="product-card-width">
+                        <p class="product-title">{{ product.title }}</p>
+                        {% render 'helper__decorate-product-price',
+                            product: product,
+                            showPriceLabel: settings.price_label
+                        %}
+                    </div>
+                    <button
+                        id="ProductPopup-{{ block.id }}"
+                        class="product-show-button"
+                        type="button"
+                        onclick="toggleCardDetails(`{{ block.id }}`);return false;"
+                        aria-label="video-presentation__show-button"
+                    >
+                        {% render 'icon-zoom' %}
+                    </button>
+                </div>
+
+                <div class="card-product-details" id="details-{{ block.id }}">
+                    <button
+                        type="button"
+                        class="button modal__close-button"
+                        onclick="toggleCardDetails(this);return false;"
+                        aria-label="video-presentation__close-button"
+                    >
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close">
+                            <use href="#icon-close" />
+                        </svg>
+                    </button>
+
+                    <div class="product-card-list">
+                        {% for product in products %}
+                            {% if product_count == 1 %}
+                                {% render 'vp_single-product', block: block, product: product %}
+                            {% else %}
+                                <div class="card-product">
+                                    {% if product.featured_image %}
+                                        {% render 'render-image',
+                                            image: product.featured_image,
+                                            widths: imageWidth,
+                                            sizes: imageSizes,
+                                            css_class: ''
+                                        -%}
+                                    {%- endif %}
+                                    <div class="product-card-width">
+                                        <p class="product-title">{{ product.title }}</p>
+                                        {% render 'helper__decorate-product-price',
+                                            product: product,
+                                            showPriceLabel: settings.price_label
+                                        %}
+                                    </div>
+                                    <button
+                                        type="button"
+                                        class="product-show-button button"
+                                        onclick="toggleCardDetails(this, '{{ product.id }}');return false;"
+                                        aria-label="video-presentation__card-show-button"
+                                    >
+                                        {% render 'icon-zoom' %}
+                                    </button>
+                                </div>
+                                <div
+                                    class="card-product-details"
+                                    data-product-id="{{ product.id }}"
+                                >
+                                    <button
+                                        type="button"
+                                        class="button modal__close-button"
+                                        onclick="toggleCardDetails(this, '{{ product.id }}');return false;"
+                                        aria-label="video-presentation__card-close-button"
+                                    >
+                                        <svg
+                                            aria-hidden="true"
+                                            focusable="false"
+                                            role="presentation"
+                                            class="icon icon-close"
+                                        >
+                                            <use href="#icon-close" />
+                                        </svg>
+                                    </button>
+                                    {% render 'vp_single-product', block: block, product: product %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% else -%}
+        <div class="card-product">
+            {{ 'image' | placeholder_svg_tag: 'placeholder' }}
+            <div>
+                <p>{{ 'products.product.select_product' | t }}</p>
+                <p>19,99</p>
+            </div>
+        </div>
+    {% endif -%}
+</li>
+
+{% schema %}
+{
+    "name": "t:sections.all.blocks.video-presentation-card.name",
+    "tag": null,
+    "settings": [
+        {
+            "type": "video",
+            "id": "video",
+            "label": "t:sections.all.blocks.video-presentation-card.settings.video.label"
+        },
+        {
+            "type": "video_url",
+            "id": "video_url",
+            "accept": ["youtube", "vimeo"],
+            "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "label": "t:sections.video.settings.video_url.label",
+            "info": "t:sections.video.settings.video_url.info"
+        },
+        {
+            "type": "checkbox",
+            "id": "autoplay",
+            "label": "t:sections.video.settings.autoplay.label",
+            "default": true
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.blocks.video-presentation-card.settings.header_2.content"
+        },
+        {
+            "type": "product_list",
+            "id": "source",
+            "limit": 5,
+            "label": "t:sections.all.blocks.video-presentation-card.settings.source.label"
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.all.blocks.video-presentation-card.name"
+        }
+    ]
+}
+{% endschema %}

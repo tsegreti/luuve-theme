@@ -1,0 +1,31 @@
+{%- comment -%}
+    Product section assets.
+{%- endcomment -%}
+
+{{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+{{ 'component-text-expandable.css' | asset_url | stylesheet_tag }}
+<noscript>
+    {{ 'section-main-product.css' | asset_url | stylesheet_tag }}
+    {{ 'component-price.css' | asset_url | stylesheet_tag }}
+    {{ 'component-text-expandable.css' | asset_url | stylesheet_tag }}
+</noscript>
+
+<link rel="stylesheet" href="{{ 'component-deferred-media.css' | asset_url }}" media="print" onload="this.media='all'">
+{% style %}
+    :is(.product__info-block--stock-status) {
+      --color--stock-status--in-stock: {{ settings.colors_stock_status }};
+    }
+    {%- if section.settings.enable_grayscale_effect %}
+    @media all and (min-width: 990px) {
+      :is(.product__info--with-gallery.with--grayscale-effect) {
+        .image--wrapper {
+          :is(img) {
+            filter: grayscale(100%);
+            transition: all 0.4s ease;
+          }
+        }
+      }
+    }
+    {% endif -%}
+{% endstyle %}

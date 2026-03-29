@@ -1,0 +1,191 @@
+{% assign popup = section.blocks | where: 'type', 'popup' | first %}
+
+{%- if popup.settings.popup_position == 'bottom_right' %}
+    {% style %}
+        #shopify-section-{{ section.id }} .popup-modal__content {
+          max-width: 24rem;
+          top: unset;
+          bottom: 1rem;
+          left: unset;
+          right: 1rem;
+          transform: none;
+        }
+
+        #shopify-section-{{ section.id }} popup-banner .popup-modal__toggle {
+          top: 1rem;
+          margin-right: 1rem;
+          border-radius: 0;
+        }
+    {% endstyle %}
+{% endif -%}
+
+{% for block in section.blocks %}
+    {% if forloop.first %}
+        {% render 'initialize-deferred-scripts', init_popup_banner: true %}
+    {% endif %}
+
+    {% case block.type %}
+        {% when 'popup' %}
+            {% render 'overlay__block-popup', block: block %}
+    {% endcase %}
+{% endfor %}
+
+{% schema %}
+{
+  "name": "t:sections.overlay.name",
+  "tag": "section",
+  "blocks": [
+    {
+      "type": "popup",
+      "name": "t:sections.overlay.blocks.popup.name",
+      "settings": [
+        {
+          "type": "richtext",
+          "id": "text",
+          "default": "<h5>Subscribe for our newsletter</h5>",
+          "label": "t:sections.overlay.blocks.popup.settings.text.label"
+        },
+        {
+          "type": "checkbox",
+          "id": "subscribe_newsletter",
+          "label": "t:sections.overlay.blocks.popup.settings.subscribe_newsletter.label",
+          "default": true
+        },
+        {
+          "type": "richtext",
+          "id": "text_additional",
+          "default": "<p>Your information is safe and secure with us. Read our <a href=\"#\">privacy policy</a>.</p>",
+          "label": "t:sections.overlay.blocks.popup.settings.text_additional.label"
+        },
+        {
+          "type": "select",
+          "id": "popup_position",
+          "label": "t:sections.overlay.blocks.popup.settings.popup_position.label",
+          "default": "bottom_right",
+          "options": [
+            {
+              "value": "center",
+              "label": "t:sections.overlay.blocks.popup.settings.popup_position.center"
+            },
+            {
+              "value": "bottom_right",
+              "label": "t:sections.overlay.blocks.popup.settings.popup_position.bottom_right"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "t:sections.overlay.blocks.popup.settings.header_image.content"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_subscribe_image",
+          "label": "t:sections.overlay.blocks.popup.settings.show_subscribe_image.label",
+          "default": false
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "t:sections.overlay.blocks.popup.settings.image.label"
+        },
+        {
+          "type": "url",
+          "id": "image_url",
+          "label": "t:sections.overlay.blocks.popup.settings.image_url.label"
+        },
+        {
+          "type": "select",
+          "id": "image_position",
+          "label": "t:sections.overlay.blocks.popup.settings.image_position.label",
+          "default": "on_left",
+          "options": [
+            {
+              "value": "underneath",
+              "label": "t:sections.overlay.blocks.popup.settings.image_position.option.underneath"
+            },
+            {
+              "value": "on_left",
+              "label": "t:sections.overlay.blocks.popup.settings.image_position.option.on_left"
+            }
+          ]
+        },
+        {
+          "type": "header",
+          "content": "t:sections.overlay.blocks.popup.settings.header_behavior.content"
+        },
+        {
+          "type": "radio",
+          "id": "showup_when",
+          "label": "t:sections.overlay.blocks.popup.settings.showup_when.label",
+          "default": "exit_intent",
+          "options": [
+            {
+              "value": "immediately",
+              "label": "t:sections.overlay.blocks.popup.settings.showup_when.option.immediately"
+            },
+            {
+              "value": "exit_intent",
+              "label": "t:sections.overlay.blocks.popup.settings.showup_when.option.exit_intent"
+            }
+          ]
+        },
+        {
+          "type": "radio",
+          "id": "showup_frequency",
+          "label": "t:sections.overlay.blocks.popup.settings.showup_frequency.label",
+          "options": [
+            {
+              "value": "daily",
+              "label": "t:sections.overlay.blocks.popup.settings.showup_frequency.option.daily"
+            },
+            {
+              "value": "weekly",
+              "label": "t:sections.overlay.blocks.popup.settings.showup_frequency.option.weekly"
+            }
+          ],
+          "default": "weekly"
+        },
+        {
+          "type": "paragraph",
+          "content": "t:sections.overlay.blocks.popup.settings.subscribe_color_scheme.content"
+        },
+        {
+          "type": "select",
+          "id": "subscribe_color_scheme",
+          "options": [
+            {
+              "value": "accent-1",
+              "label": "t:sections.all.colors.accent_1.label"
+            },
+            {
+              "value": "accent-2",
+              "label": "t:sections.all.colors.accent_2.label"
+            },
+            {
+              "value": "background-1",
+              "label": "t:sections.all.colors.background_1.label"
+            },
+            {
+              "value": "background-2",
+              "label": "t:sections.all.colors.background_2.label"
+            },
+            {
+              "value": "inverse",
+              "label": "t:sections.all.colors.inverse.label"
+            }
+          ],
+          "default": "accent-1",
+          "label": "t:sections.overlay.blocks.popup.settings.subscribe_color_scheme.label"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "popup"
+      }
+    ]
+  }
+}
+{% endschema %}

@@ -1,0 +1,129 @@
+<div
+    id="main-cart-footer"
+    class="main-cart__footer"
+    data-id="{{ section.id }}"
+    {% if cart == empty %}
+        class="is-empty"
+    {% endif %}
+>
+    <div class="cart__footer">
+        <div class="js-contents">
+            <div class="summary">
+                <h2 class="totals__subtotal h3 reveal-item">{{ 'sections.cart.subtotal' | t }}</h2>
+            </div>
+            {%- if cart.cart_level_discount_applications.size > 0 -%}
+                <div>
+                    <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                        {%- for discount in cart.cart_level_discount_applications -%}
+                            <li class="discounts__discount discounts__discount--end">
+                                {%- render 'icon-discount' -%}
+                                {{ discount.title }}
+                                (-{{ discount.total_allocated_amount | money }})
+                            </li>
+                        {%- endfor -%}
+                    </ul>
+                </div>
+            {%- endif -%}
+
+            <div class="data">
+                {%- if section.settings.show_discount_form %}
+                    <cart-discount-code class="cart__discount-code ">
+                        <form id="discount-form" class="discount-form reveal-item">
+                            <input
+                                type="text"
+                                id="discount-code"
+                                placeholder="{{ 'sections.cart.enter_discount_code' | t }}"
+                            >
+                            <button
+                                type="submit"
+                                class="button button--primary button--small{% if settings.show_button_ring_on_hover %} border--outline{% endif %}"
+                                disabled
+                            >
+                                <span>{{ 'sections.cart.discount_apply' | t }}</span>
+                            </button>
+                            <p id="discount-error" class="discount-error hidden" role="alert">
+                                {{ 'sections.cart.discount_error' | t }}
+                            </p>
+                        </form>
+                    </cart-discount-code>
+                {% endif -%}
+                <small class="tax-note caption-large rte">
+                    {%- if cart.taxes_included and shop.shipping_policy.body != blank -%}
+                        {{
+                            'sections.cart.taxes_included_and_shipping_policy_html'
+                            | t: link: shop.shipping_policy.url
+                        }}
+                    {%- elsif cart.taxes_included -%}
+                        {{ 'sections.cart.taxes_included_but_shipping_at_checkout' | t }}
+                    {%- elsif shop.shipping_policy.body != blank -%}
+                        {{
+                            'sections.cart.taxes_and_shipping_policy_at_checkout_html'
+                            | t: link: shop.shipping_policy.url
+                        }}
+                    {%- else -%}
+                        {{ 'sections.cart.taxes_and_shipping_at_checkout' | t }}
+                    {%- endif -%}
+                </small>
+                <div class="totals reveal-item">
+                    <p class="totals__subtotal">{{ 'sections.cart.total' | t }}</p>
+                    <p class="totals__subtotal-value">
+                        {% render 'render-price', price: cart.total_price, css_class: 'price--final' %}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        {% if section.settings.show_cart_note %}
+            {%- liquid
+                assign is_details_opened = false
+                unless cart.note == null or cart.note == ''
+                    assign is_details_opened = true
+                endunless
+
+                if section.settings.cart_note_initially_opened
+                    assign is_details_opened = true
+                endif
+            -%}
+            <cart-note class="cart__note field">
+                <details
+                    {% if is_details_opened %}
+                        open
+                    {% endif %}
+                >
+                    <summary>
+                        <span id="Cart-note-label">{{ 'sections.cart.note' | t }}</span>
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret">
+                            <use href="#icon-caret" /></use>
+                        </svg>
+                    </summary>
+                    <div>
+                        <textarea
+                            class="text-area field__input"
+                            name="note"
+                            id="Cart-note"
+                            placeholder="{{ 'sections.cart.note' | t }}"
+                            aria-labelledby="Cart-note-label"
+                        >{{ cart.note }}</textarea>
+                    </div>
+                </details>
+            </cart-note>
+        {% endif %}
+    </div>
+    {%- if section.settings.show_payment_icons -%}
+        <div class="cart__payment--icons">
+            <span>{{- section.settings.payment_icons_title -}}</span>
+            <ul class="list-payment">
+                {%- for type in shop.enabled_payment_types -%}
+                    <li class="list-payment__item">
+                        {{ type | payment_type_svg_tag: class: 'icon' }}
+                    </li>
+                {%- endfor -%}
+            </ul>
+        </div>
+    {%- endif -%}
+    {%- if additional_checkout_buttons -%}
+        <div class="cart__dynamic-checkout-buttons additional-checkout-buttons">
+            {{ content_for_additional_checkout_buttons }}
+        </div>
+    {%- endif -%}
+</div>

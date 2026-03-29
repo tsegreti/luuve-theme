@@ -1,0 +1,99 @@
+.dropdown-inner {
+    --color-foreground: var(--header--dropdown-color);
+    --color-foreground-75: rgba(var(--header--dropdown-color-rgb), .75);
+    position: absolute;
+    border-radius: .25rem;
+    z-index: 40;
+    background-color: var(--header--dropdown-background, #fafafa);
+    opacity: 0;
+    overflow: hidden;
+}
+
+body[data-current-preset]:not([data-current-preset="enduro"]) .dropdown-inner {
+    border: 1px solid #eaeaea;    
+}
+
+:where(.with--animation__top-menu :is(.dropdown-inner)) {
+    --transition-timing-function-on: cubic-bezier(.2,.7,.1,1);
+    --transition-timing-function-off: cubic-bezier(0.1, 0.4, 0.5, 1);
+    transform: translateY(-10px);
+    transition: all .5s var(--transition-timing-function-off);
+}
+
+.dropdown-inner:not(.small) summary {
+    padding-left: 0;
+}
+
+.dropdown-inner .list-menu--disclosure > li {
+    width: 100%;
+}
+
+.dropdown-inner [aria-current="page"],
+.dropdown-inner details:has([aria-current="page"]) > summary {
+    color: var(--header-menu__item-active--color, var(--color-base-accent-1));
+}
+
+.header__submenu .focus-inset:hover,
+.header__submenu .focus-inset:focus {
+    opacity: .8;
+}
+
+.dropdown-inner.small .collection__item-image {
+    margin-right: .75rem;
+}
+
+[open] > summary > a > svg,
+[open] > summary.header__menu-item.small > svg line,
+[open] > summary.header__menu-item.small > svg circle {
+    transform: rotate(180deg);
+}
+
+:is(
+    [data-items-menu] [open],
+    [data-items-menu] [data-active=true]
+) > .dropdown-inner {
+    opacity: 1;
+    overflow: initial;
+    transform: translateY(0px);
+}
+
+.with--animation__top-menu [open] > .dropdown-inner,
+.with--animation__top-menu [open] > .dropdown-inner.full-width {
+    transition: all .5s var(--transition-timing-function-on);
+}
+
+@media (min-width: 990px), print {
+    .with--animation__child-menu .dropdown-inner .childlist-menu--disclosure > li:focus,
+    .with--animation__child-menu .dropdown-inner .childlist-menu--disclosure > li:hover,
+    .with--animation__child-menu .dropdown-inner .list-menu--disclosure > li:hover,
+    .with--animation__child-menu .dropdown-inner .list-menu--disclosure > li:focus {
+        transform: translateX(0.25rem);
+    }
+
+    .header__menu-item-top {
+        position: relative;
+    }
+
+    .with--animation__top-menu .header__menu-item-top:not(.header__menu--logo-separator)::after {
+        content: '';
+        width: 90%;
+        position: absolute;
+        height: 2px;
+        background: var(--color-base-accent-1);
+        top: 100%;
+        left: 5%;
+        transform: scaleX(0);
+        transform-origin: right center;
+        z-index: 50;
+        transition: transform .25s;
+    }
+
+    .with--animation__top-menu li[data-item-highlighted=true]:has([aria-current=page]) .header__menu-item-top:after,
+    .with--animation__top-menu li[data-item-highlighted=true] > a:after,
+    .with--animation__top-menu .header__menu-item-top:hover:after,
+    .with--animation__top-menu .header__menu-item-top:focus:after,
+    .with--animation__top-menu [open] > .header__menu-item-top:after {
+        transform: scaleX(1);
+        transform-origin: left center;
+    }
+}

@@ -1,0 +1,65 @@
+{% comment %}
+    Add styles for section "Featured collection"
+
+     -  block {Object}
+{% endcomment %}
+
+<link
+    rel="stylesheet"
+    href="{{ 'section-featured-collection-classic.css' | asset_url }}"
+    media="print"
+    onload="this.media='all'"
+>
+{% style %}
+    {% if section.settings.border_top -%}
+    #shopify-section-{{ section.id }} {
+        border-top: 2px solid var(--color-foreground-4);
+        padding-top: 1.5rem;
+    }
+    {% endif -%}
+    #shopify-section-{{ section.id }} slider-component {
+        border-radius: 4px;
+        margin: var(--slider-component--margin, 0 -.75rem);
+    }
+
+    #shopify-section-{{ section.id }} slider-component > ul {
+        --grid-item-gap: 0px;
+        margin: 0;
+        padding: var(--slider-component__ul--padding, 1rem 0);
+    }
+
+    #shopify-section-{{ section.id }} .grid-item {
+        padding: .5rem;
+    }
+
+    #shopify-section-{{ section.id }} .slider-buttons {
+        margin: 0;
+    }
+
+    @media (min-width: 767px), print {
+        #shopify-section-{{ section.id }} {
+            --slider-component--padding: 1.5rem 0 0;
+            --slider-component__ul--padding: 1rem .75rem 2.5rem;
+        }
+    }
+
+    @media (min-width: 990px), print {
+        #shopify-section-{{ section.id }} .slider-buttons {
+            margin: 0;
+            position: absolute;
+            top: -4rem;
+        }
+
+        #shopify-section-{{ section.id }} .slider-counter {
+            display: none;
+        }
+    }
+
+    @media (min-width: calc({{ settings.type_layout_max_width | append: 'px' }} + 2 * 3rem)) {
+        #shopify-section-{{ section.id }} {
+            --slider-component--margin: 0 -3rem;
+            --slider-component--padding: 2rem 2rem 0;
+            --slider-component__ul--padding: 1rem 1rem 3rem;
+        }
+    }
+{% endstyle %}

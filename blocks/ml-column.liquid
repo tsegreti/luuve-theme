@@ -1,0 +1,322 @@
+{%- liquid
+    assign ratio = 1
+    case section.settings.image_ratio
+        when 'adapt'
+            assign ratio = 1
+
+            if block.settings.image and block.settings.image.aspect_ratio > 0
+                assign ratio = block.settings.image.aspect_ratio
+            endif
+
+        when 'portrait'
+            assign ratio = 4 | divided_by: 5.0
+    endcase
+
+    case section.blocks.size
+        when 1
+            assign image_sizes = 'calc(min(1200px, 100vw) - .75rem * 2)'
+        when 2
+            assign image_sizes = '(max-width: 767px) calc(100vw - .75rem * 2), calc(min(1200px, 100vw) / 2 - .75rem * 2)'
+        else
+            assign image_sizes = '(max-width: 767px) calc(100vw - .75rem * 2), (max-width: 989px) calc(100vw / 2 - .75rem * 2), calc(min(1200px, 100vw) / 3 - .75rem * 2)'
+    endcase
+
+    assign liClass = 'multicolumn-list__item grid__item reveal-item'
+    if section.settings.swipe_on_mobile
+        assign liClass = liClass | append: ' slider__slide'
+    endif
+
+    if section.settings.content_animation
+        assign liClass = liClass | append: ' with-reveal-animation'
+    endif
+-%}
+
+{% style %}
+    #shopify-block-{{ block.id }} li {
+      list-style: none;
+    }
+
+    #shopify-block-{{ block.id }} {
+      --multicolumn-card__background: {{ block.settings.cover_background | default: 'rgba(0,0,0,0)' }};
+      --multicolumn-card-media__padding-bottom: {% case section.settings.image_ratio -%}
+        {%- when 'portrait' -%}
+          calc(100% * 5/4)
+        {%- when 'adapt' -%}
+          {%- if block.settings.image == nil -%}
+            calc(100% * 4/5)
+          {%- else -%}
+            calc(100% / {{ block.settings.image.aspect_ratio }})
+          {%- endif -%}
+        {%- else -%}
+          100%
+      {%- endcase %};
+      width: calc(100% / var(--columns-count, 1));
+      display: contents;
+    }
+
+    {%- if section.settings.column_direction == 'cover' %}
+      #shopify-block-{{ block.id }} .multicolumn-card__content {
+        position: absolute;
+      }
+        {%- case block.settings.content_position %}
+          {% when 'top' %}
+            #shopify-block-{{ block.id }} .multicolumn-card__content {
+              top: 0;
+            }
+          {% when 'center' %}
+            #shopify-block-{{ block.id }} .multicolumn-card__content {
+              top: 50%;
+              transform: translateY(-50%);
+            }
+          {% when 'bottom' %}
+            #shopify-block-{{ block.id }} .multicolumn-card__content {
+              bottom: 0;
+            }
+        {% endcase -%}
+        {% if block.settings.content_position == 'split_button' %}
+        #shopify-block-{{ block.id }} .multicolumn-card__content {
+          height: 100%;
+        }
+        #shopify-block-{{ block.id }} .multicolumn-card__content .button {
+            position: absolute;
+            bottom: 3rem;
+            width: max-content;
+          {%- case section.settings.column_alignment %}
+            {% when 'center' %}
+              left: 50%;
+              transform: translateX(-50%);
+            {% when 'right' %}
+              right: 2.5rem;
+          {% endcase -%}
+        }
+        {% endif %}
+      {% else %}
+
+        {%- case block.settings.content_position %}
+          {% when 'top' %}
+            #shopify-block-{{ block.id }} .multicolumn-card__content {
+              transform: translateY(-25%);
+            }
+          {% when 'bottom' %}
+            #shopify-block-{{ block.id }} .multicolumn-card__content {
+              transform: translateY(25%);
+            }
+          {% when 'split_button' %}
+            #shopify-block-{{ block.id }} .multicolumn-card__content {
+              display: flex;
+              flex-direction: column;
+              gap: 1.5rem;
+            }
+        {% endcase -%}
+      {%- endif %}
+{% endstyle %}
+
+{%- capture inner_html %}
+  {% if block.settings.media_enabled %}
+    <div class="multicolumn-card__image-wrapper">
+      <div class="media media--transparent">
+      {%- if block.settings.image != blank -%}
+        {% render 'render-image',
+            image: block.settings.image
+            widths: '698,966,1176,#iw#'
+            sizes: image_sizes
+        %}
+      {%- else -%}
+        {{ 'collection-5' | placeholder_svg_tag: 'placeholder' }}
+      {%- endif -%}
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="multicolumn-card__content multicolumn-card__content-{{ section.settings.column_alignment }}"
+    style="color: {{ block.settings.color_text }}"
+  >
+    {%- unless block.settings.title == blank %}
+    <h3 class="title" style="color: {{ block.settings.color_title }}">
+      {{- block.settings.title -}}
+    </h3>        
+    {% endunless -%}
+    {%- unless block.settings.sub_title == blank %}
+    <p class="subtitle h6" style="color: {{ block.settings.color_subtitle }}">
+      {{- block.settings.sub_title -}}
+    </p>        
+    {% endunless -%}
+    {%- unless block.settings.text == blank %}
+    <div class="rte text">
+      {{- block.settings.text -}}
+    </div>        
+    {% endunless -%}
+    {%- unless block.settings.link_appearance == 'link' %}
+      <a
+        class="multicolumn-card__action button button--primary animate-arrow view-all"
+        href="{{ block.settings.link }}"
+        title="{{ block.settings.link.title }}"
+        style="background: {{ block.settings.button_background }};color: {{ block.settings.button_foreground }}"
+      >
+        {{ block.settings.button_label | escape }}
+        {%- if settings.current_theme_icons == 'enduro' %}
+          {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+        {% else %}
+          {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+        {% endif -%}
+      </a>
+    {% endunless -%}
+  </div>
+{% endcapture -%}
+
+<li id="col-{{ block.id }}--{{ section.id }}" class="{{ liClass }}" {{ block.shopify_attributes }}>
+    {%- if block.settings.link != blank and block.settings.link_appearance == 'link' -%}
+        <a
+            class="multicolumn-card link--appearance{% if block.settings.media_spaced %} multicolumn-card--spaced{% endif %}"
+            href="{{ block.settings.link | default: '#/'}}"
+            title="{{ block.settings.link.title }}"
+        >
+            {{- inner_html -}}
+        </a>
+    {%- else -%}
+        <div class="multicolumn-card{% if block.settings.media_spaced %} multicolumn-card--spaced{% endif %}">
+            {{- inner_html -}}
+        </div>
+    {%- endif -%}
+</li>
+
+{% schema %}
+{
+  "name": "t:sections.multicolumn.blocks.column.name",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "title",
+      "default":"Banner Title",
+      "label": "t:sections.multicolumn.blocks.column.settings.title.label"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "sub_title",
+      "label": "t:sections.multicolumn.blocks.column.settings.sub_title.label"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "default": "<p>Describe a product, make announcements.</p>",
+      "label": "t:sections.multicolumn.blocks.column.settings.text.label"
+    },
+    {
+      "type": "select",
+      "id": "content_position",
+      "options": [
+        {
+          "value": "top",
+          "label": "t:sections.multicolumn.blocks.column.settings.content_position.options.top"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.multicolumn.blocks.column.settings.content_position.options.center"
+        },
+        {
+          "value": "bottom",
+          "label": "t:sections.multicolumn.blocks.column.settings.content_position.options.bottom"
+        },
+        {
+          "value": "split_button",
+          "label": "t:sections.multicolumn.blocks.column.settings.content_position.options.split_button"
+        }
+      ],
+      "default": "center",
+      "label": "t:sections.multicolumn.blocks.column.settings.content_position.label"
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "t:sections.multicolumn.blocks.column.settings.button_label.label",
+      "default": "Discover"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "t:sections.multicolumn.blocks.column.settings.link.label"
+    },
+    {
+      "type": "select",
+      "id": "link_appearance",
+      "options": [
+        {
+          "value": "button",
+          "label": "t:sections.multicolumn.blocks.column.settings.link_appearance.options.button"
+        },
+        {
+          "value": "link",
+          "label": "t:sections.multicolumn.blocks.column.settings.link_appearance.options.link"
+        }
+      ],
+      "default": "link",
+      "label": "t:sections.multicolumn.blocks.column.settings.link_appearance.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.multicolumn.blocks.column.settings.header.media"
+    },
+    {
+      "type": "checkbox",
+      "id": "media_enabled",
+      "label": "t:sections.multicolumn.blocks.column.settings.image_enabled.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "media_spaced",
+      "label": "t:sections.multicolumn.blocks.column.settings.image_spaced.label",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "t:sections.multicolumn.blocks.column.settings.image.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.multicolumn.blocks.column.settings.header.colors"
+    },
+    {
+      "type": "color",
+      "id": "cover_background",
+      "label": "t:sections.multicolumn.blocks.column.settings.cover_background.label"
+    },
+    {
+      "type": "color",
+      "id": "color_title",
+      "label": "t:sections.multicolumn.blocks.column.settings.color_title.label",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "color_subtitle",
+      "label": "t:sections.multicolumn.blocks.column.settings.color_subtitle.label",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "color_text",
+      "label": "t:sections.multicolumn.blocks.column.settings.color_text.label",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "button_background",
+      "label": "t:sections.multicolumn.blocks.column.settings.button_background.label",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "button_foreground",
+      "label": "t:sections.multicolumn.blocks.column.settings.button_foreground.label",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.multicolumn.blocks.column.name"
+    }
+  ]
+}
+{% endschema %}

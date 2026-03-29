@@ -1,0 +1,95 @@
+{% comment %}
+    Render swatch options for product.
+
+    Accepts:
+     -  form    {String}
+     -  product {Object}
+     -  uniq_id {String} (Optional)
+{% endcomment %}
+
+{% comment %}
+    Swatches allows to have some wierd colors. For example "Blue Stripes".
+    Assume store has product with color option name "Blue Stripes".
+    First, Shopify try to find image with name `product-handle__color__bluestripes`.
+    Then, if not found, searches for image `color__bluestripes`.
+    When no image found Shopify tries to render swatch with CSS.
+    It use CSS variable --swatch-background-bluestripes.
+    So you can define this variable in theme custom CSS:
+    :root {
+        --swatch-background-bluestripes: repeating-linear-gradient(45deg, #606dbc, #606dbc .5rem, #465298 .5rem, #465298 1rem);
+    }
+{% endcomment %}
+
+{% liquid
+    assign swatches_initially_visible = 3
+    assign images = ''
+    assign values = ''
+    assign option_name = ''
+    assign option_selected = ''
+    assign possibleOptionName = settings.list_color_option_names | default: 'color,colour'
+    for option in product.options_with_values
+        assign option_index0 = forloop.index0
+        assign option_name_downcased = option.name | downcase
+        if possibleOptionName contains option_name_downcased
+            assign option_name = option.name
+            for value in option.values
+                assign values = values | append: value | append: '|'
+                assign image = ''
+                for variant in product.variants
+                    if variant.options[option_index0] == value
+                        if variant.id == product.selected_variant.id
+                            assign option_selected = value
+                        endif
+                        if variant.featured_media.preview_image != null
+                            assign image = variant | image_url
+                        endif
+                    endif
+                endfor
+
+                assign images = images | append: image | append: '|'
+            endfor
+        endif
+    endfor
+
+    assign values = values | split: '|'
+    assign images = images | split: '|'
+    assign json_data = '{'
+    for value in values
+        assign json_data = json_data | append: '"#value#": "#image#"' | replace: '#value#', value | replace: '#image#', images[forloop.index0]
+        unless forloop.last
+            assign json_data = json_data | append: ', '
+        endunless
+    endfor
+    assign json_data = json_data | append: '}'
+    if uniq_id == null
+        assign uniq_id = section.id
+    endif
+    assign control_id = 'radio__' | append: uniq_id | append: '-' | append: product.id
+%}
+
+{%- unless product.has_only_default_variant -%}
+    {% if json_data contains '?v' %}
+        <div class="grid-item__swatch-wrapper">
+            <select-color-variants
+                class="no-js-hidden"
+                data-product-id="{{ product.id }}"
+                data-section="{{ section.id }}"
+                data-url="{{ product.url }}"
+                {{ block.shopify_attributes }}
+            >
+                {% render 'swatch-options',
+                    option_name: option_name,
+                    form: form,
+                    option_values: values,
+                    option_selected: option_selected,
+                    control_id: control_id,
+                    product_handle: product.handle,
+                    hide_initially_after: 3
+                %}
+                <script type="application/json">
+                    {{ json_data }}
+                </script>
+            </select-color-variants>
+        </div>
+    {% endif %}
+{%- endunless -%}

@@ -1,0 +1,28 @@
+{% comment %}
+    Render Infinity Scroll action
+
+    Accepts:
+    - pagination:   {Object}
+    - type:         {String}
+    - class:        {String}
+{% endcomment %}
+
+<pagination-load-more
+    data-pagination-type="{{ type }}"
+    data-page-next="{% if paginate.next %}true{% else %}false{% endif %}"
+>
+    <a
+        class="pagination-load-more{% if type == 'button' %} button animate-arrow button--primary{% endif %}"
+        href="{{ paginate.next.url}}"
+    >
+        <span
+            {% unless type == 'button' %}
+                class="sr-only"
+            {% endunless %}
+        >
+            {{ 'general.pagination.infinity_scroll' | t }}
+        </span>
+    </a>
+</pagination-load-more>
+
+{%- render 'initialize-deferred-scripts', init_infinity_pagination: true, typeInfinityPagination: type -%}

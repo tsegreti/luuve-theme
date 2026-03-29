@@ -1,0 +1,100 @@
+{
+    "name": "t:sections.footer.name",
+    "type": "footer",
+    "sections": {
+        "footer_top": {
+            "type": "footer",
+            "settings": {
+                "show_logo": false,
+                "use_design_elements": true,
+                "enable_noise_effect": true
+            },
+            "blocks": {
+                "footer-contacts": {
+                    "type": "footer-contacts",
+                    "settings": {
+                        "show_media": true,
+                        "social_icons_color": "#DAFA46"
+                    }
+                },
+                "menu-1": {
+                    "type": "menu",
+                    "settings": {
+                        "title": "Quick links"
+                    }
+                },
+                "menu-2": {
+                    "type": "menu",
+                    "settings": {
+                        "title": "Quick links"
+                    }
+                },
+                "menu-3": {
+                    "type": "menu",
+                    "settings": {
+                        "title": "Quick links"
+                    }
+                },
+                "menu-4": {
+                    "type": "menu",
+                    "settings": {
+                        "title": "Quick links"
+                    }
+                }
+            },
+            "block_order": [
+                "footer-contacts",
+                "menu-1",
+                "menu-2",
+                "menu-3",
+                "menu-4"
+            ]
+        },
+        "footer_middle": {
+            "type": "footer-middle",
+            "blocks": {
+                "heading": {
+                    "type": "heading",
+                    "settings": {
+                        "heading": "YOUR STORE MOTTO",
+                        "heading_level": "custom_font_size",
+                        "heading_with_icon_separator": "square",
+                        "icon_separator_color": "#DAFA46",
+                        "heading_color": "#FFFFFF",
+                        "heading_font_size": 84
+                    }
+                },
+                "image": {
+                    "type": "image",
+                    "settings": {}
+                }
+            },
+            "block_order": ["heading", "image"],
+            "settings": {
+                "enable_noise_effect": true
+            }
+        },
+        "footer_bottom": {
+            "type": "footer-bottom",
+            "blocks": {
+                "menu": {
+                    "type": "menu",
+                    "settings": {
+                        "title": "Quick links"
+                    }
+                },
+                "copyright": {
+                    "type": "copyright",
+                    "settings": {
+                        "text": "Copyright @2026. Powered by shopify."
+                    }
+                }
+            },
+            "block_order": ["copyright", "menu"],
+            "settings": {
+                "enable_noise_effect": true
+            }
+        }
+    },
+    "order": ["footer_top", "footer_middle", "footer_bottom"]
+}

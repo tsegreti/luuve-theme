@@ -1,0 +1,99 @@
+{% comment %}
+    Render header dropdown content - Collection List
+
+    Accepts:
+     - block               {Object}
+     - blockOrder:         {Numb}
+     - parent_item_index:  {Numb}
+{% endcomment %}
+
+{%- liquid
+    assign collectionList = block.settings.collections
+    assign collectionItemsWidth = block.settings.collection_items_width
+    assign selectedParentIndex = block.settings.item_menu_index
+    assign viewAll = block.settings.collection_url
+    assign image_ratio = block.settings.image_ratio
+
+    assign media_condition = '(max-width: 989px)'
+-%}
+{%- unless block.settings.show_block_on_mobile %}
+    <style media="{{ media_condition }}">
+        .dropdown-inner__collections[hidden-on-mobile] {
+            display: none;
+        }
+    </style>
+{% endunless -%}
+{%- unless collectionList.count == 0 -%}
+    {% if parent_item_index == selectedParentIndex %}
+        <div
+            class="dropdown-inner__collections dropdown-list{% if settings.animation_on_reveal_assets %} reveal-slide-in{% endif %}{% if block.settings.use_zigzag_layout_grid %} zigzag-layout-grid{% endif %}"
+            data-block-index="{{ blockOrder }}"
+            {% unless block.settings.show_block_on_mobile %}
+                hidden-on-mobile
+            {% endunless %}
+        >
+            {%- comment -%}
+                Critical styles for Header Dropdown Collection listing content.
+
+                Accepts:
+                -collectionItemsWidth: {Percentage}
+            {%- endcomment -%}
+
+            {% style %}
+                {% unless settings.collection_list_image_position == 'cover' %}
+                .dropdown-inner__collections li:hover .item-title,
+                .dropdown-inner__collections li:focus .item-title {
+                  color: var(--color-foreground-75);
+                }{% endunless %}
+
+                .dropdown-inner__collections li:not(._action) {
+                  width: clamp(140px, {{ collectionItemsWidth | append: '%' }},  300px);
+                  padding: {% if collectionItemsWidth > 40 %}.8{% elsif collectionItemsWidth >= 30 and collectionItemsWidth < 40 %}.6{% else %}.4{% endif %}rem;
+                  height: 100%;
+                }
+                @media(min-width: 990px) {
+                  .dropdown-inner__collections ul > li .item-title {
+                    font-size: {% if collectionItemsWidth <= 16 %}.75{% elsif collectionItemsWidth > 16 and collectionItemsWidth < 40 %}.875{% else %}1.25{% endif %}rem;
+                  }
+                }
+                {% if settings.collection_list_image_position == 'cover' %}
+                @media(min-width: 990px) {
+                  .dropdown-inner__collections li .item-title,
+                  .dropdown-inner__collections li .action {
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);
+                  }
+
+                  .dropdown-inner__collections li .item-title {
+                    bottom: {% if collectionItemsWidth >= 40 %}6{% else %}5{% endif %}rem;
+                  }
+
+                  .dropdown-inner__collections li .item-title,
+                  .dropdown-inner__collections li .item-title {
+                    color: var(--color-background);
+                  }
+                }{% endif %}
+            {% endstyle %}
+
+            <ul
+                id="{{ 'collection-list--' | append: section.id }}"
+                class="collection-list{% if block.settings.show_outline_border %} _with-outline-border{% endif %}"
+            >
+                {%- for collectionItem in collectionList -%}
+                    {%- render 'grid-item-collection',
+                        collection: collectionItem,
+                        collection_type: 'slider',
+                        image_ratio: image_ratio,
+                        image_position: settings.collection_list_image_position
+                    -%}
+                {%- endfor -%}
+                {%- if viewAll != blank -%}
+                    <li class="grid-item _action">
+                        {%- render 'header__dropdown-link-view-all', link_view_all: viewAll -%}
+                    </li>
+                {%- endif -%}
+            </ul>
+        </div>
+    {% endif %}
+{%- endunless -%}

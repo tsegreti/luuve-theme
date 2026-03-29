@@ -1,0 +1,129 @@
+{% comment %}
+    Render header dropdown content - Product List
+
+    Accepts:
+     - block               {Object}
+     - blockOrder:         {Numb}
+     - parent_item_index:  {Numb}
+{% endcomment %}
+{%- liquid
+    assign ulID = 'product-list--' | append: section.id
+    assign ulClass = 'products product-list'
+
+    assign productList = block.settings.product_list.products
+    assign selectedParentIndex = block.settings.item_menu_index
+    assign itemsWidth = block.settings.items_width
+    assign limit = block.settings.products_to_show
+    assign viewAll = block.settings.collection_url
+    assign showPrice = block.settings.show_product_price
+    assign showBadge = block.settings.show_badge
+    assign showOutlineBorder = block.settings.show_outline_border
+
+    assign imageRatio = 'settings|product_card_image_ratio'
+
+    if showPrice == false
+        assign ulClass = ulClass | append: ' ' | append: '_with-price-hidden'
+    endif
+
+    if showBadge == false
+        assign ulClass = ulClass | append: ' ' | append: '_with-badge-hidden'
+    endif
+
+    if showOutlineBorder
+        assign ulClass = ulClass | append: ' ' | append: '_with-outline-border'
+    endif
+    assign media_condition = '(max-width: 989px)'
+-%}
+
+{%- unless productList.count == 0 %}
+    {%- comment -%}
+        Critical styles for Header Dropdown Product listing content.
+
+        Accepts:
+        -itemsWidth: {percentage}
+    {%- endcomment -%}
+    {% style %}
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} squama-item {
+            height: auto !important;
+        }
+
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} .item-link,
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} .item-link:before,
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} squama-item:after {
+            content: none;
+            background: transparent;
+            padding: 0;
+        }
+
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} .grid-item .item-title,
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} .grid-item squama-item[data-focused] .item-title {
+            text-align: center;
+            -webkit-line-clamp: 1;
+        }
+
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} squama-item[data-status=ready]  .price--compare {
+            opacity: 1;
+            transform: unset;
+        }
+
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} .grid-item .item-price {
+            justify-content: center;
+        }
+
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} > li {
+            width: clamp(140px, {{ itemsWidth | append: '%' }},  300px);
+            padding: {% if itemsWidth > 40 %}.8{% elsif itemsWidth >= 30 and itemsWidth < 40 %}.6{% elsif itemsWidth < 30 and itemsWidth >= 20 %}.4{% else %}.2{% endif %}rem;
+        }
+
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }}._with-outline-border > li {
+            box-shadow: 0px 0px 8px 2px var(--color-foreground-4);
+            outline: 1px solid var(--color-foreground-8);
+        }
+
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} > li .item-price .price,
+        .dropdown-inner__product-list {{ ulID | prepend:'#' }} > li .item-price .price > span {
+            font-size: {% if itemsWidth >= 10 and itemsWidth < 22 %}1{% elsif itemsWidth >= 22 and itemsWidth <= 32 %}1.25{% else %}1.5{% endif %}rem !important;
+            font-weight: 500;
+        }
+    {% endstyle %}
+    {%- unless block.settings.show_block_on_mobile %}
+        <style media="{{ media_condition }}">
+            .dropdown-inner__product-list[hidden-on-mobile] {
+                display: none;
+            }
+        </style>
+    {% endunless -%}
+
+    {% if parent_item_index == selectedParentIndex %}
+        <div
+            class="dropdown-inner__product-list dropdown-list{% if settings.animation_on_reveal_assets %} reveal-slide-in{% endif %}"
+            data-block-index="{{ blockOrder }}"
+            {% unless block.settings.show_block_on_mobile %}
+                hidden-on-mobile
+            {% endunless %}
+        >
+            {%- capture list -%}
+        {% render 'header-block__product-list'
+          ul_id: ulID
+          ul_class: ulClass
+          products: productList
+          limit: limit
+          image_ratio: imageRatio
+          show_slider_buttons: showSliderButtons
+        %}
+      {%- endcapture -%}
+
+            {% if viewAll != blank %}
+                {%- capture linkViewAll -%}
+          {% render 'header__dropdown-link-view-all' link_view_all: viewAll %}
+
+        {%- endcapture -%}
+                {% assign needle = '</ul>' %}
+                {% assign linkViewAll = linkViewAll | append: needle %}
+                {% assign list = list | replace: needle, linkViewAll %}
+            {% endif %}
+
+            {{- list -}}
+        </div>
+    {% endif %}
+{% endunless -%}

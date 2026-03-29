@@ -1,0 +1,203 @@
+{% comment %}
+    Render critical styles for product gallery
+
+    Accepts:
+        -  block                 {Object}
+        -  product               {Object}
+        -  section_id            {String}
+        -  thumb_width           {Number}
+        -  thumb_images_startegy {String}  'always_visible' | 'desktop_visible'
+        -  with_thumbs           {Boolean}
+{% endcomment %}
+
+{% style %}
+    slider-vertical > button {
+        display: none !important;
+    }
+
+    .product__media .slider {
+        display: flex;
+        overflow-x: hidden;
+    }
+
+    .product__media .slider__slide {
+        flex-shrink: 0;
+        position: relative;
+        width: 100%;
+    }
+
+    .product__media .image--wrapper {
+        position: relative;
+    }
+
+    .product__media .image--wrapper img {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .product__media .slider-pagination {
+        display: flex;
+        flex-direction: row;
+        padding: 1rem 0;
+    }
+
+    .product__media .deferred-media img {
+        object-fit: contain;
+    }
+
+    .product__info-block--gallery modal-opener button {
+        position: absolute;
+    }
+
+    #gallery-{{ section_id }} {
+        --thumb--width: calc({{ thumb_width }}px * 2/3);
+        --thumb--gap: .5rem;
+        display: flex;
+        flex-direction: column-reverse;
+        padding: 0;
+    }{% if with_thumbs %}{% if thumb_images_startegy == 'always_visible' %}
+
+    #gallery-{{ section_id }} .slider-pagination > * {
+        height: auto;
+        width: calc(var(--thumb--width));
+        flex-shrink: 0;
+    }
+
+    #gallery-{{ section_id }} .slider-pagination {
+        overflow: auto;
+    }
+
+    #gallery-{{ section_id }} .slider-pagination::-webkit-scrollbar {
+        display: none;
+    }
+
+    .slider-pagination > :nth-child(n + 2) {
+        visibility: visible;
+    }{% else %}
+
+    #gallery-{{ section_id }} .slider-pagination .image--wrapper {
+        display: none;
+    }
+
+    #gallery-{{ section_id }} .slider-pagination {
+        justify-content: center;
+    }{% endif %}
+
+    @media (min-width: 767px) {
+        #gallery-{{ section_id }} {
+            position: relative;
+        }
+
+        #gallery-{{ section_id }} .slider-pagination {
+            display: flex;
+            gap: var(--thumb--gap);
+            justify-content: start;
+            order: -1;
+            width: auto;
+            height: 100%
+        }
+
+        #gallery-{{ section_id }} .slider-pagination > * {
+            height: auto;
+            padding: 0;
+            width: calc(var(--thumb--width) - var(--thumb--gap));
+        }
+
+        #gallery-{{ section_id }} .slider-pagination .image--wrapper {
+            display: block;
+        }
+    }
+    {% if block.settings.gallery_thumbs_mode contains 'grid_' %}
+        @media (min-width: 767px) {
+            #gallery-{{ section_id }} {
+                display: flex;
+            }
+            #gallery-{{ section_id }} .slider-pagination {
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+        }
+    {% endif %}
+    {% case block.settings.gallery_thumbs_mode %}
+        {% when 'slide_left' or 'grid_below' %}
+            .product__media .slider--fade-in {
+                overflow-x: auto;
+            }
+            #gallery-{{ section_id }} .slider-pagination > * {
+                max-width: 108px;
+            }
+            @media (min-width: 767px) {
+                .product__media li .image--wrapper {
+                    transform: scale(.97);
+                    opacity: .9;
+                    transition: transform 1s, opacity .75s;
+                }
+                .product__media li.slide-active .image--wrapper {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+            }
+            @media (min-width: 990px) {
+                #gallery-{{ section_id }} .slider-component__inner:hover .slider-buttons,
+                #gallery-{{ section_id }} .slider-component__inner:focus .slider-buttons {
+                    display: block;
+                }
+            }
+        {% when 'slide_left' %}
+            @media (min-width: 767px) {
+                #gallery-{{ section_id }}.slideshow {
+                    display: block;
+                    --thumb--gap: 1rem;{% if thumb_width > 108 %}
+                    padding: 0 0 0 calc(108px + var(--thumb--gap));
+                    {% else %}
+                    padding: 0 0 0 calc(var(--thumb--width) + var(--thumb--gap));{% endif %}
+                }
+                #gallery-{{ section_id }} .slider-thumbs--wrapper {
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    display: block;
+                }
+                #gallery-{{ section_id }} .slider-pagination {
+                    flex-direction: column;
+                }
+            }
+        {% when 'grid_below' %}
+            @media (min-width: 767px) {
+                #gallery-{{ section_id }}.slideshow {
+                    --thumb--gap: 1rem;
+                }
+            }
+        {% when 'grid_theme' %}
+            @media (max-width: 500px) {
+                .product__media .slider--fade-in {
+                    overflow-x: auto;
+                }
+            }
+            @media (min-width: 767px) {
+                #gallery-{{ section_id }}.slideshow {
+                    --thumb--gap: .5rem;
+                }
+            }
+            @media (max-width: 989px) {
+                #gallery-{{ section_id }} .badge {
+                  display: none;
+                }
+            }
+            @media (min-width: 990px) {
+                #gallery-{{ section_id }}.slideshow {
+                    --thumb--width: calc({{ thumb_width }}px * 5/6);
+                }
+            }
+            @media (min-width: 1280px) {
+                #gallery-{{ section_id }}.slideshow {
+                    --thumb--width: calc({{ thumb_width }}px - .5rem);
+                }
+            }
+    {% endcase %}
+    {% endif %}
+{% endstyle %}

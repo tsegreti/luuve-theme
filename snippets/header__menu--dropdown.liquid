@@ -1,0 +1,64 @@
+{% comment -%}
+    Render dropdown for top-level menu item.
+    (small menu)
+
+    Accepts:
+
+     -  links           {Array}
+     -  active_dropdown {String} (Optional)
+     -  class_item      {String} (Optional)
+{% endcomment -%}
+
+{%- liquid
+    assign active_dropdown = active_dropdown | default: 'on_hover'
+-%}
+
+{% for link in links %}
+    {% capture inner_html %}
+        {% if section.settings.show_collection_image %}
+            {% render 'header__menu--collection-icon'
+                link: link
+            %}
+        {% endif %}
+        {{ link.title | escape }}
+    {% endcapture -%}
+
+    {% capture item_html %}
+        <a href="{{ link.url }}"
+            class="{{ class_item | default: 'header__menu-item list-menu__item link--text focus-inset' }}"
+            {% if link.current %} aria-current="page"{% endif %}
+        >
+            {{ inner_html }}
+        </a>
+    {% endcapture -%}
+
+    <li>
+        {% if link.links == blank %}
+            {{ item_html }}
+        {% else %}
+            <details>
+                <summary class="focus-inset">
+                    {% if active_dropdown == 'on_hover' %}
+                        {{ item_html }}
+                    {% else %}
+                        {{ inner_html }}
+                    {% endif %}
+                    <svg
+                        aria-hidden="true"
+                        focusable="false"
+                        role="presentation"
+                        class="icon icon-caret"
+                    >
+                        <use href="#icon-caret" />
+                    </svg>
+                </summary>
+                <ul
+                    class="childlist-menu--disclosure list-menu"
+                    data-type-menu="small"
+                >
+                    {% render 'header__menu--dropdown', links: link.links %}
+                </ul>
+            </details>
+        {%- endif -%}
+    </li>
+{% endfor %}

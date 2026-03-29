@@ -1,0 +1,21 @@
+{%- comment -%}
+    Render button for testimonials section using block object.
+
+    Accepts:
+     -  block {Object}
+{%- endcomment -%}
+
+<div class="testimonials-actions">
+    <a
+        {% if block.settings.link == blank -%}
+            aria-disabled="true"
+        {%- else -%}
+            href="{{ block.settings.link }}"
+        {%- endif %}
+        class="button button--{{ block.settings.style }} animate-arrow{% if block.settings.action_btn_width == 'extend' %} _extend{% endif %}"
+        {{ block.shopify_attributes }}
+    >
+        <span>{{ block.settings.label | escape }}</span>
+        {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+    </a>
+</div>

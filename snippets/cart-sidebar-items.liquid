@@ -1,0 +1,121 @@
+{%- liquid
+    assign imageWidth = '105px'
+-%}
+
+{%- for item in cart.items %}
+    {% assign item_index = forloop.index %}
+    <div
+        id="cart-sidebar-item-{{ item.id }}"
+        class="cart-sidebar__item"
+        style="--cart-item__media--width: {{ imageWidth }}"
+        data-line="{{ forloop.index }}"
+    >
+        <div class="cart-item__media">
+            {% render 'cart-item__media', item: item, item_media_width: imageWidth %}
+        </div>
+        <div class="cart-item__info">
+            {% if settings.minicart_show_sku %}
+                <span class="cart-item__sku">{{ item.sku }}</span>
+            {% endif %}
+
+            <a class="cart-item__title" href="{{ item.url }}">{{ item.product.title | escape }}</a>
+
+            {% if item.options_with_values != blank and item.product.has_only_default_variant == false %}
+                <ul class="cart-item__options">
+                    {% for option in item.options_with_values %}
+                        <li class="cart-item__option">
+                            {{ option.name }}: <span>{{ option.value }}</span>
+                        </li>
+                    {% endfor %}
+                    {%- for property in item.properties -%}
+                        {%- assign property_first_char = property.first | slice: 0 -%}
+                        {%- if property.last != blank and property_first_char != '_' -%}
+                            {%- if property.last contains '/uploads/' -%}
+                                <li class="cart-item__option">
+                                    {{ property.first }}:
+                                    <a href="{{ property.last }}" target="_blank">
+                                        {{ property.last | split: '/' | last }}
+                                    </a>
+                                </li>
+                            {%- else -%}
+                                <li class="cart-item__option">
+                                    {{ property.first }}: <span>{{ property.last }}</span>
+                                </li>
+                            {%- endif -%}
+                        {%- endif -%}
+                    {%- endfor -%}
+                </ul>
+            {% endif %}
+            {%- if item.selling_plan_allocation != null -%}
+                <p class="selling_plan_option">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+            {%- endif -%}
+            <ul class="discounts list-unstyled" role="list" aria-label="{{ 'customer.order.discount' | t }}">
+                {%- for discount in item.discounts -%}
+                    <li class="discounts__discount">
+                        {%- render 'icon-discount' -%}
+                        {{ discount.title }}
+                    </li>
+                {%- endfor -%}
+            </ul>
+            <div class="cart-item__price">
+                {% render 'cart-item__price', item: item %}
+                {% if item.quantity > 1 %}
+                    <span class="cart-item__qty">{{ item.quantity }}</span>
+                {% endif %}
+            </div>
+            <div class="cart-item__actions">
+                <quantity-input class="quantity">
+                    <a
+                        class="quantity__button button button--small"
+                        href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity={{ item.quantity | minus: 1 }}"
+                    >
+                        {% render 'icons-solid', name: 'minus' %}
+                    </a>
+                    <input
+                        class="quantity__input"
+                        type="number"
+                        name="quantity"
+                        value="{{ item.quantity }}"
+                        data-line="{{ forloop.index }}"
+                    >
+                    <a
+                        class="quantity__button button button--small"
+                        href="{{ routes.cart_change_url }}?line={{ forloop.index }}&quantity={{ item.quantity | plus: 1 }}"
+                    >
+                        {% render 'icons-solid', name: 'plus' %}
+                    </a>
+                </quantity-input>
+                <a
+                    href="#/"
+                    class="cart-item__remove"
+                    title="{{ 'sections.cart.remove_title' | t: title: item.title }}"
+                    data-line="{{ forloop.index }}"
+                >
+                    {% render 'theme-icons', name: 'trash' %}
+                </a>
+            </div>
+        </div>
+    </div>
+{% else %}
+    <div class="cart-sidebar__empty">
+        <p>{{ 'sections.cart.empty_message' | t }}</p>
+        <p>
+            <a
+                href="#"
+                onclick="this.closest('cart-sidebar')?.close?.(); return false;"
+                class="link"
+                title="{{ 'general.continue_shopping' | t | strip_html}}"
+            >
+                {{- 'general.continue_shopping' | t -}}
+            </a>
+        </p>
+    </div>
+{% endfor -%}
+{%- if cart.item_count > 0 and settings.minicart_show_upsell_products %}
+    <div class="cart-sidebar__complementary-products">
+        {%- render 'block-complementary-products',
+            sectionId: 'cart-sidebar-items',
+            productId: cart.items.first.product.id
+        -%}
+    </div>
+{% endif -%}

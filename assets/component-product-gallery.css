@@ -1,0 +1,26 @@
+slider-vertical .image--wrapper .icon-plus {
+    visibility: visible;
+    position: absolute;
+    bottom: .5rem;
+    right: 1rem;
+    width: 1.55rem;
+    height: 1.55rem;
+    padding: 2px;
+    background: var(--color-background);
+    border: 1px solid var(--color-foreground-10);
+    z-index: 11;
+    opacity: .9;
+}
+
+@media (min-width: 990px) {
+    slider-vertical .image--wrapper .icon-plus {
+        visibility: hidden;
+        right: 0;
+        transition: visibility .1s, right .25s;
+    }
+    slider-vertical .image--wrapper:hover .icon-plus,
+    slider-vertical .image--wrapper:focus .icon-plus {
+        visibility: visible;
+        right: .5rem;
+    }
+}

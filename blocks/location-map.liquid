@@ -1,0 +1,120 @@
+<div class="contact map__location" {{ block.shopify_attributes }}>
+    {%- assign api_key = block.settings.api_key | escape -%}
+    {%- if api_key != blank -%}
+        {%- assign coordinate_latitud = block.settings.position_latitude | escape -%}
+        {%- assign coordinate_longitud = block.settings.position_longitude | escape -%}
+        {%- assign street = block.settings.street_address | escape -%}
+        {%- assign postcode = block.settings.postcode | escape -%}
+        {%- assign city = block.settings.city | escape -%}
+        {%- assign region = block.settings.region_id | escape -%}
+        {%- assign country = block.settings.country_id | escape -%}
+        {%- assign phone = block.settings.phone | escape -%}
+        {%- assign email = block.settings.email | escape -%}
+        {%- assign shop_name = shop.name | escape -%}
+        <div class="error_coordinates" hidden>
+            <p>{{ 'templates.contact.location.error_coordinates' | t }}</p>
+        </div>
+        <div id="map"></div>
+        {% render 'init_map_js',
+            api_key: api_key,
+            latitud: coordinate_latitud,
+            longitud: coordinate_longitud,
+            street: street,
+            postcode: postcode,
+            city: city,
+            region: region,
+            country: country,
+            phone: phone,
+            email: email,
+            shop_name: shop_name
+        %}
+    {%- else -%}
+        {%- if template == 'index' %}
+            <img src="{{ 'map.svg' | asset_url }}" loading="lazy" class="location-map" width="1440" height="547">
+        {% else %}
+            {% render 'icon-map-location' %}
+        {% endif %}
+    {%- endif -%}
+</div>
+
+{% style %}
+    .map__location { display: block; }
+    .map__location > :is(svg, img) {margin: 0 auto;}
+{% endstyle %}
+
+{% schema %}
+{
+  "name": "t:sections.contact-form.blocks.location.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "text",
+      "id": "api_key",
+      "label": "t:sections.contact-form.blocks.location.settings.api_key.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.contact-form.blocks.location.settings.header.content",
+      "info": "t:sections.contact-form.blocks.location.settings.header.info"
+    },
+    {
+      "type": "text",
+      "id": "position_latitude",
+      "label": "t:sections.contact-form.blocks.location.settings.position_latitude.label",
+      "info": "t:sections.contact-form.blocks.location.settings.position_latitude.info"
+    },
+    {
+      "type": "text",
+      "id": "position_longitude",
+      "label": "t:sections.contact-form.blocks.location.settings.position_longitude.label",
+      "info": "t:sections.contact-form.blocks.location.settings.position_longitude.info"
+    },
+    {
+      "type": "text",
+      "id": "street_address",
+      "label": "t:sections.contact-form.blocks.location.settings.street_address.label",
+      "info": "t:sections.contact-form.blocks.location.settings.street_address.info"
+    },
+    {
+      "type": "text",
+      "id": "postcode",
+      "label": "t:sections.contact-form.blocks.location.settings.postcode.label",
+      "info": "t:sections.contact-form.blocks.location.settings.postcode.info"
+    },
+    {
+      "type": "text",
+      "id": "city",
+      "label": "t:sections.contact-form.blocks.location.settings.city.label",
+      "info": "t:sections.contact-form.blocks.location.settings.city.info"
+    },
+    {
+      "type": "text",
+      "id": "region_id",
+      "label": "t:sections.contact-form.blocks.location.settings.region_id.label"
+    },
+    {
+      "type": "text",
+      "id": "country_id",
+      "label": "t:sections.contact-form.blocks.location.settings.country_id.label",
+      "info": "t:sections.contact-form.blocks.location.settings.country_id.info"
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "t:sections.contact-form.blocks.location.settings.phone.label",
+      "info": "t:sections.contact-form.blocks.location.settings.phone.info"
+    },
+    {
+      "type": "text",
+      "id": "email",
+      "label": "t:sections.contact-form.blocks.location.settings.email.label",
+      "info": "t:sections.contact-form.blocks.location.settings.email.info"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact-form.blocks.location.name"
+    }
+  ]
+}
+{% endschema %}

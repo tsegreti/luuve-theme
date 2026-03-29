@@ -1,0 +1,22 @@
+{%- comment -%}
+    render unit price for product variant
+
+    Accepts:
+    - variant: {Object}
+{%- endcomment -%}
+
+{%- assign upm = variant.unit_price_measurement -%}
+{%- if variant.available and upm -%}
+    <small class="price--unit">
+        <span class="label">{{ 'products.product.price.unit_price' | t }}</span>
+        {% render 'render-price', price: variant.unit_price, css_class: 'unit-price' %}
+        <span aria-hidden="true">/</span>
+        <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+        <span>
+            {%- if upm.reference_value != 1 -%}
+                {{- upm.reference_value -}}
+            {%- endif -%}
+            {{ upm.reference_unit }}
+        </span>
+    </small>
+{%- endif -%}

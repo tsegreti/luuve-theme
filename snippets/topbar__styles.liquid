@@ -1,0 +1,118 @@
+{%- comment -%}
+    Render styles for header top bar section.
+
+    Accepts:
+    - section_id: {String}
+{%- endcomment -%}
+
+{% style %}
+    {{ section_id }} {
+        --header-top__background-color: {{ section.settings.color_background }};
+        --header-top__background-color-rgb: {{ section.settings.color_text.red }}, {{ section.settings.color_text.green }}, {{ section.settings.color_text.blue }};
+        display: block;
+        background: var(--header-top__background-color);
+        color: {{ section.settings.color_text }};
+        font-size: .8125rem;
+        font-weight: 500;
+        position: relative;{% if section.settings.add_border_bottom %}
+        box-shadow: inset 0px -1px 0px 0px rgba(var(--header-top__background-color-rgb), .3);{% endif %}
+    }
+
+    #header-top-inner {
+        display: flex;
+        flex-wrap: wrap;
+        gap: .5rem;
+        justify-content: center;
+        align-items: center;
+        padding-top: .1875rem;
+        padding-bottom: .1875rem;
+        max-width: {{ section.settings.custom_layout_width }}px;
+        margin: 0 auto;
+    }
+
+    #header-top-inner .contacts {
+        white-space: nowrap;
+    }
+
+    #header-top-inner .contacts a + a {
+        padding-left: 1rem;
+    }
+
+    .header-top__message {
+        display: flex;
+        padding: 0 1rem;
+        align-items: center;
+    }
+
+    .header-top__message :is(countdown-timer) {
+        display: flex;
+        justify-content: center;
+        min-width: 8rem;
+        margin-left: .75rem;
+        background: rgba(var(--header-top__background-color-rgb), .15);
+        border-radius: 4px;
+        padding: .25rem .75rem;
+    }
+
+    .header-top__message :is(countdown-timer .timer > div) {
+        flex-direction: row;
+        min-width: 0rem;
+    }
+
+    .header-top__message :is(countdown-timer .timer span) {
+        font-size: 14px;
+        min-width: .5rem;
+        text-transform: lowercase;
+        text-align: center;
+    }
+
+    .header-top__message :is(countdown-timer .timer .separator-line) {
+        border-right: 1px solid initial;
+    }
+
+    .header-top__message :is(countdown-timer .timer .separator-colon):after {
+        content: ':';
+        display: block;
+        top: -6px;
+        right: 2px;
+        font-size: 1.25rem;
+        color: inherit;
+    }{% if section.settings.show_social_icons %}
+
+    #header-top-inner .social_icons--wrapper {
+        display: none;
+    }{% endif %}
+
+    @media all and (min-width: 640px) {
+        #header-top-inner {
+            flex-wrap: nowrap;
+            gap: 2rem;
+            padding: 0.25rem 0.75rem;
+        }
+
+        #header-top-inner.full--width {
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+    }
+
+    @media all and (min-width: 990px) {
+        #header-top-inner {
+            justify-content: space-between;
+        }
+        {% if section.settings.show_social_icons %}
+        #header-top-inner .social_icons--wrapper {
+            display: flex;
+            align-items: center;
+            gap: .75rem;
+            margin-right: .75rem;
+        }
+
+        #header-top-inner .social_icons--wrapper a svg {
+            --social-icon-width: {% if settings.current_presets == 'divine' %}20{% else %}14{% endif %}px;
+            fill: var(--color-button-text);
+            width: var(--social-icon-width);
+            height: var(--social-icon-width);
+        }{% endif %}
+    }
+{% endstyle %}

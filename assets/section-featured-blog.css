@@ -1,0 +1,22 @@
+@media screen and (min-width: 750px) {
+  .blog.no-heading {
+    margin-top: 6rem;
+  }
+}
+
+@media (hover: hover) {
+  .featured-blog .blog__post:hover .article-card__image > img,
+  .featured-blog .article-card__content:focus .article-card__image > img {
+    transform: scale(1.03);
+  }
+
+}
+
+.background-secondary .article-card {
+  background-color: var(--color-background);
+}
+
+.blog__view-all {
+  margin-top: 1rem;
+  text-align: center;
+}

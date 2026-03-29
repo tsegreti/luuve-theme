@@ -1,0 +1,166 @@
+{% comment %}
+    Render newsletter form.
+
+    Accepts:
+      - form_id:            {String}
+      - class:              {String}
+      - block_order:        {Number}
+      - use_email_min_form: {Bool}
+{% endcomment %}
+
+{%- liquid
+    assign class = class | default: 'newsletter-form'
+    assign index = block_order | default: '1'
+    assign form_id = form_id | default: 'newsletter-form'
+    assign form_id = form_id | append: '-' | append: section.id | append: '-' | append: index
+
+    for policy in shop.policies
+        if policy != blank and forloop.index == 2
+            assign privacy_policy_url = policy.url
+        endif
+    endfor
+-%}
+
+{%- form 'customer', id: form_id, class: class -%}
+    <input type="hidden" name="contact[tags]" value="newsletter">
+    <div class="newsletter-form__field-wrapper">
+        <div class="field">
+            <label class="field__label visually-hidden" for="{{ form_id }}-field">
+                {{ 'newsletter.label' | t }}
+            </label>
+            {%- if settings.current_presets == 'enduro' %}
+                {%- render 'icons-solid-enduro', name: 'email', css_class: 'enduro-mail' -%}
+            {% endif -%}
+            <input
+                id="{{ form_id }}-field"
+                type="email"
+                name="contact[email]"
+                class="field__input"
+                value="{{ form.email }}"
+                aria-required="true"
+                autocorrect="off"
+                autocapitalize="off"
+                autocomplete="email"
+                pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+                title="{{ 'newsletter.email.validation' | t }}"
+                required
+                {% if form.errors %}
+                    aria-invalid="true"
+                    aria-describedby="{{ form_id }}-error"
+                {% elsif form.posted_successfully? %}
+                    aria-describedby="{{ form_id }}-success"
+                {% endif %}
+                placeholder="{{ 'newsletter.label' | t }}"
+            >
+        </div>
+        {%- if settings.show_concent_with_form %}
+            <div class="newsletter-form__consent field">
+                <input type="hidden" name="contact[tags]" value="newsletter">
+                <input
+                    type="checkbox"
+                    id="{{ form_id }}-consent"
+                    name="contact[tags]"
+                    value="consent_newsletter"
+                    required
+                    class="field__checkbox"
+                    aria-required="true"
+                >
+                <label for="{{ form_id }}-consent" class="field__label">
+                    {{ 'newsletter.consent_text' | t }}
+                    <a href="{{ privacy_policy_url }}" target="_blank" rel="noopener" class="underline">
+                        {{ 'newsletter.privacy_policy' | t }}
+                    </a>
+                </label>
+            </div>
+        {% endif -%}
+        {% liquid
+            assign newsletter_btn_label = 'newsletter.button_label' | t
+            if section.id == 'overlay'
+                assign newsletter_btn_label = 'newsletter.button_label_subscribe' | t
+            endif
+        %}
+        <button
+            type="submit"
+            class="button button--secondary newsletter-form__button"
+            name="commit"
+            id="{{ form_id }}-Subscribe"
+            aria-label="{{ newsletter_btn_label }}"
+        >
+            {% if template == 'password' %}
+                {% unless use_email_min_form %}
+                    {{ 'newsletter.button_label' | t }}
+                {% endunless %}
+            {% elsif section.id == 'overlay' %}
+                {{ 'newsletter.button_label_subscribe' | t }}
+            {% endif %}
+            {%- if settings.current_theme_icons == 'enduro' %}
+                {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+            {% else %}
+                {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+            {% endif -%}
+        </button>
+        {%- if form.errors -%}
+            <div class="newsletter-form__message form__message--error form__message" id="{{ form_id }}-error">
+                {% render 'icons-outline', name: 'x-circle' %}
+                <p>
+                    {{ form.errors.translated_fields.email | capitalize }}
+                    {{ form.errors.messages.email }}
+                </p>
+            </div>
+        {%- endif -%}
+    </div>
+
+    {%- if form.posted_successfully? -%}
+        <div
+            class="newsletter-form__message form__message--success form__message"
+            id="{{ form_id }}-success"
+            tabindex="-1"
+        >
+            {% render 'icons-outline', name: 'check-circle' %}
+            <p>{{ 'newsletter.success' | t }}</p>
+        </div>
+    {%- else -%}
+        {%- if form.email -%}
+            {% comment %} Email set for form {% endcomment %}
+            {%- unless form.errors -%}
+                {% comment %}
+                    No errors.
+                    It can happend when client already subscribed.
+                    Or email is invalide. For example, user@example
+                {% endcomment %}
+                <div
+                    class="newsletter-form__message form__message--notice form__message"
+                    id="{{ form_id }}-subscribed"
+                    tabindex="-1"
+                >
+                    {% render 'icons-outline', name: 'exclamation-circle' %}
+                    <p class="notice-message">{{ 'newsletter.already_exists_or_invalid' | t }}</p>
+                </div>
+            {%- endunless -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endform -%}
+<script type="text/javascript">
+    
+  window.addEventListener("load", (event) => {
+    let form = document.getElementById('{{ form_id }}');
+    let message = form && form.querySelector('.newsletter-form__message');
+
+    if (!message) return;    
+    message.style.display = 'none'; // hide forms messages
+
+    if (window.location.hash === `#${form.id}` /* there is hash and it matches form ID */
+      || !window.location.hash /* no hash (when form submitted succesfully) */
+    ) {
+      let popup = form && form.closest('popup-banner');
+    // show current submitted form message
+      form.querySelector('.newsletter-form__message').style.display = 'flex';
+
+      if (popup)
+        popup.show(true)
+      else
+        form?.scrollIntoView?.({behavior: "smooth"});
+    }
+  });
+
+</script>

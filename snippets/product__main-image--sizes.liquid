@@ -1,0 +1,15 @@
+{%- comment -%}
+    Renders vertical bar (|) separated product mein image [WIDTH]|[WIDTH_OPTIONS]|[SIZES_VALUE]
+{%- endcomment -%}
+
+{%- liquid
+    echo '1096'
+
+    echo '|'
+
+    echo '516, 548, 638, 668, 1002, 1096'
+
+    echo '|'
+
+    echo '(max-width: 767px) min(638px, 100vw - 1.5rem - 2px), (max-width: 989px) 548px, (max-width: 1130px) calc((100vw - 1.5rem) * .55 - 90px), 516px'
+-%}

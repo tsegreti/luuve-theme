@@ -1,0 +1,13 @@
+{%- comment -%}
+    Render collection title using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+{%- endcomment -%}
+
+<div class="collection__block collection__block--title" style="order: {{ blockOrder }}" {{ block.shopify_attributes }}>
+    <h1 class="collection__title">
+        {{- collection.title | escape | default: 'Collection title' -}}
+    </h1>
+</div>

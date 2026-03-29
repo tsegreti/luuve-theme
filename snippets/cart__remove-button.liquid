@@ -1,0 +1,15 @@
+{% comment -%}
+    Render remove cart item button.
+
+    Accepts:
+     -  cart_item {Object}
+{% endcomment -%}
+
+<cart-remove-button>
+    <a
+        href="{{ cart_item.url_to_remove }}"
+        title="{{ 'sections.cart.remove_title' | t: title: cart_item.title }}"
+    >
+        {% render 'theme-icons', name: 'trash' %}
+    </a>
+</cart-remove-button>

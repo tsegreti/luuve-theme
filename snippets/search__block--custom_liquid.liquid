@@ -1,0 +1,14 @@
+{%- comment -%}
+    Render block with custom liquid
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+{%- endcomment -%}
+
+<div class="search__block search__block--custom_liquid" style="order: {{ blockOrder }}" {{ block.shopify_attributes }}>
+    {% unless block.settings.title == blank %}
+        <h2 class="title">{{ block.settings.title }}</h2>
+    {% endunless %}
+    {{- block.settings.custom_liquid -}}
+</div>

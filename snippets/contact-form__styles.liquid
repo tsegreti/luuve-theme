@@ -1,0 +1,190 @@
+{% comment %}
+    Render Contact Us styles
+
+    Accepts:
+      - padding_bottom:   {String}
+{% endcomment %}
+{% style %}
+    .contact__form form {
+        padding-top: 1rem;
+    }
+
+    .contact__form .contact__button svg {
+        height: 1rem;
+        width: 3rem;
+    }
+
+    .contact__container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 4rem;
+    }
+
+    .contact_us {
+        position: relative;
+    }
+
+    .contact_us .media {
+        padding-bottom: {{ padding_bottom }};
+    }
+
+    .contact_us .comment,
+    .contact_us .social-icons,
+    .contact_us .icons {
+        margin: 1rem 0;
+        display: flex;
+    }
+
+    .company_data {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        margin-top: 2rem;
+        padding-top: 2rem;
+    }
+
+    .company_data h3 {
+        border-radius: 4px;
+        font-size: calc(1rem + 2px);
+        margin: 0 0 1.5rem;
+        padding: .5rem 1rem;
+        text-align: center;
+    }
+
+    .company_data .company__info,
+    .company_data .contact__info {
+        border-radius: 4px;
+        max-width: 20rem;
+        padding: 1.25rem;
+        flex-grow: 1;
+        flex-shrink: 0;
+        display:flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .contact_us .icons:empty {
+        display: none;
+    }
+
+    .contact_us .email {
+        word-break: break-all;
+    }
+
+    .contact_us .icons a {
+        width: 2rem;
+        margin: 0 .25rem;
+    }
+
+    .contact_us .icons a svg {
+        fill: var(--color-foreground);
+    }
+
+    .contact_us .icons a:hover svg {
+        fill: var(--color-foreground-75);
+    }
+
+    .contact.map__location {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+    }
+
+    .map__location .error_coordinates {
+        width: 100%;
+        padding:.5rem;
+        text-align: center;
+        color: currentColor;
+    }
+
+    #map button,
+    #map .gmnoprint {
+        display: none !important;
+    }
+
+    .infowindow {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        min-width: 200px;
+        padding: 0.5rem;
+    }
+
+    .infowindow > h6 {
+        border-bottom: 1px solid var(--color-foreground-20);
+        margin-top: 0;
+        text-align: center;
+    }
+
+    .infowindow > p {
+        color: currentColor;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .infowindow .contact-info {
+        margin-top: .5rem;
+        border-top: 1px solid var(--color-foreground-20);
+        padding-top: .5rem;
+    }
+    .contact__container > .contact__form {
+        margin: 0 -.75rem;
+        padding: 1rem;
+    }
+
+    #shopify-section-{{ section.id }} .contact__info {
+        background-color: {{ block.settings.contact_info_background }};
+    }
+
+    #shopify-section-{{ section.id }} .company__info {
+        background-color: {{ block.settings.company_info_background }};
+    }
+
+    @media (min-width: 480px) {
+        .contact__container {
+            margin-bottom: 4rem;
+        }
+
+        .contact__container > .contact__form {
+            padding: 2rem 4rem 4rem;
+        }
+    }
+
+    @media (min-width: 767px), print {
+        .company_data .company__info:last-child {
+            margin-top: -1.75rem;
+            margin-bottom: 1.75rem;
+        }
+    }
+
+    @media (min-width: 990px), print {
+        .contact__container {
+            flex-direction: row;
+            gap: 2rem;
+        }
+
+        .contact__container > .contact__form {
+            padding: 2rem 1rem;
+        }
+
+        .contact.map__location {
+            width: 50%;
+        }
+
+        .contact_us p {
+            padding-left: .5rem;
+        }
+
+        .shopify-section:has(.main-page-title:last-child) + #shopify-section-{{ section.id }} .contact__form:not(:last-child) {
+            margin-top: -4rem;
+        }
+    }
+{% endstyle %}

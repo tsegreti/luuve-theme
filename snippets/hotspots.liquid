@@ -1,0 +1,41 @@
+{% comment %}
+    Renders Hot spots
+
+    Accepts:
+    - hotspots: {Object}
+    - products: {Object}
+{% endcomment %}
+
+<hotspots>
+    {%- for spot in hotspots %}
+        {%- liquid
+            assign spot_index = forloop.index
+            assign spot_position_left = spot.settings.hotspot_position_left
+            assign spot_position_top = spot.settings.hotspot_position_top
+        -%}
+        {% for product in products limit: hotspots.size %}
+            {% if forloop.index == spot_index %}
+                <a
+                    class="hotspot-link"
+                    href="#/"
+                    data-spot-index="{{ spot_index }}"
+                    data-product-id="{{ product.id }}"
+                    title="{{ product.title }}"
+                    aria-label="hotspot-{{ product.title }}"
+                    style="left:{{ spot_position_left | append: '%' }};top:{{ spot_position_top | append: '%' }}"
+                >
+                    <span class="hotspot-tooltip">
+                        <p>{{ product.title | default: 'Product title' }}</p>
+                        <p>
+                            {% render 'helper__decorate-product-price',
+                                product: product,
+                                showPriceLabel: settings.price_label
+                            %}
+                        </p>
+                    </span>
+                </a>
+            {% endif %}
+        {% endfor %}
+    {% endfor -%}
+    {% render 'initialize-deferred-scripts', init_hotspots: true %}
+</hotspots>

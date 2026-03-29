@@ -1,0 +1,480 @@
+{%- comment -%}
+    Render items grid
+
+    Accepst:
+    - ul_id                   {String}
+    - ul_class                {String}
+    - has_side_column         {Array}   Items to render
+    - is_mozaic               {Bool}
+    - mozaic_items_per_row    {String}
+    - items                   {Array}   Items to render
+    - use_media_slider        {Bool}
+    - columns                 {Number}
+    - limit                   {Number}
+    - mode                    {String}  grid|list
+    - badge_size              {String}
+    - image_ratio             {String}  Image ration for item
+    - product_secondary_image {Boolean}
+    - product_show_vendor     {Boolean}
+    - product_to_cart_button  {Boolean}
+    - product_description     {Boolean}
+    - row_divider             {Boolean}
+    - preload_items_image     {Number}  Shopify preloads MAX ONLY 2 images per document
+    - loading_eager_image     {Number}  Main images of grid items loading eager
+{%- endcomment -%}
+
+{%- liquid
+    assign columns = columns | plus: 0
+    assign limit = limit | default: 50 | plus: 0
+    assign mode = mode | default: 'grid'
+    assign is_mozaic = is_mozaic | default: false
+    assign preloadItemsImage = preload_items_image | plus: 0
+    assign loadingEagerImage = loading_eager_image | plus: 0
+    assign use_media_slider = use_media_slider | default: false
+-%}
+
+{%- comment -%}
+    Prepare settings for item image
+{%- endcomment -%}
+{%- liquid
+    capture image_sizes_config
+        render 'grid-item--item-image--sizes', mode: mode, columns: columns, has_side_column: has_side_column
+    endcapture
+-%}
+
+{%- liquid
+    if ul_id == null
+        assign ulSelector = '[data-mode="' | append: mode | append: '"][data-columns="' | append: columns | append: '"]'
+    else
+        assign ulSelector = '#' | append: ul_id
+    endif
+
+    assign list_sections_with_grid_item_extra_gap = 'product-recommendations'
+-%}
+
+<style>
+    {{ ulSelector }} {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 1.25rem -.5rem 0;{% if mode == 'grid' %}
+        gap: var(--grid-item-gap, 1rem);{% endif %}
+    }
+
+    {{ ulSelector }} squama-item {
+        display: block;
+        position: relative;
+    }{% if product_description %}
+
+    {{ ulSelector }} .item-description {
+        display: none;
+        {% if mode == 'grid' -%}
+        font-size: calc(1rem - 2px);
+        margin: .5rem 0 0;{% endif %}
+        {% if mode == 'list' -%}
+        font-size: calc(1rem - 1px);
+        margin: 0 0 .5rem;{% endif %}
+    }{% endif %}{% if product_secondary_image %}
+
+    .item-image__with-secondary img + img {
+        opacity: 0;
+    }{% endif %}
+    {% if mode == 'grid' or mode == 'mozaic' %}
+    .grid-item :is(.item-line-separator) {
+        display: block;
+        height: 1px;
+        width: calc(100% - 1rem);
+        background: var(--color-foreground);
+        margin: 0 auto;
+        margin-top: 1rem;
+    }
+    {% endif %}
+    body[data-current-preset="enduro"] {{ ulSelector }} .item-link {
+        --grid-item__paddings: 1.25rem;
+    }
+
+    {{ ulSelector }} .item-link {
+        background: var(--grid-item__background-color, var(--color-background));
+        border-radius: var(--product-card--border-radius);
+        display: {% case mode %}{% when 'grid' or 'mozaic' %} block{% else %} grid{% endcase %};
+        padding: var(--grid-item__paddings, .75rem);{% if mode == 'list' %}
+        align-items: flex-start;
+        --columns-gap: 1rem;
+        --columns-count: 2;
+        column-gap: var(--columns-gap);
+        grid-template-columns: min(var(--image-width, auto), calc(50% - var(--columns-gap, 0) / var(--columns-count, 1))) auto;
+        {% endif %}
+    }
+
+    .grid-item .item-price > * {
+        display: inline-block;
+        margin: 0 .5rem 0 0;
+    }
+
+    .grid-item .item-price .on-sale {
+        font-weight: 600;
+    }
+
+    .grid-item .item-price > :last-child {
+        margin: 0;
+    }
+
+    #main-collection-products:empty {
+        display: none;
+    }
+    #main-collection-products ~ .pagination {
+        display: block;
+        padding-bottom: 2rem;
+    }
+
+    @media (min-width: 768px), print {
+        #main-collection-products {
+            min-height: 24rem;
+        }
+
+        .grid-item .item-link {
+            border: 1px solid transparent;{% comment %} This selector is lighter. It allows to overrides border property in component CSS easier.{% endcomment %}
+        }
+
+        {{ ulSelector }} {
+            margin: 0 -.75rem;
+        }{% if product_description %}
+
+        {{ ulSelector }} squama-item[data-status="ready"] .item-description {
+            display: block;
+            margin: 1.5rem 0 0;
+        }{% endif %}
+    }
+
+    {% case mode %}
+        {% when 'grid' %}
+            {{ ulSelector }} .grid-item__swatch-wrapper {
+        background: {{ settings.product_cart_swatch_wrapper_background }};
+    }
+
+    {{ ulSelector }} .grid-item {
+        width:{% if columns > 1 %} calc(50% - var(--grid-item-gap, 1rem) / 2){% else %} 100%{% endif %};
+    }{% if columns > 2 %}
+
+    @media (min-width: 640px), print {
+        {{ ulSelector }} .grid-item {
+            width: calc(33.333333% - 2 * var(--grid-item-gap, 1rem) / 3);
+        }
+    }{% endif %}
+    /*{% if columns > 3 %}
+    @media (min-width: 768px), print {
+        {{ ulSelector }} .grid-item {
+            width: calc(25% - 3 * var(--grid-item-gap, 1rem) / 4);
+        }
+    }{% endif %}*/
+    {% if columns > 3 %}
+    @media (min-width: 990px), print {
+        {{ ulSelector }} .grid-item {
+            width: calc(25% - 3 * var(--grid-item-gap, 1rem) / 4);
+        }
+    }{% endif %}{% if columns > 4 %}
+
+    @media (min-width: 1200px), print {
+        {{ ulSelector }} .grid-item {
+            width: calc(16.666667% - 5 * var(--grid-item-gap, 1rem) / 5);
+        }
+    }{% endif %}
+
+            {% if section.id contains list_sections_with_grid_item_extra_gap %}
+            @media (max-width: 990px), print {
+                {{ ulSelector }} .grid-item {
+                    --grid-item-gap: 1rem;
+                }
+            }
+            {% endif %}
+            {% if is_mozaic %}
+                {{ ulSelector }} {
+    	display: grid;
+    	grid-template-columns: repeat(2, 1fr);
+    	grid-gap: .5rem;
+    }
+
+    {{ ulSelector }} .grid-item {
+        width: 100%;
+    }
+
+    @media all and (max-width: 767px) {
+        {{ ulSelector }} .grid-item:nth-child(3n + 1) {
+            grid-column: span 2;
+        }
+
+        .grid-item:nth-child(4n + 1) {
+          	grid-column: span 1;
+        }
+
+        .collection__block--products .item-actions-wrapper {
+            --grid-item--actions-wrapper__top: 20%;
+        }
+
+        .collection__block--products .grid-item:nth-child(3n + 1) .item-actions-wrapper {
+            --grid-item--actions-wrapper__top: 10%;
+        }
+
+        .collection__block--products .grid-item:nth-child(3n + 1) .item-actions-wrapper .button,
+        .collection__block--products .grid-item:nth-child(3n + 1) .item-actions-wrapper quick-view {
+            height: 2.5rem;
+            width: 2.5rem;
+        }
+
+        .collection__block--products .grid-item:nth-child(3n + 1) .item-actions-wrapper .button svg {
+            height: 1.25rem;
+            width: 1.25rem;
+        }
+    }
+
+    @media all and (min-width: 767px) {
+    	{{ ulSelector }} {
+            grid-template-columns: repeat(6, 1fr);
+        }
+
+        .collection__block--products .item-actions-wrapper {
+            --grid-item--actions-wrapper__top: 10%;
+        }
+
+        .grid-item:nth-child(10n + 1),
+        .grid-item:nth-child(10n + 2) {
+            grid-column: span 3;
+        }
+
+        .grid-item:nth-child(10n + 3),
+        .grid-item:nth-child(10n + 4),
+        .grid-item:nth-child(10n + 5) {
+            grid-column: span 2;
+        }
+
+        .grid-item:nth-child(10n + 6),
+        .grid-item:nth-child(10n + 7) {
+            grid-column: span 3;
+        }
+
+        .grid-item:nth-child(10n + 8),
+        .grid-item:nth-child(10n + 9),
+        .grid-item:nth-child(10n + 10) {
+            grid-column: span 2;
+        }
+    }
+            {% endif %}
+
+        {% when 'list' %}
+            {{ ulSelector }} .grid-item {
+        width: 100%;
+    }
+
+    {{ ulSelector }} .grid-item:nth-child(n+2)::before {
+    /*    background-color: var(--color-foreground-8);*/
+        content: '';
+        display: block;
+        height: 2px;
+        margin: 1rem auto;
+        width: 100%;
+    }
+
+    {{ ulSelector }} .item-image {
+        grid-row: span 2;
+    }
+
+    body[data-current-preset]:not([data-current-preset="enduro"]) {{ ulSelector }} .item-price .price--final {
+        font-size: 1.25rem;
+        font-weight: 700;
+    }
+
+    {{ ulSelector }} .item-actions-wrapper > button {
+        border-radius: 3px;
+        height: 3rem;
+        margin: 1rem 0 0;
+        max-width: 12rem;
+        width: 100%;
+    }
+
+    @media screen and (max-width: 425px) {
+            {{ ulSelector }} .item-actions-wrapper > button {
+                max-width: 10.5rem;
+            }
+        }
+
+    @media all and (min-width: 480px) {
+        {{ ulSelector }} .item-link {
+            --columns-gap: 2rem;
+        }
+    }
+
+    @media all and (min-width: 768px) {
+        {{ ulSelector }} .grid-item:nth-child(n+2)::before {
+            width: calc(100% - 3rem);
+        }
+
+        {{ ulSelector }} .item-link {
+            grid-template-columns: min(var(--image-width, auto), calc(33.3% - var(--columns-gap, 0) / var(--columns-count, 1))) auto
+        }
+
+        {{ ulSelector }} [data-product-id] .item-link {
+            --columns-count: 3;
+            grid-template-columns: min(var(--image-width, auto), calc(33.3% - var(--columns-gap, 0) / var(--columns-count, 1))) auto min(12rem, calc(33.3% - var(--columns-gap, 0) / var(--columns-count, 1)));
+        }
+
+        {{ ulSelector }} .item-image {
+            grid-row: span 1;
+        }
+
+        body[data-current-preset]:not([data-current-preset="enduro"]) {{ ulSelector }} .item-price .price--final {
+            font-size: 1.5rem;
+        }
+
+        {{ ulSelector }} .item-actions-wrapper > button {
+            margin: 2rem 0 0;
+        }
+    }
+
+        {% when 'mozaic' %}
+            {% if limit < 6 %}
+            [data-mode="mozaic"] .grid-item .item-title {
+        margin-top: .75rem;
+    }
+
+    @media all and (max-width: 989px) {
+        [data-mode="mozaic"] .grid-item {
+            width: calc(50% - var(--grid-item-gap, 1rem) / 2);
+        }
+    }
+
+    @media all and (min-width: 990px) {
+        {{ ulSelector }}:is([data-mode="mozaic"]) {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            grid-auto-rows: 1fr;
+        }
+
+        {{ ulSelector }}:is([data-mode="mozaic"]) .grid-item {
+            padding: .5rem 0 0;
+        }
+
+        [data-mode="mozaic"] .grid-item:first-child {
+            grid-column: 1 / 2;
+            grid-row: span 2;
+            position: sticky;
+            top: 0;
+        }
+
+        {{ ulSelector }}[data-mode="mozaic"] .grid-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        {{ ulSelector }}[data-mode="mozaic"] .item-link {
+            padding: .5rem;
+        }
+    }
+            {% else %}
+            {{ ulSelector }} .grid-item__swatch-wrapper {
+        background: {{ settings.product_cart_swatch_wrapper_background }};
+    }
+
+    {{ ulSelector }} .grid-item {
+        width:{% if columns > 1 %} calc(50% - var(--grid-item-gap, 1rem) / 2){% else %} 100%{% endif %};
+    }{% if columns > 2 %}
+
+    @media (min-width: 640px), print {
+        {{ ulSelector }} .grid-item {
+            width: calc(33.333333% - 2 * var(--grid-item-gap, 1rem) / 3);
+        }
+    }{% endif %}
+    /*{% if columns > 3 %}
+    @media (min-width: 768px), print {
+        {{ ulSelector }} .grid-item {
+            width: calc(25% - 3 * var(--grid-item-gap, 1rem) / 4);
+        }
+    }{% endif %}*/
+    {% if columns > 3 %}
+    @media (min-width: 990px), print {
+        {{ ulSelector }} .grid-item {
+            width: calc(25% - 3 * var(--grid-item-gap, 1rem) / 4);
+        }
+    }{% endif %}{% if columns > 4 %}
+
+    @media (min-width: 1200px), print {
+        {{ ulSelector }} .grid-item {
+            width: calc(16.666667% - 5 * var(--grid-item-gap, 1rem) / 5);
+        }
+    }{% endif %}
+
+            {% endif %}
+    {% endcase %}
+</style>
+
+<ul
+    {% unless ul_id == null %}
+        id="{{ ul_id }}"
+    {% endunless %}
+    {% unless ul_class == null %}
+        class="{{ ul_class }}"
+    {% endunless %}
+    data-mode="{{ mode }}"
+    data-columns="{{ columns }}"
+    data-id="{{ section.id }}"
+    {% if ul_id contains 'main-collection-products' %}
+        data-list-items="main-collection-products"
+    {% endif %}
+    data-mozaic-listing="{{ is_mozaic }}"
+>
+    {%- liquid
+        for itemCandidate in items limit: limit
+            if itemCandidate.object_type != null
+                assign item = itemCandidate
+            else
+                if all_products[itemCandidate] != nill
+                    assign item = all_products[itemCandidate]
+                endif
+            endif
+
+            assign preloadImage = false
+            if forloop.index0 < preloadItemsImage
+                assign preloadImage = true
+            endif
+
+            assign loadingStrategy = 'lazy'
+            if forloop.index0 < loadingEagerImage
+                assign loadingStrategy = 'eager'
+            endif
+
+            # using metafields to define the product badges
+            assign newProduct = false
+            for variant in item.variants
+                if variant.metafields.custom.new != blank
+                    assign newProduct = true
+                endif
+            endfor
+
+            case item.object_type
+                when 'product'
+                    capture item_html
+                        render 'grid-item-product', mode: mode, product: item, image_ratio: image_ratio, image_loading: loadingStrategy, image_sizes_config: image_sizes_config, image_preload: preloadImage, show_secondary_image: product_secondary_image, show_to_cart_button: product_to_cart_button, show_vendor: product_show_vendor, show_description: product_description, uniq_id: ul_id, is_media_slider: use_media_slider
+                    endcapture
+                    capture badges_html
+                        render 'badge-onsale', product: item, size: badge_size
+                        render 'badge-soldout', product: item, size: badge_size
+                        if newProduct
+                            render 'badge-new', product: item, size: badge_size
+                        endif
+                    endcapture
+                    echo item_html | replace: '<!-- badges_html -->', badges_html
+
+                when 'article', 'page'
+                    continue
+
+                else
+                    render 'grid-item-product', product: item, image_sizes_config: image_sizes_config, show_secondary_image: product_secondary_image, show_to_cart_button: product_to_cart_button, show_vendor: product_show_vendor, show_description: product_description, image_ratio: image_ratio
+            endcase
+
+            if row_divider and forloop.last == false
+                assign modulo_index = forloop.index | modulo: columns
+                if modulo_index == 0
+                    echo '<li class="rows-divider"></li>'
+                endif
+            endif
+        endfor
+    -%}
+</ul>

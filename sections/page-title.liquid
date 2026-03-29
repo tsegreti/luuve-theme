@@ -1,0 +1,88 @@
+{% style %}
+    #shopify-section-{{ section.id }} .page-title-wrapper {
+      position: relative;
+      margin: 0 auto 4rem;
+      max-width: 58rem;
+      padding: 0 .75rem 2rem;
+      text-align: center;
+      text-wrap: balance;
+    }
+
+    #shopify-section-{{ section.id }} .page-title-wrapper a {
+      text-decoration: underline;
+    }
+
+    #shopify-section-{{ section.id }} .page-title {
+      letter-spacing: -1px;
+      line-height: 110%;
+      margin: 1rem 0;
+    }
+
+    #shopify-section-{{ section.id }} .page-title-wrapper p {
+      font-size: var(--subtitle__font-size, 1rem);
+      margin: 1rem auto 0;
+    }
+
+    @media (min-width: 768px) {
+      #shopify-section-{{ section.id }} {
+        --font-h1__multiplier: .08333rem;
+        --subtitle__font-size: 1.125rem;
+      }
+
+      #shopify-section-{{ section.id }} .page-title-wrapper {
+        margin: 6rem auto 3rem;
+      }
+    }
+
+    @media (min-width: 990px) {
+      #shopify-section-{{ section.id }} {
+        --font-h1__multiplier: .11111rem;
+        --subtitle__font-size: 1.25rem;
+      }
+    }
+{% endstyle %}
+
+<div class="page-title-wrapper">
+    {% for block in section.blocks %}
+        {%- if block.settings.title != blank -%}
+            <h1 class="page-title h2 reveal-item">{{ block.settings.title }}</h1>
+        {%- endif -%}
+        {%- if block.settings.subtitle != blank -%}
+            {{ block.settings.subtitle }}
+        {%- endif -%}
+    {% endfor %}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.page-title.name",
+  "tag": "section",
+  "class": "spaced-section section-page-title",
+  "blocks": [
+    {
+      "type": "heading",
+      "name": "t:sections.page-title.blocks.heading.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "title",
+          "label": "t:sections.page-title.blocks.heading.settings.title.label"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "name": "t:sections.page-title.blocks.text.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "inline_richtext",
+          "id": "subtitle",
+          "label": "t:sections.page-title.blocks.text.settings.subtitle.label"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

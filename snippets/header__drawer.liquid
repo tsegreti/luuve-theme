@@ -1,0 +1,290 @@
+{% comment %}
+    Render header drawer.
+
+    Accepts:
+      - menu                   {Object}
+      - show_switcher_language {Boolean}
+      - show_switcher_currency {Boolean}
+      - show_switcher_country  {Boolean}
+      - blocks                 {Object}
+{% endcomment %}
+
+<header-drawer>
+    <details class="menu-drawer-container">
+        <summary
+            class="menu-drawer-toggler header__icon header__icon--menu header__icon--summary button button--small"
+            aria-label="{{ 'sections.header.menu' | t }}"
+        >
+            <svg aria-hidden="true" focusable="false" role="presentation" width="24" height="22" class="icon-menu">
+                <use href="#icon-menu" />
+            </svg>
+        </summary>
+        <svg
+            aria-hidden="true"
+            focusable="false"
+            role="presentation"
+            width="19"
+            height="19"
+            class="icon-x menu-drawer__close"
+        >
+            <use href="#icon-x" />
+        </svg>
+        <div id="menu-drawer" class="menu-drawer motion-reduce" tabindex="-1">
+            <div class="menu-drawer__inner-container">
+                <div class="menu-drawer__navigation-header">
+                    <span hidden>{{ 'sections.header.title' | t }}</span>
+                </div>
+                <div class="menu-drawer__navigation-container">
+                    <nav class="menu-drawer__navigation menu-drawer__section-content">
+                        <ul class="menu-drawer__menu list-menu menu-drawer__menu-item-top" role="list">
+                            {%- for link in menu.links -%}
+                                {%- assign index_menu = forloop.index -%}
+                                {%- if link.links != blank -%}
+                                    <li>
+                                        <details>
+                                            <summary class="focus-inset{% if link.child_active %} menu-drawer__menu-item--active{% endif %}">
+                                                <a
+                                                    href="{{ link.url }}"
+                                                    class="menu-drawer__menu-item-top list-menu__item"
+                                                >
+                                                    {{ link.title | escape }}
+                                                </a>
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    class="icon icon-caret"
+                                                >
+                                                    <use href="#icon-caret" />
+                                                </svg>
+                                            </summary>
+                                            <div
+                                                id="link-{{ link.title | escape }}"
+                                                class="menu-drawer__submenu motion-reduce"
+                                                tabindex="-1"
+                                            >
+                                                <div class="menu-drawer__inner-submenu">
+                                                    {% # render extra attribute to remove dropdown menu links if config option is checked using js code %}
+                                                    {%- unless section.blocks.size == 0 -%}
+                                                        {%- for block in section.blocks -%}
+                                                            {%- if index_menu == block.settings.item_menu_index
+                                                                and block.settings.disable_menu_links
+                                                            -%}
+                                                                <span
+                                                                    class="remove-drawer-menu"
+                                                                    data-item-image-index="{{ block.settings.item_menu_index }}"
+                                                                    hidden
+                                                                ></span>
+                                                            {%- endif -%}
+                                                        {%- endfor -%}
+                                                    {%- endunless -%}
+                                                    {% # end render extra attribute to remove dropdown menu links if config option is checked using js code %}
+                                                    <ul
+                                                        class="childlist-menu--disclosure list-menu"
+                                                        role="list"
+                                                        tabindex="-1"
+                                                    >
+                                                        {% render 'header__menu--dropdown',
+                                                            links: link.links,
+                                                            activate_dropdown: 'on_hover',
+                                                            class_item: 'list-menu__item link--text focus-inset'
+                                                        %}
+                                                    </ul>
+
+                                                    {%- if section.blocks.size > 0 -%}
+                                                        {%- for block in section.blocks -%}
+                                                            {% case block.type %}
+                                                                {%- when 'banner_image' -%}
+                                                                    {% render 'header__dropdown--banner_image',
+                                                                        block: block,
+                                                                        blockOrder: forloop.index,
+                                                                        parent_item_index: index_menu
+                                                                    %}
+                                                                {%- when 'list_collection_items' -%}
+                                                                    {% render 'header__dropdown--list_collection_items',
+                                                                        block: block,
+                                                                        blockOrder: forloop.index,
+                                                                        parent_item_index: index_menu
+                                                                    %}
+                                                                {%- when 'list_product_items' -%}
+                                                                    {% render 'header__dropdown--list_product_items',
+                                                                        block: block,
+                                                                        blockOrder: forloop.index,
+                                                                        parent_item_index: index_menu
+                                                                    %}
+                                                                {%- when 'button' -%}
+                                                                    {% render 'header__dropdown--button',
+                                                                        block: block,
+                                                                        blockOrder: forloop.index,
+                                                                        parent_item_index: index_menu
+                                                                    %}
+                                                            {% endcase %}
+                                                        {%- endfor -%}
+                                                    {%- endif -%}
+                                                </div>
+                                            </div>
+                                        </details>
+                                    </li>
+                                {%- else -%}
+                                    <li>
+                                        <a
+                                            href="{{ link.url }}"
+                                            class="menu-drawer__menu-item list-menu__item focus-inset{% if link.current %} menu-drawer__menu-item--active{% endif %}"
+                                            {% if link.current %}
+                                                aria-current="page"
+                                            {% endif %}
+                                        >
+                                            {{ link.title | escape }}
+                                        </a>
+                                    </li>
+                                {%- endif -%}
+                            {%- endfor -%}
+
+                            {% if shop.customer_accounts_enabled %}
+                                <li class="item--account">
+                                    {% if customer %}
+                                        <details>
+                                            <summary class="menu-drawer__menu-item list-menu__item list-menu__item--account">
+                                                <span class="list-menu__item--inner">
+                                                    {%- if settings.current_theme_icons == 'enduro' %}
+                                                        <svg
+                                                            aria-hidden="true"
+                                                            focusable="false"
+                                                            role="presentation"
+                                                            width="19"
+                                                            height="19"
+                                                            class="icon-user"
+                                                        >
+                                                            <use href="#enduro-icon-user" />
+                                                        </svg>
+                                                    {% else %}
+                                                        <svg
+                                                            aria-hidden="true"
+                                                            focusable="false"
+                                                            role="presentation"
+                                                            width="20"
+                                                            height="20"
+                                                            class="icon-user"
+                                                        >
+                                                            <use href="#icon-user" />
+                                                        </svg>
+                                                    {% endif -%}
+                                                    <span class="account-label">
+                                                        {{- customer.first_name }}
+                                                        {{ customer.last_name -}}
+                                                    </span>
+                                                </span>
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    class="icon icon-caret"
+                                                >
+                                                    <use href="#icon-caret" />
+                                                </svg>
+                                            </summary>
+                                            <div
+                                                id="link-{{ link.title | escape }}"
+                                                class="menu-drawer__submenu motion-reduce"
+                                                tabindex="-1"
+                                            >
+                                                <div class="menu-drawer__inner-submenu">
+                                                    <ul class="menu-drawer__menu list-menu" role="list" tabindex="-1">
+                                                        <li>
+                                                            <a
+                                                                href="{{ routes.account_url }}"
+                                                                class="menu-drawer__menu-item list-menu__item focus-inset{% if false %} menu-drawer__menu-item--active{% endif %}"
+                                                                {% if false %}
+                                                                    aria-current="page"
+                                                                {% endif %}
+                                                            >
+                                                                {{ 'customer.account_fallback' | t }}
+                                                            </a>
+                                                        </li>
+                                                        <li>
+                                                            <a
+                                                                href="{{ routes.account_logout_url }}"
+                                                                class="menu-drawer__menu-item list-menu__item focus-inset{% if false %} menu-drawer__menu-item--active{% endif %}"
+                                                                {% if false %}
+                                                                    aria-current="page"
+                                                                {% endif %}
+                                                            >
+                                                                {{ 'customer.log_out' | t }}
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </details>
+                                    {% else %}
+                                        <a
+                                            href="{{ routes.account_login_url }}"
+                                            class="menu-drawer__menu-item list-menu__item list-menu__item--account"
+                                            title="{{ 'customer.log_in' | t }}"
+                                        >
+                                            {%- if settings.current_theme_icons == 'enduro' %}
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    width="19"
+                                                    height="19"
+                                                    class="icon-user"
+                                                >
+                                                    <use href="#enduro-icon-user" />
+                                                </svg>
+                                            {% else %}
+                                                <svg
+                                                    aria-hidden="true"
+                                                    focusable="false"
+                                                    role="presentation"
+                                                    width="20"
+                                                    height="20"
+                                                    class="icon-user"
+                                                >
+                                                    <use href="#icon-user" />
+                                                </svg>
+                                            {% endif -%}
+                                            <span>{{ 'customer.log_in' | t }}</span>
+                                        </a>
+                                    {% endif %}
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </nav>
+                </div>
+
+                {% if show_switcher_language %}
+                    {% render 'switcher-language', form_id: 'DrawerLanguageForm' %}
+                {% endif %}
+                {% if show_switcher_currency %}
+                    {% render 'switcher-currency', form_id: 'DrawerCurrencyForm' %}
+                {% endif %}
+                {% if show_switcher_country %}
+                    {% render 'switcher-country', form_id: 'DrawerCountryForm' %}
+                {% endif %}
+
+                <div class="menu-drawer__navigation-footer">
+                    {%- if settings.contact_phone != blank -%}
+                        <a
+                            href="phoneto:{{ settings.contact_phone }}"
+                            title="{{ 'header_top.contact_phone.title' | t }}"
+                        >
+                            {% render 'icons-solid', name: 'phone' %}
+                            {{ settings.contact_phone }}
+                        </a>
+                    {%- endif -%}
+                    {%- if settings.contact_email != blank -%}
+                        <a
+                            href="mailto:{{ settings.contact_email }}"
+                            title="{{ 'header_top.contact_email.title' | t }}"
+                        >
+                            {% render 'icons-solid', name: 'mail' %}
+                            {{ settings.contact_email }}
+                        </a>
+                    {%- endif -%}
+                </div>
+            </div>
+        </div>
+    </details>
+</header-drawer>

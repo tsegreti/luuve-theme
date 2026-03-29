@@ -1,0 +1,72 @@
+{% comment %}
+    Render thumbnails for product gallery
+
+    Accepts:
+        - product {Object}
+        - block: {Object}
+        - thumb_images_startegy {String} 'always_visible' | 'desktop_visible'
+{% endcomment %}
+
+{% if product.media.size > 1 %}
+    <slider-vertical
+        class="slider-thumbs--wrapper"
+        data-thumbs-image-strategy="{{ thumb_images_startegy }}"
+        data-thumbs-mode="{{ block.settings.gallery_thumbs_mode }}"
+    >
+        <button
+            type="button"
+            class="button--tertiary"
+            name="up"
+            aria-label="{{ 'accessibility.previous_slide' | t }}"
+            tabindex="-1"
+        >
+            {% render 'icons-theme', name: 'arrow-left' %}
+        </button>
+        <button
+            type="button"
+            class="button--tertiary"
+            name="down"
+            aria-label="{{ 'accessibility.next_slide' | t }}"
+            tabindex="-1"
+        >
+            {% render 'icons-theme', name: 'arrow-right' %}
+        </button>
+        {%- liquid
+            assign pagination_class = 'slider-pagination slider-bullets no-js-hidden slider-vertical--panel'
+            unless block.settings.is_thumbnail_mobile_bullet
+                assign pagination_class = pagination_class | append: ' position-start'
+            endunless
+        -%}
+        <div class="{{ pagination_class }}">
+            {% for media in product.media %}
+                <a
+                    href="#media-{{ media.id }}"
+                    onclick="this.closest('.product__media').activateSlide?.({{ forloop.index0 }}); return false;"
+                    title="{{ media.alt }}"
+                    data-id="{{ media.id }}"
+                >
+                    {%- liquid
+                        if padding_bottom == null
+                            assign padding_bottom = 100 | divided_by: media.preview_image.aspect_ratio
+                        endif
+                        assign lazy = 'lazy'
+                    -%}
+                    <div
+                        class="image--wrapper"
+                        {% if padding_bottom != blank %}
+                            style="padding-bottom: {{ padding_bottom }}%"
+                        {% endif %}
+                    >
+                        {{
+                            media.preview_image
+                            | image_url: width: thumb_width
+                            | image_tag: data-image-id: media.preview_image.id, loading: lazy
+                        }}
+                        {% render 'icon-zoom' %}
+                        {% render 'media__thumb-type', media: media %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </slider-vertical>
+{% endif %}

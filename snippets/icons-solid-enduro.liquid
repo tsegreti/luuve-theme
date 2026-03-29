@@ -1,0 +1,53 @@
+{% comment %}
+    Render SVG icons for the Enduro preset
+
+    Accepts:
+    - name:      {String} Icon name
+    - css_class: {String} Additional CSS classes for svg
+
+    Usage:
+    {% render 'icon-solid-enduro', name: 'email', css_class: 'w-6 h-6' %}
+{% endcomment %}
+
+{%- assign css_class = css_class | default: '' -%}
+
+{%- capture icon -%}
+    {%- case name -%}
+
+        {%- when 'arrow-left' -%}
+<svg width="16" height="14" viewBox="0 0 16 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_2021_174)">
+        <path d="M0 7.00023L6.887 0.115234L8.187 1.41723L3.523 6.08023H16V7.92023H0.92L0 7.00023Z" fill="currentColor" />
+        <path d="M3.52299 7.91992L8.18799 12.5859L6.88699 13.8859L2.22199 9.22192L3.52199 7.92092L3.52299 7.91992Z" fill="currentColor" />
+    </g>
+    <defs>
+        <clipPath id="clip0_2021_174">
+            <rect width="16" height="14" fill="white" transform="matrix(-1 0 0 1 16 0)" />
+        </clipPath>
+    </defs>
+</svg>
+
+    {%- when 'arrow-right' -%}
+<svg width="16" height="14" viewBox="0 0 16 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+    <g clip-path="url(#clip0_2021_176)">
+        <path d="M16 7.00023L9.113 0.115234L7.813 1.41723L12.477 6.08023H0V7.92023H15.08L16 7.00023Z" fill="currentColor" />
+        <path d="M12.477 7.91992L7.81201 12.5859L9.11301 13.8859L13.778 9.22192L12.478 7.92092L12.477 7.91992Z" fill="currentColor" />
+    </g>
+    <defs>
+        <clipPath id="clip0_2021_176">
+            <rect width="16" height="14" fill="white" />
+        </clipPath>
+    </defs>
+</svg>
+    {%- when 'email' -%}
+<svg width="34" height="27" viewBox="0 0 34 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M33.334 26.667H0V0H33.334V26.667ZM3.33398 6.66699L16.667 11.667L26.667 7.83301V11.333L16.667 15L3.33398 10V23.333H30V3.33301H3.33398V6.66699Z" fill="currentColor"/>
+</svg>
+
+    {%- endcase -%}
+{%- endcapture -%}
+{{
+    icon
+    | replace: '<svg ', '<svg class="#class#" aria-hidden="true" focusable="false" role="presentation" '
+    | replace: '#class#', css_class
+}}

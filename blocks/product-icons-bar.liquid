@@ -1,0 +1,129 @@
+{%- liquid
+    assign product = section.settings.product | default: product
+    assign block_index = block.settings.block_order
+-%}
+{%- render 'product__info-block--icons_bar',
+    block: block,
+    product: product,
+    blockOrder: block_index,
+    sectionId: section.id
+-%}
+{% schema %}
+{
+    "name": "t:sections.main-product.blocks.icons_bar.name",
+    "tag": null,
+    "settings": [
+        {
+            "type": "range",
+            "id": "icons_width",
+            "label": "t:sections.icons_bar.settings.icons_width.label",
+            "min": 24,
+            "max": 64,
+            "step": 2,
+            "default": 40,
+            "unit": "px"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.main-product.settings.header.icons_bar_1"
+        },
+        {
+            "type": "select",
+            "id": "icon_1",
+            "options": [
+                { "value": "", "label": "None"},
+                { "value": "academic-cap", "label": "Academic cap"},
+                { "value": "adjustments", "label": "Adjustments"},
+                { "value": "bell", "label": "Bell"},
+                { "value": "cake", "label": "Cake"},
+                // { "value": "calendar", "label": "Calendar"},
+                { "value": "divine-returns", "label": "Calendar"},
+                { "value": "cash", "label": "Cash"},
+                { "value": "chart-pie", "label": "Chart pie"},
+                { "value": "chat-alt-2", "label": "Chat"},
+                { "value": "clipboard-check", "label": "Checked"},
+                { "value": "clock", "label": "Clock"},
+                { "value": "lock-closed", "label": "Lock"},
+                { "value": "menu", "label": "Menu"},
+                { "value": "pencil", "label": "Pencil"},
+                { "value": "scale", "label": "Scale"},
+                { "value": "share", "label": "Share"},
+                { "value": "shield-check", "label": "Shield"},
+                { "value": "sparkles", "label": "Sparkles"},
+                { "value": "thumb-up", "label": "Thumb up"},
+                { "value": "trash", "label": "Trash"},
+                // { "value": "truck", "label": "Truck"},
+                { "value": "divine-shipping", "label": "Truck"},
+                { "value": "divine-environment", "label": "Environment"}
+            ],
+            "default": "divine-shipping",
+            "label": "t:sections.icons_bar.blocks.icon.settings.icon.label"
+        },
+        {
+            "type": "richtext",
+            "id": "text_1",
+            "label": "t:sections.icons_bar.blocks.icon.settings.text.label",
+            "default": "<p>Free shipping anywhere</p>"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.main-product.settings.header.icons_bar_2"
+        },
+        {
+            "type": "select",
+            "id": "icon_2",
+            "options": [
+                { "value": "", "label": "None"},
+                { "value": "academic-cap", "label": "Academic cap"},
+                { "value": "adjustments", "label": "Adjustments"},
+                { "value": "bell", "label": "Bell"},
+                { "value": "cake", "label": "Cake"},
+                // { "value": "calendar", "label": "Calendar"},
+                { "value": "divine-returns", "label": "Calendar"},
+                { "value": "cash", "label": "Cash"},
+                { "value": "chart-pie", "label": "Chart pie"},
+                { "value": "chat-alt-2", "label": "Chat"},
+                { "value": "clipboard-check", "label": "Checked"},
+                { "value": "clock", "label": "Clock"},
+                { "value": "lock-closed", "label": "Lock"},
+                { "value": "menu", "label": "Menu"},
+                { "value": "pencil", "label": "Pencil"},
+                { "value": "scale", "label": "Scale"},
+                { "value": "share", "label": "Share"},
+                { "value": "shield-check", "label": "Shield"},
+                { "value": "sparkles", "label": "Sparkles"},
+                { "value": "thumb-up", "label": "Thumb up"},
+                { "value": "trash", "label": "Trash"},
+                // { "value": "truck", "label": "Truck"},
+                { "value": "divine-shipping", "label": "Truck"},
+                { "value": "divine-environment", "label": "Environment"}
+            ],
+            "default": "divine-returns",
+            "label": "t:sections.icons_bar.blocks.icon.settings.icon.label"
+        },
+        {
+            "type": "richtext",
+            "id": "text_2",
+            "label": "t:sections.icons_bar.blocks.icon.settings.text.label",
+            "default": "<p>30 day free returns</p>"
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.advanced.header.content"
+        },
+        {
+            "type": "number",
+            "id": "block_order",
+            "label": "t:sections.all.advanced.block_order.label",
+            "info": "t:sections.all.advanced.block_order.info",
+            "default": 15
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.main-product.blocks.icons_bar.name",
+            "category": "t:sections.all.categories.product-information"
+        }
+    ]
+}
+{% endschema %}

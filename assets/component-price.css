@@ -1,0 +1,21 @@
+.price.price--unavailable {
+  visibility: hidden;
+}
+
+.price--sold-out .price__availability {
+  display: block;
+}
+
+.price--compare {
+  text-decoration-line: line-through;
+}
+
+.product__info .price--unit {
+  font-size: calc(1rem - 2px);
+}
+
+@media (min-width: 768px) {
+  [data-mode="grid"] .item-price:not(.no-label) .price--compare:not(.price-compare__hidden) {
+    display: none;
+  }
+}

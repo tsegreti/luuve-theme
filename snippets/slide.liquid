@@ -1,0 +1,61 @@
+{%- comment -%}
+    Renders slide for slider section.
+
+    Accepts:
+    - padding_bottom:   {String}
+    - image:            {Object} is it open initialy
+    - video:            {Object or String}
+    - link:             {String}
+    - loading_strategy: {String}
+    - fetchpriority:    {String}
+    - width_breaks:     {String}
+    - is_preload:       {Boolean}
+{%- endcomment -%}
+
+{%- liquid
+    assign padding_bottom = padding_bottom | default: ''
+    assign loading_strategy = loading_strategy | default: 'lazy'
+    assign fetchpriority = fetchpriority | default: 'low'
+    assign is_preload = is_preload | default: false
+    assign image_width = image_width | default: image.width
+    assign width_breaks = width_breaks | default: '480, 768, 1024, 1920, #iw#' | replace: '#iw#', image.width
+    assign sizes_attr = sizes_attr | default: '100vw, (min-width: #w#px) #w#px' | replace: '#w#', image_width
+
+    if image_height == blank
+        assign image_height = image_width | divided_by: image.aspect_ratio | round
+    endif
+-%}
+
+{%- capture slider_content -%}
+    {%- if video -%}
+        {%- render 'video', video: video, padding_bottom: padding_bottom -%}
+    {%- elsif image -%}
+        <div class="image--wrapper"{% if padding_bottom != blank %} style="padding-bottom: {{ padding_bottom }}%"{% endif %}>
+            {% render 'render-image' 
+                image: image,
+                class: slide_img_css,                
+                loading: loading_strategy,
+                fetchpriority: fetchpriority,
+                preload: is_preload,
+                sizes: sizes_attr,
+                widths: width_breaks
+            %}
+            
+            <span class="visually-hidden">{{ image }}</span>
+        </div>
+    {%- else -%}
+        {{ placeholder | default: 'lifestyle-1' | placeholder_svg_tag: 'placeholder image--wrapper w-full' }}
+    {%- endif -%}
+{%- endcapture %}
+
+{%- if link == blank %}
+    {{ slider_content }}
+{%- else %}
+    <a
+        href="{{ link }}"
+        class="slider__link {% if video == blank %}_image{% else %}_video{% endif %}"
+        aria-label="{{ section.id }}"
+    >
+        {{ slider_content }}
+    </a>
+{%- endif %}

@@ -1,0 +1,63 @@
+{{ 'section-contact-form.css' | asset_url | stylesheet_tag }}
+{%- liquid
+    assign __class__ = 'contact dynamic-page-width spaced-section'
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+-%}
+
+{%- capture map %}
+  {%- content_for 'block', type: 'location-map', id: 'location-map' -%}
+{% endcapture -%}
+
+{%- capture contact_us %}
+  {%- content_for 'block', type: 'contact-us', id: 'contact-us' -%}
+{% endcapture -%}
+
+{%- capture contact_form %}
+  {%- content_for 'block', type: 'contact-form', id: 'contact-form' -%}
+{% endcapture -%}
+
+<div class="{{ __class__ }}">
+    <div class="contact__container">
+        {{- contact_form -}}
+
+        {{- map -}}
+    </div>
+</div>
+
+{{- contact_us -}}
+
+{% schema %}
+{
+  "name": "t:sections.contact-form.name",
+  "tag": "section",
+  "class": "spaced-section",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "contact_form_title",
+      "label": "t:sections.contact-form.settings.contact_form_title.label",
+      "default": "<h2>Get in touch</h2>"
+    },
+    {
+      "type": "checkbox",
+      "id": "animation_on_reveal",
+      "label": "t:sections.all.settings.animation_on_reveal.label",
+      "default": true
+    }
+  ],
+  "blocks": [
+    { "type": "@theme" },
+    { "type": "@app" },
+    { "type": "location-map" },
+    { "type": "contact-us" },
+    { "type": "contact-form" }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.contact-form.presets.name"
+    }
+  ]
+}
+{% endschema %}

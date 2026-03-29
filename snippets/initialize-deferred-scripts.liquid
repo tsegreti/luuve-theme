@@ -1,0 +1,596 @@
+{%- comment -%}
+    Render initialization for deferr scripts.
+
+    Accepts:
+     -  init_bought_together         {Boolean}
+     -  init_cart_items              {Boolean}
+     -  init_cart_note               {Boolean}
+     -  init_cart_remove_button      {Boolean}
+     -  init_cart_sidebar            {Boolean}
+     -  init_collection_filters      {Boolean}
+     -  init_collection_mode         {Boolean}
+     -  init_core_components         {Boolean}
+     -  init_faqs_accordion          {Boolean}
+     -  init_fetcher                 {Boolean}
+     -  init_header_drawer           {Boolean}
+     -  init_header_menu             {Boolean}
+     -  init_localization_form       {Boolean}
+     -  init_menu_drawer             {Boolean}
+     -  init_modal_dialog            {Boolean}
+     -  init_password_modal          {Boolean}
+     -  init_pickup_availability     {Boolean}
+     -  init_popup_banner            {Boolean}
+     -  init_predictive_search       {Boolean}
+     -  init_product_form            {Boolean}
+     -  init_product_modal           {Boolean}
+     -  init_product_model           {Boolean}
+     -  init_product_recommendations {Boolean}
+     -  init_product_tabs            {Boolean}
+     -  init_quantity_input          {Boolean}
+     -  init_quick_view              {Boolean}
+     -  init_recipient_form          {Boolean}
+     -  init_scroll_top              {Boolean}
+     -  init_scrolling_text          {Boolean}
+     -  init_share_button            {Boolean}
+     -  init_slider_vertical         {Boolean}
+     -  init_squama_item             {Boolean}
+     -  init_sticky_header           {Boolean}
+     -  init_tabs                    {Boolean}
+     -  init_text_expandable         {Boolean}
+     -  init_variant_radios          {Boolean}
+     -  init_variant_selects         {Boolean}
+     -  init_variants_grid_options   {Boolean}
+     -  init_scroll_reveal_animation {Boolean}
+     -  init_countdown_timer         {Boolean}
+     -  init_comparison_slider       {Boolean}
+     -  init_infinity_pagination     {Boolean}
+     -  init_hotspots                {Boolean}
+     -  init_text_color_animation    {Boolean}
+{%- endcomment -%}
+
+{%- liquid
+    assign scripts = ''
+
+    if init_bought_together
+        assign scripts = scripts | append: '|boughtTogether'
+    endif
+
+    if init_cart_items
+        assign scripts = scripts | append: '|cartItems'
+    endif
+
+    if init_cart_discount_code
+        assign scripts = scripts | append: '|cartDiscountCode'
+    endif
+
+    if init_cart_note
+        assign scripts = scripts | append: '|cartNote'
+    endif
+
+    if init_cart_remove_button
+        assign scripts = scripts | append: '|cartRemoveButton'
+    endif
+
+    if init_cart_sidebar
+        assign scripts = scripts | append: '|cartSidebar'
+    endif
+
+    if init_collection_mode
+        assign scripts = scripts | append: '|collectionMode'
+    endif
+
+    if init_collection_filters
+        assign scripts = scripts | append: '|collectionFilters'
+        assign scripts = scripts | append: '|facetsSlider'
+        assign scripts = scripts | append: '|priceRange'
+        assign scripts = scripts | append: '|rangeSlider'
+    endif
+
+    if init_core_components
+        assign scripts = scripts | append: '|animation'
+        assign scripts = scripts | append: '|deferredMedia'
+        assign scripts = scripts | append: '|detailsAdvanced'
+        assign scripts = scripts | append: '|detailsDisclosure'
+        assign scripts = scripts | append: '|modalOpener'
+        assign scripts = scripts | append: '|slider'
+    endif
+
+    if init_faqs_accordion
+        assign scripts = scripts | append: '|faqsAccordion'
+    endif
+
+    if init_fetcher
+        assign scripts = scripts | append: '|fetcher'
+    endif
+
+    if init_header_drawer
+        assign scripts = scripts | append: '|headerDrawer'
+    endif
+
+    if init_header_menu
+        assign scripts = scripts | append: '|headerMenu'
+    endif
+
+    if init_localization_form
+        assign scripts = scripts | append: '|localizationForm'
+    endif
+
+    if init_menu_drawer
+        assign scripts = scripts | append: '|menuDrawer'
+    endif
+
+    if init_modal_dialog
+        assign scripts = scripts | append: '|modalDialog'
+    endif
+
+    if init_password_modal
+        assign scripts = scripts | append: '|passwordModal'
+    endif
+
+    if init_pickup_availability
+        assign scripts = scripts | append: '|pickupAvailabilityPreview'
+        assign scripts = scripts | append: '|pickupAvailabilityDrawer'
+    endif
+
+    if init_popup_banner
+        assign scripts = scripts | append: '|popupBanner'
+        assign scripts = scripts | append: '|popupBannerCss'
+    endif
+
+    if init_predictive_search
+        assign scripts = scripts | append: '|predictiveSearch'
+    endif
+
+    if init_product_form
+        assign scripts = scripts | append: '|productForm'
+    endif
+
+    if init_product_modal
+        assign scripts = scripts | append: '|productModal'
+    endif
+
+    if init_product_model
+        assign scripts = scripts | append: '|productModel'
+    endif
+
+    if init_product_recommendations
+        assign scripts = scripts | append: '|productRecommendations'
+    endif
+
+    if init_product_tabs
+        assign scripts = scripts | append: '|productTabs'
+    endif
+
+    if init_quantity_input
+        assign scripts = scripts | append: '|quantityInput'
+    endif
+
+    if init_recipient_form
+        assign scripts = scripts | append: '|recipientForm'
+    endif
+
+    if init_scroll_top
+        assign scripts = scripts | append: '|scrollTop'
+    endif
+
+    if init_scrolling_text
+        assign scripts = scripts | append: '|scrollingText'
+    endif
+
+    if init_share_button
+        assign scripts = scripts | append: '|shareButton'
+    endif
+
+    if init_slider_vertical
+        assign scripts = scripts | append: '|sliderVertical'
+    endif
+
+    if init_squama_item
+        assign scripts = scripts | append: '|squamaItem'
+    endif
+
+    if init_sticky_header
+        assign scripts = scripts | append: '|stickyHeader'
+    endif
+
+    if init_tabs
+        assign scripts = scripts | append: '|tabs'
+    endif
+
+    if init_text_expandable
+        assign scripts = scripts | append: '|textExpandable'
+    endif
+
+    if init_variant_selects
+        assign scripts = scripts | append: '|variantSelects'
+    endif
+
+    if init_variant_radios
+        assign scripts = scripts | append: '|variantRadios'
+    endif
+
+    if init_variants_grid_options
+        assign scripts = scripts | append: '|variantsGridOptions'
+    endif
+
+    if init_scroll_reveal_animation
+        assign scripts = scripts | append: '|scrollrevealAnimation'
+    endif
+
+    if init_countdown_timer
+        assign scripts = scripts | append: '|countdownTimer'
+    endif
+
+    if init_quick_view
+        assign scripts = scripts | append: '|modalDialog|productModel|quickView'
+    endif
+
+    if init_comparison_slider
+        assign scripts = scripts | append: '|comparisonSlider'
+    endif
+
+    if init_infinity_pagination
+        assign scripts = scripts | append: '|paginationLoadMore'
+        assign typeInfinityPagination = typeInfinityPagination
+    endif
+
+    if init_hotspots
+        assign scripts = scripts | append: '|hotspots'
+    endif
+
+    if init_text_color_animation
+        assign scripts = scripts | append: '|textColorAnimation'
+    endif
+
+    assign scripts = scripts | remove_first: '|' | split: '|'
+-%}
+
+{%- if scripts.size > 0 -%}
+    <script type="text/init-deferred">
+        {
+            {% for script in scripts -%}
+                "{{ script }}":
+                {%- case script -%}
+                    {%- when 'scrollrevealAnimation' -%}
+                        {
+                            "src": "{{ 'scroll-reveal.js' | asset_url }}"
+                            {%- if settings.animation_on_reveal_assets %},
+                            "reveal": "body"
+                            {% endif %}
+                        }
+                    {%- when 'animation' -%}
+                        {
+                            "src": "{{ 'animation.js' | asset_url }}",
+                            "reveal": ".with-reveal-animation"
+                        }
+                    {%- when 'boughtTogether' -%}
+                        {
+                            "src": "{{ 'bought-together.js' | asset_url }}",
+                            "reveal": "bought-together"
+                        }
+                    {%- when 'cartDiscountCode' -%}
+                        {
+                            "src": "{{ 'cart-discount.js' | asset_url }}",
+                            "reveal": "cart-discount-code"
+                        }
+                    {%- when 'cartItems' -%}
+                        {
+                            "src": "{{ 'cart.js' | asset_url }}",
+                            "reveal": "cart-items"
+                        }
+                    {%- when 'cartNote' -%}
+                        {
+                            "src": "{{ 'cart-note.js' | asset_url }}",
+                            "event": "input::cart-note textarea"
+                        }
+                    {%- when 'productRecommendations' -%}
+                        {
+                            "src": "{{ 'product-recommendations.js' | asset_url }}",
+                            "reveal": "product-recommendations"
+                        }
+                    {%- when 'cartSidebar' -%}
+                        {
+                            "src": "{{ 'cart-sidebar.js' | asset_url }}",
+                            "css": [
+                                "{{ 'component-cart-sidebar.css' | asset_url }}",
+                                "{{ 'component-quantity-input.css' | asset_url }}",
+                                "{{ 'component-discounts.css' | asset_url }}"
+                            ],
+                            "event": "click::#cart-icon-bubble"
+                        }
+                    {%- when 'cartRemoveButton' -%}
+                        {
+                            "src": "{{ 'cart-remove-button.js' | asset_url }}",
+                            "event": "click::cart-remove-button a"
+                        }
+                    {%- when 'collectionFilters' -%}
+                        {
+                            "src": "{{ 'collection-filters-form.js' | asset_url }}",
+                            "reveal": "collection-filters-form"
+                        }
+                    {%- when 'collectionMode' -%}
+                        {
+                            "src": "{{ 'collection-mode.js' | asset_url }}",
+                            "event": "click::collection-modes a"
+                        }
+                    {%- when 'deferredMedia' -%}
+                        {
+                            "src": "deferred-media",
+                            "event": "click::deferred-media [id^='Deferred-Poster-']"
+                        }
+                    {%- when 'detailsAdvanced' -%}
+                        {
+                            "src": "{{ 'details-advanced.js' | asset_url }}",
+                            "reveal": "details[data-advanced=\"true\"]"
+                        }
+                    {%- when 'detailsDisclosure' -%}
+                        {
+                            "src": "details-disclosure",
+                            "reveal": "details-disclosure"
+                        }
+                    {%- when 'faqsAccordion' -%}
+                        {
+                            "src": "{{ 'faqs-accordion.js' | asset_url }}",
+                            "event": "click::faqs-accordion summary"
+                        }
+                    {%- when 'facetsSlider' -%}
+                            {
+                                "src": "{{ 'facets-slider.js' | asset_url }}"
+                            }
+                    {%- when 'fetcher' -%}
+                        {
+                            "src": "fetcher",
+                            "event": "click::fetcher-component a"
+                        }
+                    {%- when 'headerDrawer' -%}
+                        {
+                            "src": "{{ 'header-drawer.js' | asset_url }}",
+                            "css": [
+                                "{{ 'component-menu-drawer.css' | asset_url }}",{% if init_slideout_menu %}
+                                "{{ 'section-navigation-slideoutmenu.css' | asset_url }}",{% endif %}
+                                "{{ 'component-header__block-banner.css' | asset_url }}",
+                                "{{ 'component-header__block-list.css' | asset_url }}",
+                                "{{ 'component-header__block-button.css' | asset_url }}"
+                            ],
+                            "event": "click::header-drawer summary"
+                        }
+                    {%- when 'headerMenu' -%}
+                        {
+                            "src": "{{ 'header-menu.js' | asset_url }}",
+                            "css": [
+                                "{{ 'component-header-menu.css' | asset_url }}",
+                                "{{ 'section-navigation-megamenu.css' | asset_url }}",
+                                "{{ 'section-navigation-smallmenu.css' | asset_url }}",
+                                "{{ 'component-header__block-banner.css' | asset_url }}",
+                                "{{ 'component-header__block-list.css' | asset_url }}",
+                                "{{ 'component-header__block-button.css' | asset_url }}"
+                            ],
+                            "reveal": "header-menu"
+                        }
+                    {%- when 'localizationForm' -%}
+                        {
+                            "src": "{{ 'define-localization-form.js' | asset_url }}",
+                            "event": "click::.localization-selector"
+                        }
+                    {%- when 'menuDrawer' -%}
+                        {
+                            "src": "menu-drawer",
+                            "event": "click::menu-drawer summary"
+                        }
+                    {%- when 'modalDialog' -%}
+                        {
+                            "src": "modal-dialog",
+                            "css": "{{ 'component-modal-dialog.css' | asset_url }}"
+                        }
+                    {%- when 'modalOpener' -%}
+                        {
+                            "src": "{{ 'modal-opener.js' | asset_url }}",
+                            "event": "click::modal-opener button"
+                        }
+                    {%- when 'passwordModal' -%}
+                        {
+                            "src": "{{ 'password-modal.js' | asset_url }}",
+                            "css": "{{ 'component-modal-dialog.css' | asset_url }}",
+                            "reveal": "password-modal",
+                            "event": "click::password-modal summary"
+                        }
+                    {%- when 'pickupAvailabilityDrawer' -%}
+                        {
+                            "src": "{{ 'pickup-availability-drawer.js' | asset_url }}",
+                            "css": "{{ 'component-pickup-availability.css' | asset_url }}"
+                        }
+                    {%- when 'pickupAvailabilityPreview' -%}
+                        {
+                            "src": "{{ 'pickup-availability-preview.js' | asset_url }}",
+                            "event": "click::pickup-availability-preview .pickup-availability-button"
+                        }
+                    {%- when 'popupBanner' -%}
+                        {
+                            "src": "{{ 'popup-banner.js' | asset_url }}",
+                            "reveal": "body"
+                        }
+                    {%- when 'popupBannerCss' -%}
+                        {
+                            "css": [
+                                "{{ 'section-popup-banner.css' | asset_url }}",
+                                "{{ 'component-modal-dialog.css' | asset_url }}"
+                            ]
+                        }
+                    {%- when 'predictiveSearch' -%}
+                        {
+                            "src": "{{ 'predictive-search.js' | asset_url }}",
+                            "css": "{{ 'component-predictive-search.css' | asset_url }}",
+                            "event": "input::predictive-search [name=\"q\"]"
+                        }
+                    {%- when 'priceRange' -%}
+                        {
+                            "src": "{{ 'price-range.js' | asset_url }}",
+                            "depends": [
+                                "rangeSlider"
+                            ]
+                        }
+                    {%- when 'productForm' -%}
+                            {
+                                "src": "{{ 'product-form.js' | asset_url }}",
+                                {% if settings.minicart_enabled %}
+                                "event": "submit::product-form form"
+                                {% else %}
+                                "reveal": "product-form"
+                                {% endif %}
+                            }
+                    {%- when 'productModal' -%}
+                        {
+                            "src": "{{ 'product-modal.js' | asset_url }}"
+                        }
+                    {%- when 'productModel' -%}
+                        {
+                            "src": "{{ 'product-model.js' | asset_url }}",
+                            "css": [
+                                "https://cdn.shopify.com/shopifycloud/model-viewer-ui/assets/v1.0/model-viewer-ui.css",
+                                "{{ 'component-model-viewer-ui.css' | asset_url }}",
+                                "{{ 'component-product-model.css' | asset_url }}"
+                            ],
+                            "event": "click::product-model [id^='Deferred-Poster-']"
+                        }
+                    {%- when 'productTabs' -%}
+                        {
+                            "src": "{{ 'product-tabs.js' | asset_url }}",
+                            {%- if request.design_mode %}
+                            "reveal": "product-tabs"
+                            {%- else %}
+                            "event": "input::product-tabs [type=\"radio\"][name^=\"tabs-\"]"
+                            {%- endif %}
+                        }
+                    {%- when 'quantityInput' -%}
+                        {
+                            "src": "{{ 'quantity-input.js' | asset_url }}",
+                            "reveal": "quantity-input"
+                        }
+                    {%- when 'rangeSlider' -%}
+                        {
+                            "src": "{{ 'range-slider.js' | asset_url }}"
+                        }
+                    {%- when 'recipientForm' -%}
+                        {
+                            "src": "{{ 'recipient-form.js' | asset_url }}",
+                            "event": "input::recipient-form [id^='Recipient-checkbox-']"
+                        }
+                    {%- when 'scrollTop' -%}
+                        {
+                            "src": "{{ 'scroll-top.js' | asset_url }}",
+                            "css": "{{ 'component-scroll-top.css' | asset_url }}",
+                            "PUB_SUB_EVENT": "window-scroll"
+                        }
+                    {%- when 'scrollingText' -%}
+                        {
+                            "css": "{{ 'component-scrolling-text.css' | asset_url }}",
+                            "reveal": ".scrolling-text"
+                        }
+                    {%- when 'shareButton' -%}
+                        {
+                            "src": "{{ 'share.js' | asset_url }}",
+                            "css": "{{ 'component-share-button.css' | asset_url }}",
+                            "event": "click::share-button summary"
+                        }
+                    {%- when 'slider' -%}
+                        {
+                            "src": "{{ 'slider.js' | asset_url }}",
+                            "reveal": "slider-component"
+                        }
+                    {%- when 'sliderVertical' -%}
+                        {
+                            "src": "{{ 'slider-vertical.js' | asset_url }}",
+                            "css": "{{ 'component-slider-vertical.css' | asset_url }}",
+                            "reveal": "slider-vertical .image--wrapper",
+                            "depends": [
+                                "productModal"
+                            ]
+                        }
+                    {%- when 'squamaItem' -%}
+                        {
+                            "src": "{{ 'squama-item.js' | asset_url }}",
+                            "css": "{{ 'component-squama-item.css' | asset_url }}",
+                            "reveal": "squama-item"
+                        }
+                    {%- when 'stickyHeader' -%}
+                        {
+                            "src": "{{ 'sticky-header.js' | asset_url }}",
+                            "css": "{{ 'component-sticky-header.css' | asset_url }}",
+                            "PUB_SUB_EVENT": "window-scroll"
+                        }
+                    {%- when 'tabs' -%}
+                        {
+                            "src": "tabs",
+                            {%- if request.design_mode %}
+                            "reveal": "tabs-component"
+                            {%- else %}
+                            "event": "input::tabs-component [type=\"radio\"][name^=\"tabs-\"]"
+                            {%- endif %}
+                        }
+                    {%- when 'textExpandable' -%}
+                        {
+                            "src": "{{ 'text-expandable.js' | asset_url }}",
+                            "reveal": "text-expandable"
+                        }
+                    {%- when 'variantSelects' -%}
+                        {
+                            "src": "variant-selects",
+                            "reveal": "variant-selects"
+                        }
+                    {%- when 'variantRadios' -%}
+                        {
+                            "src": "{{ 'variant-radios.js' | asset_url }}",
+                            "reveal": "variant-radios"
+                        }
+                    {%- when 'variantsGridOptions' -%}
+                        {
+                            "src": "{{ 'variants-grid-options.js' | asset_url }}"
+                            {% if settings.product_card_swatch_colors %},
+                            "reveal": ".grid-item"
+                            {% endif %}
+                        }
+                    {%- when 'countdownTimer' -%}
+                        {
+                            "src": "{{ 'countdown-timer.js' | asset_url }}",
+                            "reveal": "body"
+                        }
+                    {%- when 'quickView' -%}
+                        {
+                            "src": "{{ 'quick-view.js' | asset_url }}",
+                            "css": "{{ 'component-quick-view.css' | asset_url }}",
+                            "event": "click::quick-view",
+                            "depends": [
+                                "modalDialog"
+                            ]
+                        }
+                    {%- when 'comparisonSlider' -%}
+                        {
+                            "src": "{{ 'comparison-slider.js' | asset_url }}",
+                            "reveal": "comparison-slider"
+                        }
+                    {%- when 'paginationLoadMore' -%}
+                        {
+                            "src": "{{ 'pagination-load-more.js' | asset_url }}",
+                            "css": [
+                                "{{ 'component-loading-overlay.css' | asset_url }}",
+                                "{{ 'pagination-load-more.css' | asset_url }}"
+                            ],
+                            "reveal": "pagination-load-more"
+                        }
+                    {%- when 'hotspots' -%}
+                        {
+                            "src": "{{ 'hotspots.js' | asset_url }}",
+                            "css": "{{ 'component-hotspots.css' | asset_url }}",
+                            "reveal": "hotspots"
+                        }
+                    {%- when 'textColorAnimation'-%}
+                        {
+                            "src": "{{ 'text-color-animation.js' | asset_url }}",
+                            "reveal": ".text-color-animation"
+                        }
+                {%- endcase -%}
+                {%- unless forloop.last %},{% endunless %}
+            {% endfor -%}
+        }
+    </script>
+{%- endif -%}

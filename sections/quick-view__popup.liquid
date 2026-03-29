@@ -1,0 +1,8 @@
+{% liquid
+    capture loader
+        render 'loading-overlay'
+    endcapture
+    assign loader = loader | replace: 'hidden', ''
+%}
+
+{%- render 'modal-dialog', id: 'quickView', aria_label: 'Quick view popup', content: loader, no_padding: true -%}

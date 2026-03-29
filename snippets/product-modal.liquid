@@ -1,0 +1,39 @@
+{%- comment -%}
+    Renders a product modal with all of media.
+
+    Accepts:
+    - modal_id:    {String} The product modal ID
+    - product:     {Object} Product object
+    - thumb_width: {Number}
+{%- endcomment -%}
+
+<product-modal
+    id="{{ modal_id }}"
+    class="product-media-modal transition-bezier"
+    style="--modal__thumb--width: {{ thumb_width }}px"
+    data-deferred-name="productModal"
+    data-handle="{{ product.handle }}"
+    data-push-to-history="true"
+></product-modal>
+
+{% render 'initialize-deferred-scripts', init_product_modal: true %}
+
+<script>
+    if (window.location.hash === '#{{ modal_id }}') {
+      let element = document.getElementById('{{ modal_id }}');
+      let intervalId = setInterval(async () => {
+        const { deferredItems, load } = await import(
+            window?._importmap?.imports?.['deferred'] || 'deferred'
+          );
+
+        if (deferredItems.productModal) {
+          element.afterLoadCallback = function () {
+            this.show(null, false);
+            delete this.afterLoadCallback;
+          };
+          load('productModal');
+          clearInterval(intervalId);
+        }
+      }, 200);
+    }
+</script>

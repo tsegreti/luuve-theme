@@ -1,0 +1,14 @@
+{% comment %}
+    Renders custom badge.
+
+    Accepts:
+    - content: {String} Badge content
+    - size: {String} xs | sm ... xl
+{% endcomment %}
+
+{%- liquid
+    assign size = size | default: 'xs'
+-%}
+<div class="badge badge-size-{{ size }} badge-custom top-left" aria-hidden="true">
+    {{ content }}
+</div>

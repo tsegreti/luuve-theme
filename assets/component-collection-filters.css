@@ -1,0 +1,94 @@
+.collection-toolbar-top .facets.desktop-only {
+    display: none;
+}
+
+.collection-toolbar-top .mobile-facets__wrapper {
+    display: block;
+}
+
+@media all and (min-width: 768px) {
+    .collection-toolbar-top .mobile-facets__wrapper {
+        display: none;
+    }
+
+    .collection-toolbar-top .facets.desktop-only {
+        display: block;
+        margin: 0 1rem 0 0;
+        min-width: 0;
+        position: relative;
+        z-index: 99;
+    }
+
+    .collection-toolbar-top .facets.desktop-only .facets__display {
+        max-height: 18rem;
+        touch-action: none;
+    }
+
+
+    .collection-toolbar-top .facets.desktop-only .facets__wrapper {
+        overflow-x: auto !important;
+        scroll-behavior: smooth;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .collection-toolbar-top .facets.desktop-only .facets__wrapper::-webkit-scrollbar {
+        display: none;
+    }
+
+    .collection-toolbar-top .facets.desktop-only [name=prev],
+    .collection-toolbar-top .facets.desktop-only [name=next] {
+        --color-button-text: var(--color-foreground);
+        background: linear-gradient(90deg, var(--color-background) 60%, transparent 100%);
+        border: 0;
+        bottom: 18.75rem;
+        box-shadow: none;
+        left: 0;
+        min-width: auto;
+        padding: 0 .75rem 0 0;
+        position: absolute;
+        top: -.25rem;
+        width: auto;
+        z-index: 1;
+    }
+
+    .collection-toolbar-top .facets.desktop-only [name=prev] svg {
+        --tw-rotate: 90deg;
+        height: .875rem;
+        width: .875rem;
+    }
+
+    .collection-toolbar-top .facets.desktop-only [name=next] {
+        background: linear-gradient(-90deg, var(--color-background) 60%, transparent 100%);
+        left: auto;
+        padding: 0 0 0 .75rem;
+        right: 0;
+    }
+
+    .collection-toolbar-top .facets.desktop-only [name=next] svg {
+        --tw-rotate: -90deg;
+        height: .875rem;
+        width: .875rem;
+    }
+
+    .collection-toolbar-top .facets.desktop-only [name=prev]:focus,
+    .collection-toolbar-top .facets.desktop-only [name=next]:focus {
+        box-shadow: none;
+    }
+
+    .collection-toolbar-top .facets__type-buttons .facets__wrapper {
+        flex-wrap: nowrap;
+        margin: -1rem 0 -20rem;
+        overflow-x: hidden;
+        padding: 1rem 1.5rem 20rem 0;
+        position: relative;
+        white-space: nowrap;
+    }
+}
+
+@media all (hover: hover) and (min-width: 768px) {
+    .collection-toolbar-top .facets.desktop-only [name=prev]:hover,
+    .collection-toolbar-top .facets.desktop-only [name=next]:hover {
+        box-shadow: none;
+    }
+}

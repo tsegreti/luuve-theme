@@ -1,0 +1,56 @@
+{%- comment -%}
+    Render product pickup information using block settings
+
+    Accepts:
+     - block:      {Object}
+     - blockOrder: {Number}
+     - product:    {Object}
+{%- endcomment -%}
+
+<div
+    class="product__info-block product__info-block--icons_bar"
+    style="order: {{ blockOrder }}"
+    {{ block.shopify_attributes }}
+>
+    {% render 'icons-bar__styles',
+        enable_slider: false,
+        icon_size: block.settings.icons_width,
+        show_border_bottom: false,
+        show_border_top: false,
+        show_separator: false,
+        show_shadow: false,
+        visibility: 'all'
+    %}
+
+    {%- capture inner_html -%}
+<ul class="icons-bar-inner">
+    {% for i in (1..2) -%}
+        {%- liquid
+            assign icon = 'icon_' | append: i
+            assign text = 'text_' | append: i
+        -%}
+        {% if block.settings[icon] != blank or block.settings[text] != blank %}
+            <li class="icons-bar-item">
+                {% unless block.settings[icon] == blank %}
+                    <div class="icons-bar-icon">
+                        {% if block.settings[icon] contains 'divine' %}
+                            {% render 'theme-icons'
+                                name: block.settings[icon]
+                            %}
+                        {% else %}
+                            {% render 'icons-bar__icon'
+                                name: block.settings[icon]
+                                css_class: 'ionicon'
+                            %}
+                        {% endif %}
+                    </div>
+                {% endunless %}
+                <div class="icons-bar-text">{{ block.settings[text] }}</div>
+            </li>
+        {% endif %}
+    {%- endfor %}
+</ul>
+{%- endcapture -%}
+
+    {% render 'icons-bar__wrapper', color_scheme: '', enable_slider: false, inner_html: inner_html %}
+</div>

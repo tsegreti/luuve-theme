@@ -1,0 +1,221 @@
+{% comment %}
+    Render featured collection / product list / product recoomendations.
+    It uses section object to get all nessecery data.
+
+    Accepts:
+        - data_source: {String}
+        - appearance:  {String}
+        - heading:     {String}
+        - mode:        {String}
+{% endcomment %}
+
+{%- liquid
+    assign heading = heading | default: section.settings.title
+    assign mode = mode | default: 'grid'
+    assign block_button = section.blocks | where: 'type', 'button' | first
+    assign button_class = 'view-all reveal-item animate-arrow'
+    case block_button.settings.appearance
+        when 'button'
+            assign button_class = button_class | append: ' button button--primary'
+        when 'button_secondary'
+            assign button_class = button_class | append: ' button button--secondary'
+        when 'link'
+            assign button_class = button_class | append: ' _link'
+    endcase
+
+    assign block_cover = section.blocks | where: 'type', 'magazine_cover' | first
+
+    assign titlePosition = settings.section_heading_position
+    assign __class__ = 'collection dynamic-page-width'
+
+    if block_cover != null
+        assign __class__ = __class__ | append: ' magazine'
+    else
+        assign __class__ = __class__ | append: ' classic'
+    endif
+
+    if section.settings.enable_grayscale_effect
+        assign __class__ = __class__ | append: ' with--grayscale-effect'
+    endif
+
+    assign cover_height = ''
+    if block_cover != null and block_cover.settings.cover_max_height != blank
+        assign cover_height = 'style="max-height:'
+        assign cover_height = cover_height | append: block_cover.settings.cover_max_height
+        assign cover_height = cover_height | append: 'px'
+        assign cover_height = cover_height | append: '"'
+    endif
+
+    if section.settings.animation_on_reveal
+        assign __class__ = __class__ | append: ' reveal-slide-in'
+    endif
+
+    assign badge_size = section.settings.badge_size | default: 'sm'
+    assign show_secondary_image = settings.product_card_secondary_image
+    assign show_to_cart_button = section.settings.show_to_cart_button
+    # render show_to_cart_button button for blocks that do not use such an option
+    unless show_to_cart_button == false
+        if show_to_cart_button == blank
+            assign show_to_cart_button = true
+        endif
+    endunless
+
+    assign products_appearance = section.settings.products_appearance | default: appearance
+    assign ul_class = 'products'
+    if products_appearance == 'slider'
+        assign ul_class = ul_class | append: ' slider slider--desktop grid--peek'
+    elsif products_appearance == 'mixed'
+        assign ul_class = ul_class | append: ' slider slider--mobile grid--peek'
+    endif
+-%}
+
+{% style %}
+    #shopify-section-{{ section.id }} .heading.position_{{ titlePosition }} {
+        align-items: {{ titlePosition }};
+    }{% unless section.settings.products_background_color == blank %}
+    #shopify-section-{{ section.id }} {
+        background: {{ section.settings.products_background_color }};
+    }{% endunless %}
+    @media (min-width: 990px), print {
+        #shopify-section-{{ section.id }} .slider-buttons {
+            right: {% if settings.section_heading_position == 'end' %}unset{% else %}1rem{% endif %};
+            {% if settings.section_heading_position == 'end' %}
+            left: 1rem;{% endif %}
+        }
+    }
+{% endstyle %}
+
+{{ 'component-listing-grid.css' | asset_url | stylesheet_tag }}
+{{ 'component-price.css' | asset_url | stylesheet_tag }}
+<noscript>
+    {{ 'component-listing-grid.css' | asset_url | stylesheet_tag }}
+    {{ 'component-price.css' | asset_url | stylesheet_tag }}
+</noscript>
+
+{% if block_cover != null %}
+    {% render 'featured-collection__css--magazine', block: block_cover %}
+{% else %}
+    {% render 'featured-collection__css--classic' %}
+{% endif %}
+
+<div class="{{ __class__ }}">
+    <div class="collection-inner">
+        <div
+            class="title-wrapper{% if cover_height != blank %} _sticky{% endif %}"
+            {% unless cover_height == blank %}
+                {{ cover_height -}}
+            {% endunless %}
+        >
+            {%- unless heading == blank %}
+                <div class="heading position_{{ titlePosition }}">
+                    <{{ section.settings.heading_size | default: 'span' }}
+                        {% if block_cover == null %}
+                            class="title reveal-item"
+                        {% endif %}
+                    >
+                        {{ heading }}
+                    </{{ section.settings.heading_size | default: 'span' }}>
+                    {%- unless section.settings.sub_heading == blank %}
+                        <p class="subtitle h5 reveal-item">
+                            {{ section.settings.sub_heading }}
+                        </p>
+                    {% endunless -%}
+                    {%- if block_button.settings.position == 'title' %}
+                        <a
+                            href="{{ block_button.settings.link }}"
+                            class="{{ button_class }}"
+                            title="{{ block_button.settings.label }}"
+                            {{ block.shopify_attributes }}
+                        >
+                            <span>{{ block_button.settings.label }}</span>
+                            {%- if settings.current_theme_icons == 'enduro' %}
+                                {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+                            {% else %}
+                                {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+                            {% endif -%}
+                        </a>
+                    {% endif -%}
+                </div>
+            {% endunless -%}
+            {%- if block_cover.settings.image -%}
+                <div class="title-image">
+                    <div class="media media--transparent">
+                        {% render 'render-image',
+                            image: block_cover.settings.image,
+                            widths: '480,640,960,#iw#',
+                            sizes: '50vw'
+                        %}
+                    </div>
+                </div>
+            {%- endif -%}
+        </div>
+
+        <slider-component data-loop="false">
+            {%- liquid
+                assign ul_id = 'products--' | append: section.id
+                assign has_side_column = false
+
+                if block_cover != null
+                    assign has_side_column = true
+                endif
+
+                case data_source
+                    when 'collection'
+                        assign items = section.settings.collection.products
+
+                    when 'product_list'
+                        assign items = section.settings.product_list
+
+                    when 'related', 'complementary'
+                        assign items = recommendations.products
+                endcase
+
+                if items == null or items.count == 0
+                    if section.settings.show_random
+                        capture handels
+                            render 'helper__get-similar-products', limit: section.settings.products_to_show
+                        endcapture
+                        assign items = handels | split: '|'
+                    endif
+                endif
+            -%}
+
+            {% render 'grid-items',
+                ul_id: ul_id,
+                ul_class: ul_class,
+                has_side_column: has_side_column,
+                items: items,
+                mode: mode,
+                columns: section.settings.products_per_row,
+                limit: section.settings.products_to_show,
+                badge_size: badge_size,
+                image_ratio: section.settings.image_ratio,
+                product_secondary_image: show_secondary_image,
+                product_to_cart_button: show_to_cart_button,
+                product_show_vendor: settings.product_card_vendor,
+                row_divider: true
+            %}
+            {% unless section.settings.products_appearance == 'grid' %}
+                {%- assign items_count = items.count | default: items.size -%}
+                {% render 'slider__buttons', count: items_count %}
+            {% endunless %}
+        </slider-component>
+    </div>
+    {%- if block_button.settings.position == 'bottom' -%}
+        <div class="button-wrapper" style="text-align: center; margin: 1rem 0 0;">
+            <a
+                href="{{ block_button.settings.link }}"
+                class="{{ button_class }}"
+                title="{{ block_button.settings.label }}"
+                {{ block.shopify_attributes }}
+            >
+                <span>{{ block_button.settings.label }}</span>
+                {%- if settings.current_theme_icons == 'enduro' %}
+                    {%- render 'icons-solid-enduro', name: 'arrow-right', css_class: 'icon icon-arrow' -%}
+                {% else %}
+                    {% render 'icons-solid', name: 'long-arrow-right', css_class: 'icon-arrow extend' %}
+                {% endif -%}
+            </a>
+        </div>
+    {%- endif -%}
+</div>

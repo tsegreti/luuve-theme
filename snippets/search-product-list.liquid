@@ -1,0 +1,64 @@
+{%- comment -%}
+    Render product list for search blocks: Results, Related product list
+
+    Accepts:
+     - items: {Array}
+{%- endcomment -%}
+
+{%- for product in items -%}
+    <li
+        id="predictive-search-option-{{ forloop.index }}"
+        class="predictive-search__list-item grid-item"
+        role="option"
+        aria-selected="false"
+    >
+        <a
+            href="{{ product.url }}"
+            class="predictive-search__item predictive-search__item--link link--text"
+            tabindex="-1"
+        >
+            {% assign featuredImage = product.featured_media.preview_image %}
+            <div
+                class="media"
+                style="padding-bottom: {% render 'helper__media-padding-bottom' image: featuredImage image_ratio: imageRatio %};"
+            >
+                {% if featuredImage %}
+                    {% render 'grid-item--item-image',
+                        image: featuredImage,
+                        image_ratio: imageRatio,
+                        image_sizes_config: imageSizesConfig
+                    %}
+                {% else %}
+                    {{
+                        product.id
+                        | divided_by: 1000
+                        | modulo: 4
+                        | plus: 1
+                        | prepend: 'product-'
+                        | placeholder_svg_tag: 'placeholder-svg placeholder'
+                    }}
+                {% endif %}
+            </div>
+            <div class="predictive-search__item-content item-details-wrapper">
+                {%- if settings.product_card_vendor -%}
+                    <p class="item-vendor">
+                        <span class="visually-hidden">{{ 'accessibility.vendor' | t }}</span>
+                        <span>{{ product.vendor | default: 'vendor' }}</span>
+                    </p>
+                {%- endif -%}
+                <p class="item-title predictive-search__item-heading">{{ product.title }}</p>
+                {% render 'helper__decorate-product-price', product: product, showPriceLabel: settings.price_label %}
+                {% if settings.product_card_rating -%}
+                    <div class="shopify-product-reviews-badge" data-id="{{ product.id }}"></div>
+                {%- endif %}
+                <div class="stock-sku">
+                    {%- render 'stock-sku',
+                        target: product.selected_or_first_available_variant,
+                        show_sku: false,
+                        show_stock: settings.predictive_search_show_stock
+                    -%}
+                </div>
+            </div>
+        </a>
+    </li>
+{%- endfor -%}

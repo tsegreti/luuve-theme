@@ -1,0 +1,94 @@
+{%- comment -%}
+    Renders vertical bar (|) separated product grid item image [WIDTH]|[WIDTH_OPTIONS]|[SIZES_VALUE]
+
+    Accepts:
+     - columns         {Number}
+     - has_side_column {Boolean}
+     - mode            {String}
+{%- endcomment -%}
+
+{%- comment -%}
+    412px is screen width of Moto G Power.
+    Google pagespeed uses it for mobile tests.
+{%- endcomment -%}
+
+{%- liquid
+    assign columnsInt = columns | plus: 0
+    if mode == 'list'
+        echo '540'
+        echo '|'
+        echo '270,306,480,540'
+        echo '|'
+        echo '(max-width: 360px) calc(160px * {m}), calc(270px * {m})'
+    else
+        if has_side_column
+            case columnsInt
+                when 2
+                    echo '608'
+                    echo '|'
+                    echo '306,446,480,608'
+                    echo '|'
+                    echo '(max-width: 360px) calc(160px * {m}), (max-width: 639px) calc(300px * {m}), (max-width: 767px) calc(364px * {m}), (max-width: 989px) calc(469px * {m}), calc(446px * {m})'
+                when 3
+                    echo '608'
+                    echo '|'
+                    echo '249,306,480,608'
+                    echo '|'
+                    echo '(max-width: 412px) calc(170px * {m}), (max-width: 639px) calc(284px * {m}), (max-width: 767px) calc(218px * {m}), (max-width: 989px) calc(285px * {m}), calc(249px * {m})'
+                when 4
+                    echo '630'
+                    echo '|'
+                    echo '210,306,480,630'
+                    echo '|'
+                    echo '(max-width: 360px) calc(160px * {m}), (max-width: 639px) calc(300px * {m}), (max-width: 767px) calc(237px * {m}), calc(210px * {m})'
+                when 5
+                    echo '600'
+                    echo '|'
+                    echo '163,306,480,600'
+                    echo '|'
+                    echo '(max-width: 360px) calc(160px * {m}), (max-width: 639px) calc(300px * {m}), (max-width: 767px) calc(237px * {m}), (max-width: 989px) calc(221px * {m}), calc(163px * {m})'
+
+                when 6
+                    echo '600'
+                    echo '|'
+                    echo '131,306,480,600'
+                    echo '|'
+                    echo '(max-width: 360px) calc(160px * {m}), (max-width: 639px) calc(300px * {m}), (max-width: 767px) calc(237px * {m}), (max-width: 989px) calc(221px * {m}), (max-width: 1199px) calc(163px * {m}), calc(131px * {m})'
+            endcase
+        else
+            case columnsInt
+                when 2
+                    echo '608'
+                    echo '|'
+                    echo '306,480,574,608'
+                    echo '|'
+                    echo '(max-width: 360px) calc(160px * {m}), (max-width: 639px) calc(300px * {m}), (max-width: 767px) calc(364px * {m}), (max-width: 989px) calc(469px * {m}), calc(574px * {m})'
+                when 3
+                    echo '608'
+                    echo '|'
+                    echo '306,374,480,608'
+                    echo '|'
+                    echo '(max-width: 360px) calc(160px * {m}), (max-width: 639px) calc(300px * {m}), (max-width: 767px) calc(237px * {m}), (max-width: 989px) calc(304px * {m}), calc(374px * {m})'
+                when 4
+                    echo '630'
+                    echo '|'
+                    echo '274,306,480,630'
+                    echo '|'
+                    echo '(max-width: 360px) calc(160px * {m}), (max-width: 639px) calc(300px * {m}), (max-width: 767px) calc(237px * {m}), calc(274px * {m})'
+                when 5
+                    echo '600'
+                    echo '|'
+                    echo '214,306,480,600'
+                    echo '|'
+                    echo '(max-width: 360px) calc(160px * {m}), (max-width: 639px) calc(300px * {m}), (max-width: 767px) calc(237px * {m}), (max-width: 989px) calc(221px * {m}), calc(214px * {m})'
+
+                when 6
+                    echo '600'
+                    echo '|'
+                    echo '174,306,480,600'
+                    echo '|'
+                    echo '(max-width: 360px) calc(160px * {m}), (max-width: 639px) calc(300px * {m}), (max-width: 767px) calc(237px * {m}), (max-width: 989px) calc(221px * {m}), (max-width: 1199px) calc(214px * {m}), calc(174px * {m})'
+            endcase
+        endif
+    endif
+-%}

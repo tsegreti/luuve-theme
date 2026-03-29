@@ -1,0 +1,11 @@
+.collections-list + .buttons-wrapper {
+
+    margin-top: 2rem;
+
+    text-align: center
+}
+
+.item-collection .products-count {
+
+    color: var(--color-foreground-75)
+}

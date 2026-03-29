@@ -1,0 +1,39 @@
+.order-details .old-price {
+
+    text-decoration-line: line-through
+}
+
+.order-details #RowTotal,
+.order-details #RowTotal + td {
+
+    font-size: 1.25rem;
+
+    line-height: 1.75rem
+}
+
+@media (min-width: 768px) {
+
+    .order-details #RowTotal,
+.order-details #RowTotal + td {
+
+        font-size: 1.5rem;
+
+        line-height: 2rem
+    }
+}
+
+.order-item {
+
+    font-size: 1.125rem;
+
+    line-height: 1.75rem;
+
+    font-weight: 600;
+
+    color: var(--color-foreground)
+}
+
+a.order-item:hover {
+
+    text-decoration-line: underline
+}

@@ -1,0 +1,86 @@
+{%- comment -%}
+    Render search results for product.
+
+    Accepts:
+     - block {Object}
+{%- endcomment -%}
+
+{%- assign pages = search.results | where: 'object_type', 'page' -%}
+{%- if pages.size > 0 -%}
+    <div class="pages__wrapper">
+        <h2 class="h3 search-secondary-results-heading">{{ 'templates.search.results.pages' | t }}</h2>
+        {% style %}
+            .pages-listing {
+                --pages-listing__gap: 1.25rem;
+                --pages-listing__columns: 1;
+                display: flex;
+                flex-wrap: wrap;
+                gap: var(--pages-listing__gap);
+                margin-top: 1rem;
+                position: relative;
+            }
+
+            .pages-listing .item-page {
+                width: calc((100% - var(--pages-listing__gap) * (var(--pages-listing__columns) - 1)) / var(--pages-listing__columns));
+                transform: translateY(0);
+                transition: transform .4s;
+            }
+
+            .pages-listing .item-page:hover,
+            .pages-listing .item-page:focus {
+                transform: translateY(-.5rem);
+            }
+
+            .pages-listing .item-link {
+                background: var(--color-foreground-4);
+                border-radius: 6px;
+                display: block;
+                padding: 2rem;
+            }
+
+            .pages-listing .item-title:first-child {
+                margin-top: 0;
+            }
+
+            .pages-listing .item-title:last-child {
+                margin-bottom: 0;
+            }
+
+            .pages-listing .item-description {
+                color: var(--color-foreground-75);
+            }
+
+            @media (min-width: 768px) {
+                .pages-listing {
+                    --pages-listing__columns: 2;
+                }
+            }
+
+            @media (min-width: 990px) {
+                .pages-listing {
+                    --pages-listing__columns: 3;
+                    --pages-listing__gap: 2.5rem;
+                }
+            }
+        {% endstyle %}
+        <ul id="pages-{{ section.id }}" class="pages-listing">
+            {%- for page in search.results -%}
+                {%- liquid
+                    unless page.object_type == 'page'
+                        continue
+                    endunless
+                -%}
+                <li class="item-page" data-page-id="{{ page.id }}">
+                    <a href="{{ page.url }}" class="item-link">
+                        <h3 class="item-title">{{ page.title | escape }}</h3>
+                        {% if block.settings.excerpt_limit > 0 -%}
+                            <div class="item-description rte">
+                                {{ page.content | strip_html | truncatewords: block.settings.excerpt_limit }}
+                            </div>
+                        {%- endif %}
+                    </a>
+                </li>
+            {%- endfor -%}
+        </ul>
+    </div>
+{%- endif -%}

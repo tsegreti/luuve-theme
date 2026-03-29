@@ -1,0 +1,111 @@
+{%- liquid
+    if block.settings.collection != blank
+        assign collection_title = block.settings.collection.title | escape
+    else
+        assign collection_title = 'onboarding.collection_title' | t
+    endif
+
+    assign paddingBottom = 75
+    if block.settings.collection.featured_image
+        assign paddingBottom = 100 | divided_by: block.settings.collection.featured_image.aspect_ratio
+        assign imageWidth = '326,652,978,1182,1340,2364'
+        assign imageSizes = '(max-width: 767px) calc(100vw - 2rem - 2px), (max-width: 1279px) calc(100vw - 6rem - 2px), 1182px'
+    endif
+
+    assign block_index = section.blocks | find_index: 'id', block.id
+
+    assign focus_card_left = false
+    if section.settings.desktop_layout == 'left' and block_index == 0
+        assign focus_card_left = true
+    elsif section.settings.desktop_layout == 'right' and block_index == 2
+        assign focus_card_right = true
+    endif
+-%}
+
+<a
+    id="{{ block.id }}"
+    href="{{ block.settings.collection.url }}"
+    title="{{ collection_title }}"
+    class="collage-card color-{{ block.settings.color_scheme }}{% if focus_card_left %} collage-card--left{% elsif focus_card_right %} collage-card--right{% endif %}"
+    {{ block.shopify_attributes }}
+>
+    <div class="product-image animate-arrow">
+        <div
+            class="media"
+            {% if paddingBottom %}
+                style="padding-bottom: {{ paddingBottom }}%;"
+            {% endif %}
+        >
+            {% if block.settings.collection.featured_image %}
+                {% render 'render-image',
+                    image: block.settings.collection.featured_image,
+                    widths: imageWidth,
+                    sizes: imageSizes,
+                    css_class: ''
+                %}
+            {% else %}
+                {{
+                    block.settings.collection.id
+                    | divided_by: 1000
+                    | modulo: 6
+                    | plus: 1
+                    | prepend: 'collection-'
+                    | placeholder_svg_tag: 'placeholder-svg placeholder flex-1'
+                }}
+            {% endif %}
+        </div>
+        <div class="collage-card-title">
+            <h3>
+                {{- collection_title -}}
+            </h3>
+        </div>
+    </div>
+</a>
+
+{% schema %}
+{
+  "name": "t:sections.collage.blocks.collection.name",
+  "tag": null,
+  "settings": [
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "t:sections.collage.blocks.collection.settings.collection.label"
+    },
+    {
+      "type": "select",
+      "id": "color_scheme",
+      "options": [
+        {
+          "value": "accent-1",
+          "label": "t:sections.all.colors.accent_1.label"
+        },
+        {
+          "value": "accent-2",
+          "label": "t:sections.all.colors.accent_2.label"
+        },
+        {
+          "value": "background-1",
+          "label": "t:sections.all.colors.background_1.label"
+        },
+        {
+          "value": "background-2",
+          "label": "t:sections.all.colors.background_2.label"
+        },
+        {
+          "value": "inverse",
+          "label": "t:sections.all.colors.inverse.label"
+        }
+      ],
+      "default": "background-1",
+      "label": "t:sections.all.colors.label"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:sections.collage.blocks.collection.name",
+      "category": "t:sections.all.categories.collage"
+    }
+  ]
+}
+{% endschema %}

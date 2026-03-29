@@ -1,0 +1,22 @@
+{
+    "name": "t:sections.header.name",
+    "type": "header",
+    "sections": {
+        "header_top": {
+            "type": "header-top",
+            "settings": {
+                "color_text": "#909090",
+                "color_background": "#0B0B0B",
+                "show_email": true,
+                "message": "<p><strong>Free shipping</strong> for all new summer outfits | <a href='/collections/all' title='All collections'><strong>See selection</strong></a></p>"
+            }
+        },
+        "header": {
+            "type": "header",
+            "settings": {
+                "logo_width": 180
+            }
+        }
+    },
+    "order": ["header_top", "header"]
+}

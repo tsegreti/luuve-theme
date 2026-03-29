@@ -1,0 +1,21 @@
+{% comment %}
+    Renders "Sold Out" badge for product.
+    Text for badge you can find in localization files.
+
+    Accepts:
+    - product: {Object} Product
+    - position: {String} Position of badge (top-left | top-right | ... | in-content)
+    - size: {String} 1..5 | large
+{% endcomment %}
+
+{%- liquid
+    assign position = position | default: settings.badge_soldout__position
+    assign text = settings.badge_soldout__text
+    assign size = size | default: '1'
+-%}
+
+{%- unless product.available or text == blank -%}
+    <div class="badge badge-size-{{ size }} badge-soldout {{ position }}" aria-hidden="true">
+        {{- text -}}
+    </div>
+{%- endunless -%}

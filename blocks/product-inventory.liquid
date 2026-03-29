@@ -1,0 +1,42 @@
+{%- liquid
+    assign product = section.settings.product | default: product
+    assign block_index = block.settings.block_order
+-%}
+{%- render 'product__info-block--stock_status',
+    block: block,
+    product: product,
+    blockOrder: block_index,
+    sectionId: section.id
+-%}
+{% schema %}
+{
+    "name": "t:sections.main-product.blocks.stock_status.name",
+    "tag": null,
+    "settings": [
+        {
+            "type": "number",
+            "id": "stock_left_threshold",
+            "label": "t:sections.main-product.blocks.stock_status.settings.stock_left_threshold.label",
+            "info": "t:sections.main-product.blocks.stock_status.settings.stock_left_threshold.info",
+            "default": 9
+        },
+        {
+            "type": "header",
+            "content": "t:sections.all.advanced.header.content"
+        },
+        {
+            "type": "number",
+            "id": "block_order",
+            "label": "t:sections.all.advanced.block_order.label",
+            "info": "t:sections.all.advanced.block_order.info",
+            "default": 4
+        }
+    ],
+    "presets": [
+        {
+            "name": "t:sections.main-product.blocks.stock_status.name",
+            "category": "t:sections.all.categories.product-information"
+        }
+    ]
+}
+{% endschema %}

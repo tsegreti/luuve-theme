@@ -1,0 +1,50 @@
+{%- comment -%}
+    Render dialog modal
+
+    Accepts:
+    - aria_label   {String}
+    - color_scheme {String}
+    - content      {String}
+    - id           {String}
+    - no_padding   {Boolean}
+    - title        {String}
+{%- endcomment -%}
+
+{%- assign no_padding = no_padding | default: false -%}
+{%- assign color_scheme = color_scheme | default: 'background-1' -%}
+
+<modal-dialog
+    id="PopupModal-{{ id }}"
+    class="popup-modal color-{{ color_scheme }}"
+    data-deferred-name="modalDialog"
+>
+    <div
+        role="dialog"
+        aria-label="{{ aria_label }}"
+        aria-modal="true"
+        class="popup-modal__content scrollbar{% unless no_padding %} popup-modal__content-padding{% endunless %}"
+        tabindex="-1"
+    >
+        <button
+            id="ModalClose-{{ id }}"
+            type="button"
+            class="button--secondary popup-modal__toggle modal__close-button"
+            title="{{ 'accessibility.close' | t }}"
+        >
+            <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close">
+                <use href="#icon-close" />
+            </svg>
+        </button>
+
+        <div class="popup-modal__content-info">
+            {% unless title == blank %}
+                <div class="h6">{{ title }}</div>
+            {% endunless %}
+            {%- if content == blank %}
+                <span class="h5 content-blank__title">{{ 'general.pop_up.empty' | t }}</span>
+            {% else %}
+                {{- content -}}
+            {% endif -%}
+        </div>
+    </div>
+</modal-dialog>
