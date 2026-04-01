@@ -1,1 +1,224 @@
-{"sections":{"breadcrumbs":{"type":"breadcrumbs","settings":{}},"main":{"type":"main-product","blocks":{"gallery":{"type":"product-media-gallery","static":true,"settings":{},"blocks":{}},"product-details":{"type":"product-details","static":true,"settings":{},"blocks":{"title":{"type":"product-title","settings":{"text_before":"{{ product.vendor }}"}},"stock_status":{"type":"product-inventory","settings":{}},"description":{"type":"product-description","settings":{"is_collapsed":false}},"price":{"type":"product-price","settings":{}},"variant_picker":{"type":"product-variant-picker","settings":{}},"quantity_selector":{"type":"product-quantity","settings":{}},"buy_buttons":{"type":"product-buy-buttons","settings":{}},"pickup":{"type":"product-pickup","settings":{}},"collapsible_customer_service":{"type":"product-collapsible-tab","settings":{"heading":"Customer Service","content":"<p>Post your customer service details here.<\/p>","icon":"check_mark"}},"collapsible_return_policy":{"type":"product-collapsible-tab","settings":{"heading":"Return Policy","content":"<p>Post your policy conditions details here.<\/p>","icon":"return"}},"share":{"type":"product-share","settings":{}}},"block_order":["title","stock_status","price","description","variant_picker","quantity_selector","buy_buttons","pickup","collapsible_customer_service","collapsible_return_policy","share"]}},"settings":{}},"product-tabs":{"type":"product-tabs","blocks":{"description":{"type":"description","settings":{"heading":"Description"}},"reviews":{"type":"reviews","settings":{"heading":"Reviews"}},"similar":{"type":"similar","disabled":true,"settings":{}},"faq":{"type":"faq","settings":{"default_faqs":"What level of performance can I expect from 4K Color Drive?:This tv comes equipped with a 4k color drive, which allows the tv to accurately reproduce a wider spectrum of colors. you’ll experience an exceptionally vibrant, pristine image that makes each scene more lifelike."}}},"block_order":["description","reviews","faq","similar"],"settings":{"tabs_layout":"collapsed","collapsed_tabs_bg_gradient":"","section_tabs_bg":""}},"products-recommendations":{"type":"product-recommendations","settings":{"title":"You may also like","products_background_color":"#FFFFFF","products_appearance":"slider","show_slider_buttons":true}},"products-complementary":{"type":"product-complementary","settings":{"title":"Complementary products","products_background_color":"#FFFFFF","products_appearance":"slider","show_slider_buttons":true}},"recent_posts":{"type":"featured-blog","settings":{"heading":"Recent stories","blog":"news","post_limit":3,"excerpt_limit":0,"show_date":true,"show_link":false,"show_comments":false}},"icons_bar":{"type":"icons-bar","blocks":{"icon-bar-1":{"type":"icon","settings":{"icon":"divine-shipping"}},"icon-bar-2":{"type":"icon","settings":{"icon":"divine-returns"}},"icon-bar-3":{"type":"icon","settings":{"icon":"divine-lock"}}},"block_order":["icon-bar-1","icon-bar-2","icon-bar-3"],"settings":{"border_top":false}},"border_separator_1":{"type":"border-separator","settings":{}},"border_separator_2":{"type":"border-separator","settings":{}}},"order":["breadcrumbs","main","product-tabs","products-recommendations","products-complementary","border_separator_1","recent_posts","border_separator_2","icons_bar"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "breadcrumbs": {
+      "type": "breadcrumbs",
+      "settings": {}
+    },
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "gallery": {
+          "type": "product-media-gallery",
+          "static": true,
+          "settings": {},
+          "blocks": {}
+        },
+        "product-details": {
+          "type": "product-details",
+          "static": true,
+          "settings": {},
+          "blocks": {
+            "title": {
+              "type": "product-title",
+              "settings": {
+                "text_before": "{{ product.vendor }}"
+              }
+            },
+            "stock_status": {
+              "type": "product-inventory",
+              "settings": {}
+            },
+            "description": {
+              "type": "product-description",
+              "settings": {
+                "is_collapsed": false
+              }
+            },
+            "price": {
+              "type": "product-price",
+              "settings": {}
+            },
+            "variant_picker": {
+              "type": "product-variant-picker",
+              "settings": {}
+            },
+            "quantity_selector": {
+              "type": "product-quantity",
+              "settings": {}
+            },
+            "buy_buttons": {
+              "type": "product-buy-buttons",
+              "settings": {}
+            },
+            "pickup": {
+              "type": "product-pickup",
+              "settings": {}
+            },
+            "collapsible_customer_service": {
+              "type": "product-collapsible-tab",
+              "settings": {
+                "heading": "Customer Service",
+                "content": "<p>Post your customer service details here.</p>",
+                "icon": "check_mark"
+              }
+            },
+            "collapsible_return_policy": {
+              "type": "product-collapsible-tab",
+              "settings": {
+                "heading": "Return Policy",
+                "content": "<p>Post your policy conditions details here.</p>",
+                "icon": "return"
+              }
+            },
+            "share": {
+              "type": "product-share",
+              "settings": {}
+            }
+          },
+          "block_order": [
+            "title",
+            "stock_status",
+            "price",
+            "description",
+            "variant_picker",
+            "quantity_selector",
+            "buy_buttons",
+            "pickup",
+            "collapsible_customer_service",
+            "collapsible_return_policy",
+            "share"
+          ]
+        }
+      },
+      "settings": {}
+    },
+    "product-tabs": {
+      "type": "product-tabs",
+      "blocks": {
+        "description": {
+          "type": "description",
+          "settings": {
+            "heading": "Description"
+          }
+        },
+        "reviews": {
+          "type": "reviews",
+          "settings": {
+            "heading": "Reviews"
+          }
+        },
+        "similar": {
+          "type": "similar",
+          "disabled": true,
+          "settings": {}
+        },
+        "faq": {
+          "type": "faq",
+          "settings": {
+            "default_faqs": "What level of performance can I expect from 4K Color Drive?:This tv comes equipped with a 4k color drive, which allows the tv to accurately reproduce a wider spectrum of colors. you’ll experience an exceptionally vibrant, pristine image that makes each scene more lifelike."
+          }
+        }
+      },
+      "block_order": [
+        "description",
+        "reviews",
+        "faq",
+        "similar"
+      ],
+      "settings": {
+        "tabs_layout": "collapsed",
+        "collapsed_tabs_bg_gradient": "",
+        "section_tabs_bg": ""
+      }
+    },
+    "products-recommendations": {
+      "type": "product-recommendations",
+      "settings": {
+        "title": "You may also like",
+        "products_background_color": "#FFFFFF",
+        "products_appearance": "slider",
+        "show_slider_buttons": true
+      }
+    },
+    "products-complementary": {
+      "type": "product-complementary",
+      "settings": {
+        "title": "Complementary products",
+        "products_background_color": "#FFFFFF",
+        "products_appearance": "slider",
+        "show_slider_buttons": true
+      }
+    },
+    "recent_posts": {
+      "type": "featured-blog",
+      "settings": {
+        "heading": "Recent stories",
+        "blog": "news",
+        "post_limit": 3,
+        "excerpt_limit": 0,
+        "show_date": true,
+        "show_link": false,
+        "show_comments": false
+      }
+    },
+    "icons_bar": {
+      "type": "icons-bar",
+      "blocks": {
+        "icon-bar-1": {
+          "type": "icon",
+          "settings": {
+            "icon": "divine-shipping"
+          }
+        },
+        "icon-bar-2": {
+          "type": "icon",
+          "settings": {
+            "icon": "divine-returns"
+          }
+        },
+        "icon-bar-3": {
+          "type": "icon",
+          "settings": {
+            "icon": "divine-lock"
+          }
+        }
+      },
+      "block_order": [
+        "icon-bar-1",
+        "icon-bar-2",
+        "icon-bar-3"
+      ],
+      "settings": {
+        "border_top": false
+      }
+    },
+    "border_separator_1": {
+      "type": "border-separator",
+      "settings": {}
+    },
+    "border_separator_2": {
+      "type": "border-separator",
+      "settings": {}
+    }
+  },
+  "order": [
+    "breadcrumbs",
+    "main",
+    "product-tabs",
+    "products-recommendations",
+    "products-complementary",
+    "border_separator_1",
+    "recent_posts",
+    "border_separator_2",
+    "icons_bar"
+  ]
+}

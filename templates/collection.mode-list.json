@@ -1,1 +1,227 @@
-{"sections":{"image-banner":{"type":"image-banner","blocks":{"subheading":{"type":"text","settings":{"text":"Collection","text_color":"#FFFFFF"}},"heading":{"type":"heading","settings":{"heading":"{{ collection.title }}","level":"h1","heading_color":"#FFFFFF"}}},"block_order":["subheading","heading"],"settings":{"image":"{{ collection.image }}","is_preload":true,"image_height":"small","full_width":true}},"breadcrumbs":{"type":"breadcrumbs","settings":{"border_bottom":false,"use_background_transparent":true}},"collection":{"type":"main-collection","blocks":{"title":{"type":"title","disabled":true,"settings":{}},"image":{"type":"image","disabled":true,"settings":{}},"description":{"type":"description","settings":{}},"featured":{"type":"featured","disabled":true,"settings":{}},"filters":{"type":"filters","settings":{"position":"left","list_of_initially_opened":"price"}},"products":{"type":"products","settings":{"mode":"list","per_page":6,"columns":2,"badge_size":"md","show_description":true}},"contacts":{"type":"contacts","disabled":true,"settings":{"heading":"Contacts","position":"left"}},"menu":{"type":"menu","disabled":true,"settings":{"menu":"sidebar-menu","position":"left"}}},"block_order":["title","image","featured","filters","products","description","menu","contacts"],"settings":{}},"icons_bar":{"type":"icons-bar","blocks":{"icon-bar-1":{"type":"icon","settings":{"icon":"divine-shipping"}},"icon-bar-2":{"type":"icon","settings":{"icon":"divine-returns"}},"icon-bar-3":{"type":"icon","settings":{"icon":"divine-lock"}}},"block_order":["icon-bar-1","icon-bar-2","icon-bar-3"],"settings":{"border_top":false}},"countdown":{"type":"countdown-timer","blocks":{"timer":{"type":"timer","settings":{}}},"block_order":["timer"],"settings":{}},"banners":{"type":"multicolumn","blocks":{"col-1":{"type":"ml-column","settings":{"title":"Banner Title","sub_title":"","text":"","content_position":"split_button","link_appearance":"button","cover_background":"","color_title":"#FFFFFF","color_subtitle":"#FFFFFF","color_text":"#FFFFFF","button_background":"#FFFFFF","button_foreground":"#000000"}},"col-2":{"type":"ml-column","settings":{"title":"Banner Title","sub_title":"","text":"","content_position":"split_button","link_appearance":"button","cover_background":"","color_title":"#FFFFFF","color_subtitle":"#FFFFFF","color_text":"#FFFFFF","button_background":"#FFFFFF","button_foreground":"#000000"}}},"block_order":["col-1","col-2"],"settings":{"title":"","heading_size":"h2","sub_title":"","columns":2,"image_width":"","column_alignment":"center","column_direction":"cover","button_label":"","swipe_on_mobile":true}},"border_separator_1":{"type":"border-separator","settings":{}}},"order":["image-banner","breadcrumbs","collection","countdown","banners","border_separator_1","icons_bar"]}
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "image-banner": {
+      "type": "image-banner",
+      "blocks": {
+        "subheading": {
+          "type": "text",
+          "settings": {
+            "text": "Collection",
+            "text_color": "#FFFFFF"
+          }
+        },
+        "heading": {
+          "type": "heading",
+          "settings": {
+            "heading": "{{ collection.title }}",
+            "level": "h1",
+            "heading_color": "#FFFFFF"
+          }
+        }
+      },
+      "block_order": [
+        "subheading",
+        "heading"
+      ],
+      "settings": {
+        "image": "{{ collection.image }}",
+        "is_preload": true,
+        "image_height": "small",
+        "full_width": true
+      }
+    },
+    "breadcrumbs": {
+      "type": "breadcrumbs",
+      "settings": {
+        "border_bottom": false,
+        "use_background_transparent": true
+      }
+    },
+    "collection": {
+      "type": "main-collection",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "disabled": true,
+          "settings": {}
+        },
+        "image": {
+          "type": "image",
+          "disabled": true,
+          "settings": {}
+        },
+        "description": {
+          "type": "description",
+          "settings": {}
+        },
+        "featured": {
+          "type": "featured",
+          "disabled": true,
+          "settings": {}
+        },
+        "filters": {
+          "type": "filters",
+          "settings": {
+            "position": "left",
+            "list_of_initially_opened": "price"
+          }
+        },
+        "products": {
+          "type": "products",
+          "settings": {
+            "mode": "list",
+            "per_page": 6,
+            "columns": 2,
+            "badge_size": "md",
+            "show_description": true
+          }
+        },
+        "contacts": {
+          "type": "contacts",
+          "disabled": true,
+          "settings": {
+            "heading": "Contacts",
+            "position": "left"
+          }
+        },
+        "menu": {
+          "type": "menu",
+          "disabled": true,
+          "settings": {
+            "menu": "sidebar-menu",
+            "position": "left"
+          }
+        }
+      },
+      "block_order": [
+        "title",
+        "image",
+        "featured",
+        "filters",
+        "products",
+        "description",
+        "menu",
+        "contacts"
+      ],
+      "settings": {}
+    },
+    "icons_bar": {
+      "type": "icons-bar",
+      "blocks": {
+        "icon-bar-1": {
+          "type": "icon",
+          "settings": {
+            "icon": "divine-shipping"
+          }
+        },
+        "icon-bar-2": {
+          "type": "icon",
+          "settings": {
+            "icon": "divine-returns"
+          }
+        },
+        "icon-bar-3": {
+          "type": "icon",
+          "settings": {
+            "icon": "divine-lock"
+          }
+        }
+      },
+      "block_order": [
+        "icon-bar-1",
+        "icon-bar-2",
+        "icon-bar-3"
+      ],
+      "settings": {
+        "border_top": false
+      }
+    },
+    "countdown": {
+      "type": "countdown-timer",
+      "blocks": {
+        "timer": {
+          "type": "timer",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "timer"
+      ],
+      "settings": {}
+    },
+    "banners": {
+      "type": "multicolumn",
+      "blocks": {
+        "col-1": {
+          "type": "ml-column",
+          "settings": {
+            "title": "Banner Title",
+            "sub_title": "",
+            "text": "",
+            "content_position": "split_button",
+            "link_appearance": "button",
+            "cover_background": "",
+            "color_title": "#FFFFFF",
+            "color_subtitle": "#FFFFFF",
+            "color_text": "#FFFFFF",
+            "button_background": "#FFFFFF",
+            "button_foreground": "#000000"
+          }
+        },
+        "col-2": {
+          "type": "ml-column",
+          "settings": {
+            "title": "Banner Title",
+            "sub_title": "",
+            "text": "",
+            "content_position": "split_button",
+            "link_appearance": "button",
+            "cover_background": "",
+            "color_title": "#FFFFFF",
+            "color_subtitle": "#FFFFFF",
+            "color_text": "#FFFFFF",
+            "button_background": "#FFFFFF",
+            "button_foreground": "#000000"
+          }
+        }
+      },
+      "block_order": [
+        "col-1",
+        "col-2"
+      ],
+      "settings": {
+        "title": "",
+        "heading_size": "h2",
+        "sub_title": "",
+        "columns": 2,
+        "image_width": "",
+        "column_alignment": "center",
+        "column_direction": "cover",
+        "button_label": "",
+        "swipe_on_mobile": true
+      }
+    },
+    "border_separator_1": {
+      "type": "border-separator",
+      "settings": {}
+    }
+  },
+  "order": [
+    "image-banner",
+    "breadcrumbs",
+    "collection",
+    "countdown",
+    "banners",
+    "border_separator_1",
+    "icons_bar"
+  ]
+}
