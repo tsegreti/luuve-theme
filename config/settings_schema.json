@@ -382,7 +382,7 @@
                 "type": "color",
                 "id": "colors_badge_sale_background",
                 "label": "t:settings_schema.colors.settings.colors_badge_sale_background.label",
-                "default": "#f54336"
+                "default": "#777777"
             },
             {
                 "type": "color_background",
@@ -393,7 +393,7 @@
                 "type": "color",
                 "id": "colors_badge_sale_foreground",
                 "label": "t:settings_schema.colors.settings.colors_badge_sale_foreground.label",
-                "default": "#ffffff"
+                "default": "#FFFFFF"
             },
             {
                 "type": "color",
@@ -414,13 +414,13 @@
                 "type": "color",
                 "id": "colors_badge_soldout_background",
                 "label": "t:settings_schema.colors.settings.colors_badge_soldout_background.label",
-                "default": "#e5eaee"
+                "default": "#E9E9E9"
             },
             {
                 "type": "color",
                 "id": "colors_badge_soldout_foreground",
                 "label": "t:settings_schema.colors.settings.colors_badge_soldout_foreground.label",
-                "default": "#002d57"
+                "default": "#242424"
             },
             {
                 "type": "header",
@@ -440,7 +440,7 @@
                 "type": "color",
                 "id": "colors_blog_tag_background",
                 "label": "t:settings_schema.colors.settings.colors_blog_tag_background.label",
-                "default": "#ffffff"
+                "default": "#FFFFFF"
             },
             {
                 "type": "header",

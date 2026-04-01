@@ -6,7 +6,7 @@
   --color-foreground: var(--header--dropdown-color);
   --color-foreground-75: rgba(var(--header--dropdown-color-rgb), .75);
   display: block !important;
-  background-color: var(--header--dropdown-background, #fafafa);
+  background-color: var(--header--dropdown-background, #FAFAFA);
   box-shadow: 0 0 1rem var(--color-foreground-50);
   color: var(--color-foreground);
   margin: .25rem 0 0;

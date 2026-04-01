@@ -14,7 +14,7 @@
                     "type": "footer-contacts",
                     "settings": {
                         "show_media": true,
-                        "social_icons_color": "#DAFA46"
+                        "social_icons_color": "#DCDCDC"
                     }
                 },
                 "menu-1": {
@@ -59,7 +59,7 @@
                         "heading": "YOUR STORE MOTTO",
                         "heading_level": "custom_font_size",
                         "heading_with_icon_separator": "square",
-                        "icon_separator_color": "#DAFA46",
+                        "icon_separator_color": "#DCDCDC",
                         "heading_color": "#FFFFFF",
                         "heading_font_size": 84
                     }

@@ -6,7 +6,7 @@
     display: table}}
 
 .cart-items thead {
-  background: #F6F5F4;
+  background: #F5F5F5;
   display: none}
 
 @media (min-width: 768px) {.cart-items thead {

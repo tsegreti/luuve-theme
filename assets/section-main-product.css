@@ -179,7 +179,7 @@ shopify-accelerated-checkout {
   --shopify-accelerated-checkout-button-block-size: 44px;
   --shopify-accelerated-checkout-button-border-radius: 6px;
   --shopify-accelerated-checkout-button-box-shadow: none;
-  --shopify-accelerated-checkout-skeleton-background-color: #dedede;
+  --shopify-accelerated-checkout-skeleton-background-color: #DEDEDE;
   --shopify-accelerated-checkout-skeleton-animation-opacity-start: 1;
   --shopify-accelerated-checkout-skeleton-animation-opacity-end: 0.5;
   --shopify-accelerated-checkout-skeleton-animation-duration: 4s;
@@ -322,7 +322,7 @@ shopify-accelerated-checkout {
 }
 
 .pickup-availability-preview .icon {
-    color: #42CA49;
+    color: #939393;
     flex-shrink: 0;
     height: 1.5rem;
     width: 1.5rem;
@@ -373,11 +373,11 @@ pickup-availability-drawer {
 }
 
 .stock-status__in-stock .stock-status__icon-ellipse {
-    background: #b4f7b2;
+    background: #DBDBDB;
 }
 
 .stock-status__out-of-stock .stock-status__icon-ellipse {
-    background: #c9c9c9;
+    background: #C9C9C9;
 }
 
 .stock-status__in-stock .stock-status__icon-ellipse::after,
@@ -393,7 +393,7 @@ pickup-availability-drawer {
 }
 
 .stock-status__in-stock .stock-status__icon-ellipse::after {
-    background: #04DD00;
+    background: #838383;
 }
 
 .stock-status__out-of-stock .stock-status__icon-ellipse::after {

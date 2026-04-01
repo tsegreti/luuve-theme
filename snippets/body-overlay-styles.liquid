@@ -17,7 +17,7 @@
         content: '';
         position: fixed;
         display: block;
-        background: rgba(0,0,0,{{ settings.overlay_transparenty }});{% if settings.enable_overlay_blur %}
+        background: rgba(0, 0, 0, {{ settings.overlay_transparenty }});{% if settings.enable_overlay_blur %}
         backdrop-filter: blur({{ settings.overlay_blur | times: 10 | append: 'px' }});{% endif %}
         left: 0;
         right: 0;

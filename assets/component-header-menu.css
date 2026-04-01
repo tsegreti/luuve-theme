@@ -4,13 +4,13 @@
     position: absolute;
     border-radius: .25rem;
     z-index: 40;
-    background-color: var(--header--dropdown-background, #fafafa);
+    background-color: var(--header--dropdown-background, #FAFAFA);
     opacity: 0;
     overflow: hidden;
 }
 
 body[data-current-preset]:not([data-current-preset="enduro"]) .dropdown-inner {
-    border: 1px solid #eaeaea;    
+    border: 1px solid #EAEAEA;    
 }
 
 :where(.with--animation__top-menu :is(.dropdown-inner)) {

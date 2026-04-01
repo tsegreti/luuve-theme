@@ -9,7 +9,7 @@
                         "heading": "{{ collection.title }}",
                         "level": "h1",
                         "heading_font_size": 0,
-                        "heading_color": "#ffffff"
+                        "heading_color": "#FFFFFF"
                     }
                 },
                 "subheading": {
@@ -17,7 +17,7 @@
                     "settings": {
                         "text": "Collection description",
                         "text_font_size": 2,
-                        "text_color": "#ffffff"
+                        "text_color": "#FFFFFF"
                     }
                 }
             },
@@ -35,8 +35,8 @@
                 "underlayer": false,
                 "source": [],
                 "separate_desription_with_products": false,
-                "bg_color_1": "#ffffff",
-                "bg_color_2": "#ffffff",
+                "bg_color_1": "#FFFFFF",
+                "bg_color_2": "#FFFFFF",
                 "hide_banner_on_mobile": false,
                 "animation_on_reveal": true
             }
@@ -165,9 +165,9 @@
                 "title": "Flash Sale",
                 "heading_size": "h2",
                 "sub_title": "Get 20% off if you spend $100 or more",
-                "section_bg_color": "#b49071",
+                "section_bg_color": "#979797",
                 "section_bg_gradient": "",
-                "color_foreground": "#ffffff",
+                "color_foreground": "#FFFFFF",
                 "vertical_paddings": 3,
                 "animation_on_reveal": true
             }
@@ -188,10 +188,10 @@
                         "media_enabled": true,
                         "media_spaced": false,
                         "cover_background": "",
-                        "color_title": "#ffffff",
-                        "color_subtitle": "#ffffff",
-                        "color_text": "#ffffff",
-                        "button_background": "#ffffff",
+                        "color_title": "#FFFFFF",
+                        "color_subtitle": "#FFFFFF",
+                        "color_text": "#FFFFFF",
+                        "button_background": "#FFFFFF",
                         "button_foreground": "#000000"
                     },
                     "blocks": {}
@@ -209,10 +209,10 @@
                         "media_enabled": true,
                         "media_spaced": false,
                         "cover_background": "",
-                        "color_title": "#ffffff",
-                        "color_subtitle": "#ffffff",
-                        "color_text": "#ffffff",
-                        "button_background": "#ffffff",
+                        "color_title": "#FFFFFF",
+                        "color_subtitle": "#FFFFFF",
+                        "color_text": "#FFFFFF",
+                        "button_background": "#FFFFFF",
                         "button_foreground": "#000000"
                     },
                     "blocks": {}
@@ -235,7 +235,7 @@
                 "swipe_on_mobile": true,
                 "content_animation": false,
                 "animation_on_reveal": true,
-                "section_background": "#ffffff",
+                "section_background": "#FFFFFF",
                 "section_background_gradient": ""
             }
         },

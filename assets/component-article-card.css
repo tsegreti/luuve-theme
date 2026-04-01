@@ -1,6 +1,6 @@
 .article-card {
   margin: 1rem 0 0;
-  background: var(--item-card-background, #ffffff);
+  background: var(--item-card-background, #FFFFFF);
   border-radius: 4px;
 }
 

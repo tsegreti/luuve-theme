@@ -44,10 +44,10 @@
                         "subtitle": "",
                         "image": "",
                         "image_height": "small",
-                        "company_info_background": "#ffffff",
+                        "company_info_background": "#FFFFFF",
                         "company_info_title": "Our Address",
                         "company_info_address": "<p>FifthAve Street 31</p><p>New York, USA</p>",
-                        "contact_info_background": "#ffffff",
+                        "contact_info_background": "#FFFFFF",
                         "contact_info": "Contact Info",
                         "show_social_icons": true
                     },

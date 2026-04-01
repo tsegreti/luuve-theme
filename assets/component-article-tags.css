@@ -9,7 +9,7 @@
 .article_tags .tag {
   background: var(--tag-background, var(--color-tag-background));  
   color: var(--tag-foreground, var(--color-tag-foreground));
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 0px 7px 0px;
+  box-shadow: rgba(101, 101, 101, 0.2) 0px 0px 7px 0px;
   font-size: .75rem;
   letter-spacing: .5px;
   line-height: normal;

@@ -34,7 +34,7 @@ body[data-current-preset]:not([data-current-preset="enduro"]) .footer-section {
 }
 
 .image-placeholder > svg {
-    border: 3px solid #002D57;
+    border: 3px solid #242424;
     border-radius: 50%;
     padding: .25rem;
 }
@@ -251,7 +251,7 @@ body[data-current-preset]:not([data-current-preset="enduro"]) .footer-content .a
     }
 
     .footer-contacts__social > a:hover svg path {
-        fill: #000;
+        fill: #000000;
     }
 }
 

@@ -7,7 +7,7 @@
             "settings": {
                 "show_email": false,
                 "show_social_icons": "left",
-                "color_background": "#564839",
+                "color_background": "#4A4A4A",
                 "message": "<p><strong>Free shipping</strong> for all new summer outfits</p>"
             },
             "blocks": {

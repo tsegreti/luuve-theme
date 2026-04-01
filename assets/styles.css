@@ -263,7 +263,7 @@ deferred-media {
   box-sizing: border-box; /* 1 */
   border-width: 0; /* 2 */
   border-style: solid; /* 2 */
-  border-color: #e5e7eb; /* 2 */
+  border-color: #E7E7E7; /* 2 */
 }
 
 ::before,
@@ -581,13 +581,13 @@ textarea {
 
 input::-moz-placeholder, textarea::-moz-placeholder {
   opacity: 1; /* 1 */
-  color: #9ca3af; /* 2 */
+  color: #A2A2A2; /* 2 */
 }
 
 input::placeholder,
 textarea::placeholder {
   opacity: 1; /* 1 */
-  color: #9ca3af; /* 2 */
+  color: #A2A2A2; /* 2 */
 }
 
 /*
@@ -665,8 +665,8 @@ video {
   --tw-numeric-fraction:  ;
   --tw-ring-inset:  ;
   --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-color: #FFFFFF;
+  --tw-ring-color: rgb(122 122 122 / 0.5);
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
   --tw-shadow: 0 0 #0000;
@@ -715,8 +715,8 @@ video {
   --tw-numeric-fraction:  ;
   --tw-ring-inset:  ;
   --tw-ring-offset-width: 0px;
-  --tw-ring-offset-color: #fff;
-  --tw-ring-color: rgb(59 130 246 / 0.5);
+  --tw-ring-offset-color: #FFFFFF;
+  --tw-ring-color: rgb(122 122 122 / 0.5);
   --tw-ring-offset-shadow: 0 0 #0000;
   --tw-ring-shadow: 0 0 #0000;
   --tw-shadow: 0 0 #0000;
@@ -1371,9 +1371,9 @@ body[data-current-preset="enduro"] [type=button],
 }
 
 .shopify-payment-button__button {
-    --color-button-background: #fff;
-    --color-button-border: #000;
-    --color-button-text: #000;
+    --color-button-background: #FFFFFF;
+    --color-button-border: #000000;
+    --color-button-text: #000000;
     --color-button-text-rgb: 255, 255, 255;
 }
 
@@ -1550,11 +1550,11 @@ p > a {
 }
 
 .form__message {
-    background-color: var(--color-message-background, #fff);
-    border: 2px solid rgba(var(--color-message-rgb, 200, 82, 7), .75);
+    background-color: var(--color-message-background, #FFFFFF);
+    border: 2px solid rgba(var(--color-message-rgb, 109, 109, 109), .75);
     border-radius: 4px;
     box-shadow: 4px 4px 14px var(--color-foreground-4);
-    color: rgba(var(--color-message-rgb, 200, 82, 7), 1);
+    color: rgba(var(--color-message-rgb, 109, 109, 109), 1);
     display: flex;
     font-weight: 500;
     gap: .5rem;
@@ -1564,11 +1564,11 @@ p > a {
 }
 
 .form__message--success {
-  --color-message-rgb: var(--color-message-success-rgb, 39, 174, 96);
+  --color-message-rgb: var(--color-message-success-rgb, 118, 118, 118);
 }
 
 .form__message--error {
-  --color-message-rgb: var(--color-message-error-rgb, 235, 87, 87);
+  --color-message-rgb: var(--color-message-error-rgb, 151, 151, 151);
 }
 
 .form__message ul {
@@ -1576,7 +1576,7 @@ p > a {
 }
 
 .form__message svg {
-    fill: rgba(var(--color-message-rgb, 200, 82, 7), .1);
+    fill: rgba(var(--color-message-rgb, 109, 109, 109), .1);
     flex-shrink: 0;
     height: 1.5rem;
     width: 1.5rem;
@@ -1954,7 +1954,7 @@ select-color-variants {
 .facets__swatches input[type=checkbox]:focus:not(:focus-visible) + label,
 .facets__swatches input[type=checkbox]:checked:not(:focus-visible) + label {
     box-shadow:
-        0 0 0 2px #fff,
+        0 0 0 2px #FFFFFF,
         0 0 0 3px var(--color-foreground);
 }
 

@@ -20,7 +20,7 @@ section.shopify-section {
     left: 50%;
     transform: translateX(-50%);
     border-radius: 4px;
-    background: #DFF6E0;    
+    background: #EDEDED;    
     max-width: calc(440px - 1px);
     height: 40px;
 }
@@ -30,12 +30,12 @@ section.shopify-section {
     height: 22px;
     border-radius: 50%;
     color: var(--color-base-background-1);
-    background-color: #42CA49;
+    background-color: #939393;
     margin: .5rem;
 }
 
 .notification__message > span {
-    color: #219653;
+    color: #6B6B6B;
     font-weight: 500;
     text-align: center;
     margin-right: .5rem;
@@ -104,7 +104,7 @@ shopify-accelerated-checkout-cart {
   --shopify-accelerated-checkout-button-box-shadow: none;
   --shopify-accelerated-checkout-inline-alignment: flex-start;
   --shopify-accelerated-checkout-row-gap: 8px;
-  --shopify-accelerated-checkout-skeleton-background-color: #dedede;
+  --shopify-accelerated-checkout-skeleton-background-color: #DEDEDE;
   --shopify-accelerated-checkout-skeleton-animation-opacity-start: 1;
   --shopify-accelerated-checkout-skeleton-animation-opacity-end: 0.5;
   --shopify-accelerated-checkout-skeleton-animation-duration: 4s;
@@ -279,11 +279,11 @@ shopify-accelerated-checkout-cart {
 	left: 0;
 	right: 0;
 	padding: .5rem .75rem;
-	background: #ffffff;
+	background: #FFFFFF;
 	color: #000000;
 	border-radius: var(--button__border-radius);
 	outline: 1px solid var(--color-foreground-20);
-	box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+	box-shadow: rgba(101, 101, 101, 0.2) 0px 7px 29px 0px;
 	animation: discountError .5s linear forwards;
 }
 

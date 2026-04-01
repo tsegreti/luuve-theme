@@ -20,8 +20,8 @@
         border-radius: 0.25rem;
         padding: .75rem;
         right: -18rem;
-        background-color: var(--header--dropdown-background, #fafafa);
-        box-shadow: 2px 2px 10px 5px rgba(0,0,0,0.08);
+        background-color: var(--header--dropdown-background, #FAFAFA);
+        box-shadow: 2px 2px 10px 5px rgba(0, 0, 0, 0.08);
         z-index: 40;
     }
 

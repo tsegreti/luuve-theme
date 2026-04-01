@@ -41,7 +41,7 @@
                         "subtext": "",
                         "show_media": true,
                         "social_icons_width": 18,
-                        "social_icons_color": "#564839",
+                        "social_icons_color": "#4A4A4A",
                         "payment_enable": true
                     }
                 }
@@ -63,8 +63,8 @@
             "settings": {
                 "custom_layout_width": 1200,
                 "payment_enable": false,
-                "footer_bottom_background": "#faf6f2",
-                "footer_bottom_foreground": "#564839"
+                "footer_bottom_background": "#F7F7F7",
+                "footer_bottom_foreground": "#4A4A4A"
             },
             "blocks": {
                 "menu": {

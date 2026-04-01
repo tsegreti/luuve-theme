@@ -187,9 +187,9 @@ class RangeSlider extends HTMLElement {
                 --thumb-mobile-scale: 1.4;
                 --thumb-mobile-width: calc(var(--thumb-width) * var(--thumb-mobile-scale));
                 --thumb-mobile-height: calc(var(--thumb-height) * var(--thumb-mobile-scale));
-                --thumb-border: 1px solid #fff;
+                --thumb-border: 1px solid #FFFFFF;
                 --thumb-border-radius: 999px;
-                --thumb-bg: 10 89 254;
+                --thumb-bg: 84 84 84;
                 --thumb-mobile-scale: 1.4;
                 --track-height: 4px;
                 --track-border-radius: var(--thumb-border-radius);
